@@ -1,27 +1,9 @@
 var model = require('../../lib/model')
   , utils = require('utilities')
   , assert = require('assert')
-  , tests
-  , _params;
-
-var User = function () {
-  this.property('login', 'string', {required: true});
-  this.property('password', 'string', {required: true});
-  this.property('confirmPassword', 'string', {required: true});
-  this.property('lastName', 'string');
-  this.property('firstName', 'string');
-
-  this.validatesPresent('login');
-  this.validatesFormat('login', /[a-z]+/, {message: 'Subdivisions!'});
-  this.validatesLength('login', {min: 3});
-  this.validatesConfirmed('password', 'confirmPassword');
-};
-
-User.prototype.someMethod = function () {
-  // Do some stuff on a User instance
-};
-
-User = model.register('User', User);
+  , User = require('../fixtures/user')
+  , _params
+  , tests;
 
 _params = {
   login: 'zzz',
@@ -36,7 +18,6 @@ var tests = {
     var user = User.create(_params);
     assert.ok(user.isValid());
   }
-
 
 , 'test login is too short': function () {
     _params.login = 'zz'; // Too short, invalid
