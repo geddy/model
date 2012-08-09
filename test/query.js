@@ -1,7 +1,7 @@
-var model = require('../lib/model')
-  , Query = require('../lib/mapper/query').Query
-  , operation = require('../lib/mapper/operation')
-  , comparison = require('../lib/mapper/comparison')
+var model = require('../lib/index')
+  , Query = require('../lib/query/query').Query
+  , operation = require('../lib/query/operation')
+  , comparison = require('../lib/query/comparison')
   , utils = require('utilities')
   , assert = require('assert')
   , User = require('./fixtures/user')

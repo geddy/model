@@ -1,4 +1,4 @@
-var model = require('../../lib/model')
+var model = require('../lib')
   , assert = require('assert')
   , tests;
 

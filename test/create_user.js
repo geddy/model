@@ -1,7 +1,7 @@
-var model = require('../../lib/model')
+var model = require('../lib')
   , utils = require('utilities')
   , assert = require('assert')
-  , User = require('../fixtures/user')
+  , User = require('./fixtures/user')
   , _params
   , tests;
 

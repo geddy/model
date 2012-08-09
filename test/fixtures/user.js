@@ -1,4 +1,4 @@
-var model = require('../../lib/model');
+var model = require('../../lib');
 
 var User = function () {
   this.property('login', 'string', {required: true});
