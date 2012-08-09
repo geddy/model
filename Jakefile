@@ -5,3 +5,4 @@ var t = new jake.TestTask('Dungeon Master', function () {
   this.testFiles.exclude('test/fixtures/*.js');
 });
 
+

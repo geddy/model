@@ -1,10 +1,10 @@
-var model = require('../lib/index')
-  , Query = require('../lib/query/query').Query
-  , operation = require('../lib/query/operation')
-  , comparison = require('../lib/query/comparison')
+var model = require('../../lib/index')
+  , Query = require('../../lib/query/query').Query
+  , operation = require('../../lib/query/operation')
+  , comparison = require('../../lib/query/comparison')
   , utils = require('utilities')
   , assert = require('assert')
-  , User = require('./fixtures/user')
+  , User = require('../fixtures/user')
   , tests;
 
 var tests = {
