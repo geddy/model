@@ -4,14 +4,14 @@ var model = require('../../lib/index')
   , comparison = require('../../lib/query/comparison')
   , utils = require('utilities')
   , assert = require('assert')
-  , User = require('../fixtures/user')
+  , User = require('../fixtures/user').User
   , tests;
 
 var tests = {
   'test condition': function () {
     var query = new Query(User, {login: {like: 'foo'}, firstName: null}, {});
     assert.ok(query.conditions instanceof operation.AndOperation);
-    console.log(query.conditions.toString());
+    //console.log(query.conditions.toString());
   }
 
 };

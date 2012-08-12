@@ -19,4 +19,4 @@ User.prototype.someMethod = function () {
 
 User = model.register('User', User);
 
-module.exports = User;
+module.exports.User = User;
