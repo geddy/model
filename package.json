@@ -1,0 +1,22 @@
+{
+  "name": "model",
+  "description": "Datastore-agnostic ORM in JavaScript",
+  "keywords": [
+    "model",
+    "orm",
+    "relation",
+    "data",
+    "mapper",
+    "validation"
+  ],
+  "version": "0.0.1",
+  "author": "Matthew Eernisse <mde@fleegix.org> (http://fleegix.org)",
+  "main": "./lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mde/model.git"
+  },
+  "engines": {
+    "node": "*"
+  }
+}
