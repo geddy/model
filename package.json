@@ -7,7 +7,12 @@
     "relation",
     "data",
     "mapper",
-    "validation"
+    "validation",
+    "postgresql",
+    "postgres",
+    "riak",
+    "mongo",
+    "mongodb"
   ],
   "version": "0.0.1",
   "author": "Matthew Eernisse <mde@fleegix.org> (http://fleegix.org)",
