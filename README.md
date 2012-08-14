@@ -1,4 +1,4 @@
-dungeon-master
+Model
 ==============
 
 Datastore-agnostic ORM in JavaScript
