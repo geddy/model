@@ -5,4 +5,11 @@ var t = new jake.TestTask('Dungeon Master', function () {
   this.testFiles.exclude('test/fixtures/*.js');
 });
 
+var p = new jake.NpmPublishTask('model', [
+  'Jakefile'
+, 'README.md'
+, 'package.json'
+, 'lib/**'
+, 'test/**'
+]);
 

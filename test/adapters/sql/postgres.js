@@ -4,6 +4,8 @@ id, createdAt, updatedAt are auto-fields -- if not defined, handle
   transparently. If defined, make sure it's present and valid before using
 
 Allow auto-increment setting for id
+
+Relies on 'saved' property to know if an instanced is new or existing
 */
 
 var utils = require('utilities')
