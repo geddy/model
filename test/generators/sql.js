@@ -43,7 +43,6 @@ tests = {
     client.connect(function () {
       client.on('drain', client.end.bind(client));
       client.query(sql, function (err, data) {
-        console.dir(arguments);
         next();
       });
     });

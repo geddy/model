@@ -1,15 +1,21 @@
+/*
+Notes:
+id, createdAt, updatedAt are auto-fields -- if not defined, handle
+  transparently. If defined, make sure it's present and valid before using
+
+Allow auto-increment setting for id
+*/
 
 var utils = require('utilities')
+  , model = require('../../../lib')
   , Adapter = require('../../../lib/adapters/sql/postgres').Adapter
   , Query = require('../../../lib/query/query').Query
-  , model = require('../../../lib')
   , generator = require('../../../lib/generators/sql')
   , adapter
   , assert = require('assert')
   , currentId
   , tests
   , testItems = []
-  , _runOnce
   , Zooby = require('../../fixtures/zooby').Zooby;
 
 tests = {
@@ -186,6 +192,62 @@ tests = {
       assert.equal(data.length, 2);
       next();
     });
+  }
+
+, 'test all sort string column name': function (next) {
+    Zooby.all({}, {sort: 'zong'}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
+, 'test all sort incorrect string column name': function () {
+    assert.throws(function () {
+      Zooby.all({}, {sort: 'zongX'}, function (err, data) {
+      });
+    }, Error);
+  }
+
+, 'test all sort array column names': function (next) {
+    Zooby.all({}, {sort: ['foo', 'zong']}, function (err, data) {
+      // Should be sorted BAR, BAZ, FOO
+      assert.equal(data[0].id, testItems[1].id);
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
+, 'test all sort object literal desc': function (next) {
+    Zooby.all({}, {sort: {zong: 'desc'}}, function (err, data) {
+      // Sort by datetime
+      assert.equal(data[0].id, testItems[0].id);
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
+, 'test all sort object literal asc': function (next) {
+    Zooby.all({}, {sort: {zong: 'asc'}}, function (err, data) {
+      // Sort by datetime reversed
+      assert.equal(data[0].id, testItems[2].id);
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
+, 'test all sort incorrect sort direction': function () {
+    assert.throws(function () {
+      Zooby.all({}, {sort: {foo: 'asc', bar: 'descX'}}, function (err, data) {
+      });
+    }, Error);
   }
 
 };
