@@ -26,6 +26,7 @@ tests = {
 
     adapter = new Adapter({
       database: 'model_test'
+    , autoConnect: false
     });
     sql = generator.createTable(['Zooby']);
     adapter.once('connect', function () {
