@@ -12,7 +12,7 @@ _params = {
   firstName: 'Neil'
 };
 
-var tests = {
+tests = {
 
   'test validity': function () {
     var user = User.create(_params);
