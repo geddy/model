@@ -28,6 +28,7 @@ tests = {
       database: 'model_test'
     , autoConnect: false
     });
+    model.adapters.Zooby = adapter;
     sql = generator.createTable(['Zooby']);
     adapter.once('connect', function () {
       var sql = generator.createTable(['Zooby']);
@@ -83,7 +84,7 @@ tests = {
       if (err) {
         throw err;
       }
-      assert.equal(data[0].id, currentId);
+      assert.equal(data.id, currentId);
       next();
     });
   }
@@ -95,14 +96,14 @@ tests = {
       if (err) {
         throw err;
       }
-      assert.equal(data[0].id, currentId);
+      assert.equal(data.id, currentId);
       next();
     });
   }
 
 , 'test save existing': function (next) {
     Zooby.load({id: currentId}, {}, function (err, data) {
-      var inst = data[0];
+      var inst = data;
       inst.foo = 'BAR';
       inst.save(function (err, data) {
         if (err) {
@@ -112,7 +113,7 @@ tests = {
           if (err) {
             throw err;
           }
-          assert.equal(data[0].foo, 'BAR');
+          assert.equal(data.foo, 'BAR');
           next();
         });
       });
@@ -128,7 +129,7 @@ tests = {
         if (err) {
           throw err;
         }
-        assert.equal(data.length, 0);
+        assert.ok(!data);
         next();
       });
     });
