@@ -32,7 +32,7 @@ var tests = {
       , operands;
   }
 
-, 'test not condition': function () {
+, 'test not': function () {
     var conditions = {foo: 'bar', not: {bar: 'baz', baz: 'zoobie'}}
       , query = new Query(Zooby, conditions, {})
       , operands;
@@ -42,6 +42,18 @@ var tests = {
     assert.ok(operands[1] instanceof operation.NotOperation);
     operands = operands[1].operands;
     assert.ok(operands[0] instanceof operation.AndOperation);
+  }
+
+, 'test or': function () {
+    var conditions = {or: [{foo: 'bar'}, {bar: 'baz'}]}
+      , query = new Query(Zooby, conditions, {})
+      , operands;
+
+    operands = query.conditions.operands;
+    assert.ok(operands[0] instanceof operation.OrOperation);
+    operands = query.conditions.operands[0].operands;
+    assert.ok(operands[0] instanceof operation.AndOperation);
+    assert.ok(operands[1] instanceof operation.AndOperation);
   }
 
 };

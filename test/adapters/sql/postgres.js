@@ -157,7 +157,7 @@ tests = {
     });
   }
 
-, 'test all by string equality': function (next) {
+, 'test all, by string equality': function (next) {
     Zooby.all({foo: 'FOO'}, {}, function (err, data) {
       if (err) {
         throw err;
@@ -168,7 +168,7 @@ tests = {
     });
   }
 
-, 'test all by string LIKE case-sensitive': function (next) {
+, 'test all, by string LIKE case-sensitive': function (next) {
     Zooby.all({foo: {'like': 'B'}}, {}, function (err, data) {
       if (err) {
         throw err;
@@ -178,7 +178,7 @@ tests = {
     });
   }
 
-, 'test all by string LIKE case-insensitive bool': function (next) {
+, 'test all, by string LIKE case-insensitive bool': function (next) {
     Zooby.all({foo: {'like': 'b'}}, {lowercase: true}, function (err, data) {
       if (err) {
         throw err;
@@ -188,7 +188,7 @@ tests = {
     });
   }
 
-, 'test all by LIKE case-insensitive array': function (next) {
+, 'test all, by LIKE case-insensitive array': function (next) {
     Zooby.all({foo: {'like': 'b'}}, {lowercase: ['foo']}, function (err, data) {
       if (err) {
         throw err;
@@ -198,7 +198,7 @@ tests = {
     });
   }
 
-, 'test all sort string column name': function (next) {
+, 'test all, sort string column name': function (next) {
     Zooby.all({}, {sort: 'zong'}, function (err, data) {
       if (err) {
         throw err;
@@ -207,14 +207,14 @@ tests = {
     });
   }
 
-, 'test all sort incorrect string column name': function () {
+, 'test all, sort incorrect string column name': function () {
     assert.throws(function () {
       Zooby.all({}, {sort: 'zongX'}, function (err, data) {
       });
     }, Error);
   }
 
-, 'test all sort array column names': function (next) {
+, 'test all, sort array column names': function (next) {
     Zooby.all({}, {sort: ['foo', 'zong']}, function (err, data) {
       // Should be sorted BAR, BAZ, FOO
       assert.equal(data[0].id, testItems[1].id);
@@ -225,7 +225,7 @@ tests = {
     });
   }
 
-, 'test all sort object literal desc': function (next) {
+, 'test all, sort object literal desc': function (next) {
     Zooby.all({}, {sort: {zong: 'desc'}}, function (err, data) {
       // Sort by datetime
       assert.equal(data[0].id, testItems[0].id);
@@ -236,7 +236,7 @@ tests = {
     });
   }
 
-, 'test all sort object literal asc': function (next) {
+, 'test all, sort object literal asc': function (next) {
     Zooby.all({}, {sort: {zong: 'asc'}}, function (err, data) {
       // Sort by datetime reversed
       assert.equal(data[0].id, testItems[2].id);
@@ -247,11 +247,43 @@ tests = {
     });
   }
 
-, 'test all sort incorrect sort direction': function () {
+, 'test all, sort incorrect sort direction': function () {
     assert.throws(function () {
       Zooby.all({}, {sort: {foo: 'asc', bar: 'descX'}}, function (err, data) {
       });
     }, Error);
+  }
+
+, 'test all, using or, simple equality': function (next) {
+    Zooby.all({or: [{foo: 'BAR'}, {foo: 'BAZ'}]}, {}, function (err, data) {
+      assert.equal(data.length, 2);
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
+, 'test all, using or, like comparison': function (next) {
+    Zooby.all({or: [{foo: {'like': 'b'}}, {foo: 'foo'}]}, {lowercase: ['foo']},
+        function (err, data) {
+      assert.equal(data.length, 3);
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
+, 'test all, using or, like comparison with not': function (next) {
+    Zooby.all({or: [{foo: {'like': 'b'}}, {foo: 'foo'}], not: {foo: 'baz'}},
+        {lowercase: ['foo']}, function (err, data) {
+      assert.equal(data.length, 2);
+      if (err) {
+        throw err;
+      }
+      next();
+    });
   }
 
 };
