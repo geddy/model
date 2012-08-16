@@ -26,6 +26,24 @@ var tests = {
     assert.ok(operands[1] instanceof comparison.EqualToComparison);
   }
 
+, 'test nested conditions': function () {
+    var conditions = {foo: 'bar', baz: 'qux', or: {foo: 'baz', baz: 'zoobie'}}
+      , query = new Query(Zooby, conditions, {})
+      , operands;
+  }
+
+, 'test not condition': function () {
+    var conditions = {foo: 'bar', not: {bar: 'baz', baz: 'zoobie'}}
+      , query = new Query(Zooby, conditions, {})
+      , operands;
+
+    operands = query.conditions.operands;
+    assert.ok(operands[0] instanceof comparison.EqualToComparison);
+    assert.ok(operands[1] instanceof operation.NotOperation);
+    operands = operands[1].operands;
+    assert.ok(operands[0] instanceof operation.AndOperation);
+  }
+
 };
 
 module.exports = tests;
