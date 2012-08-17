@@ -4,6 +4,7 @@ var assert = require('assert')
   , pg = require('pg')
   , model = require('../../lib')
   , Zooby = require('../fixtures/zooby').Zooby
+  , User = require('../fixtures/user').User
   , generator = require('../../lib/generators/sql')
   , tests
   , arrIncl;
@@ -37,9 +38,20 @@ tests = {
         'blarg time'));
   }
 
-, 'test createTable in DB': function (next) {
+, 'test createTable in DB, string id': function (next) {
     var client = new pg.Client('postgres://mde@localhost/model_test');
     var sql = generator.createTable(['Zooby']);
+    client.connect(function () {
+      client.on('drain', client.end.bind(client));
+      client.query(sql, function (err, data) {
+        next();
+      });
+    });
+  }
+
+, 'test createTable in DB, autoIncrement id': function (next) {
+    var client = new pg.Client('postgres://mde@localhost/model_test');
+    var sql = generator.createTable(['User']);
     client.connect(function () {
       client.on('drain', client.end.bind(client));
       client.query(sql, function (err, data) {

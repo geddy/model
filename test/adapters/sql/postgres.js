@@ -18,7 +18,8 @@ var utils = require('utilities')
   , currentId
   , tests
   , testItems = []
-  , Zooby = require('../../fixtures/zooby').Zooby;
+  , Zooby = require('../../fixtures/zooby').Zooby
+  , User = require('../../fixtures/user').User;
 
 tests = {
   'before': function (next) {
@@ -26,12 +27,10 @@ tests = {
 
     adapter = new Adapter({
       database: 'model_test'
-    , autoConnect: false
     });
     model.adapters.Zooby = adapter;
-    sql = generator.createTable(['Zooby']);
     adapter.once('connect', function () {
-      var sql = generator.createTable(['Zooby']);
+      var sql = generator.createTable(['Zooby', 'User']);
       adapter.exec(sql, function (err, data) {
         if (err) {
           throw err;
@@ -41,8 +40,9 @@ tests = {
     });
     adapter.connect();
 
-    model.adapter = {
+    model.adapters = {
       'Zooby': adapter
+    , 'User': adapter
     };
 
   }
@@ -68,7 +68,32 @@ tests = {
     });
   }
 
-, 'test save new': function (next) {
+, 'test save new, auto-increment id': function (next) {
+    var u = User.create({
+      login: 'asdf'
+    , password: 'zerb'
+    , confirmPassword: 'zerb'
+    });
+    u.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = u.id;
+      next();
+    });
+  }
+
+, 'test load via auto-increment id': function (next) {
+    User.load(currentId, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.id, currentId);
+      next();
+    });
+  }
+
+, 'test save new, string UUID id': function (next) {
     var z = Zooby.create({foo: 'FOO'});
     z.save(function (err, data) {
       if (err) {
@@ -79,7 +104,7 @@ tests = {
     });
   }
 
-, 'test load via id': function (next) {
+, 'test load via string id': function (next) {
     Zooby.load(currentId, {}, function (err, data) {
       if (err) {
         throw err;

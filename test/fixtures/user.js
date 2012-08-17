@@ -11,6 +11,8 @@ var User = function () {
   this.validatesFormat('login', /[a-z]+/, {message: 'Subdivisions!'});
   this.validatesLength('login', {min: 3});
   this.validatesConfirmed('password', 'confirmPassword');
+
+  this.autoIncrementId = true;
 };
 
 User.prototype.someMethod = function () {
