@@ -5,6 +5,7 @@ var assert = require('assert')
   , model = require('../../lib')
   , Zooby = require('../fixtures/zooby').Zooby
   , User = require('../fixtures/user').User
+  , Profile = require('../fixtures/profile').Profile
   , generator = require('../../lib/generators/sql')
   , tests
   , arrIncl;
@@ -55,6 +56,20 @@ tests = {
     client.connect(function () {
       client.on('drain', client.end.bind(client));
       client.query(sql, function (err, data) {
+        next();
+      });
+    });
+  }
+
+, 'test createTable in DB with association, autoIncrement id': function (next) {
+    var client = new pg.Client('postgres://mde@localhost/model_test');
+    var sql = generator.createTable(['Profile']);
+    client.connect(function () {
+      client.on('drain', client.end.bind(client));
+      client.query(sql, function (err, data) {
+        sql = sql.split('\n');
+        assert.ok(arrIncl(sql,
+            'user_id integer'));
         next();
       });
     });

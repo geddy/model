@@ -19,7 +19,9 @@ var utils = require('utilities')
   , tests
   , testItems = []
   , Zooby = require('../../fixtures/zooby').Zooby
-  , User = require('../../fixtures/user').User;
+  , User = require('../../fixtures/user').User
+  , Profile = require('../../fixtures/profile').Profile
+  , Account = require('../../fixtures/account').Account;
 
 tests = {
   'before': function (next) {
@@ -28,9 +30,9 @@ tests = {
     adapter = new Adapter({
       database: 'model_test'
     });
-    model.adapters.Zooby = adapter;
     adapter.once('connect', function () {
-      var sql = generator.createTable(['Zooby', 'User']);
+      var sql = generator.createTable(['Zooby',
+          'User', 'Profile', 'Account']);
       adapter.exec(sql, function (err, data) {
         if (err) {
           throw err;
@@ -43,6 +45,8 @@ tests = {
     model.adapters = {
       'Zooby': adapter
     , 'User': adapter
+    , 'Profile': adapter
+    , 'Account': adapter
     };
 
   }
@@ -90,6 +94,111 @@ tests = {
       }
       assert.equal(data.id, currentId);
       next();
+    });
+  }
+
+, 'test hasOne association, set from owner': function (next) {
+    var u = User.create({
+      login: 'asdf'
+    , password: 'zerb'
+    , confirmPassword: 'zerb'
+    });
+    u.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = u.id;
+      User.load(currentId, {}, function (err, data) {
+        var user = data
+          , profile;
+        if (err) {
+          throw err;
+        }
+        profile = Profile.create({});
+        user.setProfile(profile);
+        user.save(function (err, data) {
+          if (err) {
+            throw err;
+          }
+          user.getProfile(function (err, data) {
+            assert.equal(profile.id, data.id);
+            if (err) {
+              throw err;
+            }
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test hasOne association, set from owned': function (next) {
+    var u = User.create({
+      login: 'asdf'
+    , password: 'zerb'
+    , confirmPassword: 'zerb'
+    });
+    u.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = u.id;
+      User.load(currentId, {}, function (err, data) {
+        var user = data
+          , profile;
+        if (err) {
+          throw err;
+        }
+        profile = Profile.create({});
+        profile.setUser(user);
+        profile.save(function (err, data) {
+          if (err) {
+            throw err;
+          }
+          user.getProfile(function (err, data) {
+            assert.equal(profile.id, data.id);
+            if (err) {
+              throw err;
+            }
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test hasMany association, set from owner': function (next) {
+    var u = User.create({
+      login: 'asdf'
+    , password: 'zerb'
+    , confirmPassword: 'zerb'
+    });
+    u.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = u.id;
+      User.load(currentId, {}, function (err, data) {
+        var user = data
+          , account;
+        if (err) {
+          throw err;
+        }
+        user.addAccount(Account.create({}));
+        user.addAccount(Account.create({}));
+        user.save(function (err, data) {
+          if (err) {
+            throw err;
+          }
+          user.getAccounts(function (err, data) {
+            assert.equal(2, data.length);
+            if (err) {
+              throw err;
+            }
+            next();
+          });
+        });
+      });
     });
   }
 

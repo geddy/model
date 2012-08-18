@@ -12,6 +12,9 @@ var User = function () {
   this.validatesLength('login', {min: 3});
   this.validatesConfirmed('password', 'confirmPassword');
 
+  this.hasOne('Profile');
+  this.hasMany('Accounts');
+
   this.autoIncrementId = true;
 };
 
