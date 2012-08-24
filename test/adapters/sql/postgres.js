@@ -87,8 +87,8 @@ tests = {
     });
   }
 
-, 'test load via auto-increment id': function (next) {
-    User.load(currentId, {}, function (err, data) {
+, 'test first via auto-increment id': function (next) {
+    User.first(currentId, {}, function (err, data) {
       if (err) {
         throw err;
       }
@@ -108,7 +108,7 @@ tests = {
         throw err;
       }
       currentId = u.id;
-      User.load(currentId, {}, function (err, data) {
+      User.first(currentId, {}, function (err, data) {
         var user = data
           , profile;
         if (err) {
@@ -143,7 +143,7 @@ tests = {
         throw err;
       }
       currentId = u.id;
-      User.load(currentId, {}, function (err, data) {
+      User.first(currentId, {}, function (err, data) {
         var user = data
           , profile;
         if (err) {
@@ -178,7 +178,7 @@ tests = {
         throw err;
       }
       currentId = u.id;
-      User.load(currentId, {}, function (err, data) {
+      User.first(currentId, {}, function (err, data) {
         var user = data
           , account;
         if (err) {
@@ -213,8 +213,8 @@ tests = {
     });
   }
 
-, 'test load via string id': function (next) {
-    Zooby.load(currentId, {}, function (err, data) {
+, 'test first via string id': function (next) {
+    Zooby.first(currentId, {}, function (err, data) {
       if (err) {
         throw err;
       }
@@ -225,8 +225,8 @@ tests = {
 
 // TODO: Load via array of ids
 
-, 'test load via object': function (next) {
-    Zooby.load({id: currentId}, {}, function (err, data) {
+, 'test first via object': function (next) {
+    Zooby.first({id: currentId}, {}, function (err, data) {
       if (err) {
         throw err;
       }
@@ -236,14 +236,14 @@ tests = {
   }
 
 , 'test save existing': function (next) {
-    Zooby.load({id: currentId}, {}, function (err, data) {
+    Zooby.first({id: currentId}, {}, function (err, data) {
       var inst = data;
       inst.foo = 'BAR';
       inst.save(function (err, data) {
         if (err) {
           throw err;
         }
-        Zooby.load({id: currentId}, {}, function (err, data) {
+        Zooby.first({id: currentId}, {}, function (err, data) {
           if (err) {
             throw err;
           }
@@ -259,7 +259,7 @@ tests = {
       if (err) {
         throw err;
       }
-      Zooby.load({id: currentId}, {}, function (err, data) {
+      Zooby.first({id: currentId}, {}, function (err, data) {
         if (err) {
           throw err;
         }
