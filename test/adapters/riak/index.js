@@ -28,7 +28,7 @@ tests = {
 , 'test create adapter': function () {
     assert.ok(adapter instanceof Adapter);
   }
-
+/*
 , 'test save new, string UUID id': function (next) {
     var z = Zooby.create({foo: 'FOO'});
     z.save(function (err, data) {
@@ -73,7 +73,18 @@ tests = {
       });
     });
   }
+*/
+, 'test all': function (next) {
+    Zooby.all({foo: 'FOO'}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      //assert.equal(data.id, currentId);
+      next();
+    });
+  }
 
+/*
 , 'test remove': function (next) {
     Zooby.remove(currentId, {}, function (err, data) {
       if (err) {
@@ -88,6 +99,7 @@ tests = {
       });
     });
   }
+*/
 
 };
 
