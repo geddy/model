@@ -28,7 +28,7 @@ tests = {
 , 'test create adapter': function () {
     assert.ok(adapter instanceof Adapter);
   }
-/*
+
 , 'test save new, string UUID id': function (next) {
     var z = Zooby.create({foo: 'FOO'});
     z.save(function (err, data) {
@@ -45,7 +45,7 @@ tests = {
       if (err) {
         throw err;
       }
-      assert.equal(data.id, currentId);
+      assert.equal(currentId, data.id);
       next();
     });
   }
@@ -67,24 +67,33 @@ tests = {
           if (err) {
             throw err;
           }
-          assert.equal(data.foo, 'BAR');
+          assert.equal('BAR', data.foo);
           next();
         });
       });
     });
   }
-*/
-, 'test all': function (next) {
-    Zooby.all({foo: 'FOO'}, {}, function (err, data) {
+
+, 'test all, by id': function (next) {
+    Zooby.all({id: currentId}, {}, function (err, data) {
       if (err) {
         throw err;
       }
-      //assert.equal(data.id, currentId);
+      assert.equal(currentId, data[0].id);
       next();
     });
   }
 
-/*
+, 'test all, by map-reduce': function (next) {
+    Zooby.all({foo: 'BAR'}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data[0].id, currentId);
+      next();
+    });
+  }
+
 , 'test remove': function (next) {
     Zooby.remove(currentId, {}, function (err, data) {
       if (err) {
@@ -99,7 +108,6 @@ tests = {
       });
     });
   }
-*/
 
 };
 
