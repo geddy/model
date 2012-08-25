@@ -144,7 +144,10 @@ Methods for querying are static methods on each model constructor.
 
 ### Finding a single item
 
-Use the `first` method to find a single item. You can pass it an id, or a set of query parameters. In the case of a query, it will return the first item that matches, according to whatever sort you've specified.
+Use the `first` method to find a single item. You can pass it an id, or a set of
+query parameters in the form of an object-literal. In the case of a query, it
+will return the first item that matches, according to whatever sort you've
+specified.
 
 ```javascript
 var user;
@@ -160,7 +163,8 @@ User.first({login: 'alerxst'}, function (err, data) {
 
 ### Collections of items
 
-Use the `all` method to find lots of items. Pass it a set of query parameters.
+Use the `all` method to find lots of items. Pass it a set of query parameters in
+the form of an object-literal, where each key is a field to compare, and the value is either a simple value for comparison (equal to), or another object-literal where the key is the comparison-operator, and the value is the value to use for the comparison.
 
 ```javascript
 var users
@@ -179,6 +183,64 @@ User.all({createdAt: {gt: dt}, function (err, data) {
   console.dir(users);
 });
 ```
+
+Here are some more examples of queries:
+
+```javascript
+// Where "foo" is 'BAR' and "bar" is not null
+{foo: 'BAR', bar: {ne: null}}
+// Where "foo" begins with 'B' (SQL-adapter only)
+{foo: {'like': 'B'}}
+// Where foo is less than 2112, and bar is 'BAZ'
+{foo: {lt: 2112}, bar: 'BAZ'}
+```
+
+### Comparison operators
+
+Here is the list of comparison operators currently supported:
+
+eql: equal to
+ne: not equal to
+gt: greater than
+lt: less than
+gte: greater than or equal
+lte: less than or equal
+like: like (SQL adapters only)
+
+A simple string-value for a query parameter is the same as 'eql'. `{foo: 'bar'}`
+is the same as `{foo: {eql: 'bar'}}`.
+
+### More complex queries
+
+Model supports combining queries with OR and negating queries with NOT.
+
+To perform an 'or' query, use an object-literal with a key of 'or', and an array
+of query-objects to represent each set of alternative conditions:
+
+```javascript
+// Where "foo" is 'BAR' OR "bar" is 'BAZ'
+{or: [{foo: 'BAR'}, {bar: 'BAZ'}]}
+// Where "foo" is not 'BAR' OR "bar" is null OR "baz" is less than 2112
+{or: [{foo {ne: 'BAR'}}, {bar: null}, {baz: {lt: 2112}}]}
+```
+
+To negate a query with 'not', simply use a query-object where 'not' is the key,
+and the value is the set of conditions to negate:
+
+```javascript
+// Where NOT ("foo" is 'BAR' and "bar" is 'BAZ')
+{not: {foo: 'BAR', bar: 'BAZ'}}
+// Where NOT ("foo" is 'BAZ' and "bar" is less than 1001)
+{not: {foo: 'BAZ', bar: {lt: 1001}}}
+```
+
+These OR and NOT queries can be nested and combined:
+
+```javascript
+// Where ("foo" is like 'b' OR "foo" is 'foo') and NOT "foo" is 'baz'
+{or: [{foo: {'like': 'b'}}, {foo: 'foo'}], not: {foo: 'baz'}}
+```
+
 
 
 
