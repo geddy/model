@@ -236,14 +236,19 @@ tests = {
   }
 
 , 'test save existing': function (next) {
-    Zooby.first({id: currentId}, {}, function (err, data) {
+    Zooby.first(currentId, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
       var inst = data;
-      inst.foo = 'BAR';
+      data.updateProperties({
+        foo: 'BAR'
+      });
       inst.save(function (err, data) {
         if (err) {
           throw err;
         }
-        Zooby.first({id: currentId}, {}, function (err, data) {
+        Zooby.first(currentId, {}, function (err, data) {
           if (err) {
             throw err;
           }
@@ -255,11 +260,11 @@ tests = {
   }
 
 , 'test remove': function (next) {
-    Zooby.remove({id: currentId}, {}, function (err, data) {
+    Zooby.remove(currentId, {}, function (err, data) {
       if (err) {
         throw err;
       }
-      Zooby.first({id: currentId}, {}, function (err, data) {
+      Zooby.first(currentId, {}, function (err, data) {
         if (err) {
           throw err;
         }
