@@ -425,6 +425,17 @@ tests = {
     });
   }
 
+, 'test all, using less-than createdAt': function (next) {
+    Zooby.all({createdAt: {lt: new Date()}},
+        {}, function (err, data) {
+      assert.equal(data.length, 3);
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
 };
 
 module.exports = tests;
