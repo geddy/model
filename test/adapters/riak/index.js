@@ -84,8 +84,38 @@ tests = {
     });
   }
 
-, 'test all, by map-reduce': function (next) {
+, 'test all, by map-reduce, equality': function (next) {
     Zooby.all({foo: 'BAR'}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data[0].id, currentId);
+      next();
+    });
+  }
+
+, 'test all, by map-reduce, like': function (next) {
+    Zooby.all({foo: {like: 'B'}}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data[0].id, currentId);
+      next();
+    });
+  }
+
+, 'test all, by map-reduce, like lowercased': function (next) {
+    Zooby.all({foo: {like: 'b'}}, {lowercase: ['foo']}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data[0].id, currentId);
+      next();
+    });
+  }
+
+, 'test all, by map-reduce, equality and like': function (next) {
+    Zooby.all({createdAt: {ne: null}, foo: {like: 'B'}}, {}, function (err, data) {
       if (err) {
         throw err;
       }
