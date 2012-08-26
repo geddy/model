@@ -189,7 +189,7 @@ Here are some more examples of queries:
 ```javascript
 // Where "foo" is 'BAR' and "bar" is not null
 {foo: 'BAR', bar: {ne: null}}
-// Where "foo" begins with 'B' (SQL-adapter only)
+// Where "foo" begins with 'B'
 {foo: {'like': 'B'}}
 // Where foo is less than 2112, and bar is 'BAZ'
 {foo: {lt: 2112}, bar: 'BAZ'}
@@ -205,7 +205,7 @@ gt: greater than
 lt: less than
 gte: greater than or equal
 lte: less than or equal
-like: like (SQL adapters only)
+like: like
 
 A simple string-value for a query parameter is the same as 'eql'. `{foo: 'bar'}`
 is the same as `{foo: {eql: 'bar'}}`.

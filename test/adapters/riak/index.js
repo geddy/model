@@ -139,6 +139,18 @@ tests = {
     });
   }
 
+/*
+, 'test all, by map-reduce, equality': function (next) {
+    Zooby.all({foo: 'FOO'}, {sort: {createdAt: 'desc'}}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.ok(data.length > 0);
+      assert.equal(data[0].id, currentId);
+      next();
+    });
+  }
+*/
 };
 
 module.exports = tests;
