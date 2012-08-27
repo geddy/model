@@ -29,7 +29,7 @@ Model currently implements adapters for:
 * Riak
 * MongoDB
 
-## Definining models
+## Defining models
 
 Model uses a pretty simple syntax for defining a model. (It should look familiar
 to anyone who has used an ORM like ActiveRecord, DataMapper, Django's models, or
