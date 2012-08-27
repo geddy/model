@@ -5,6 +5,22 @@ Model is a datastore-agnostic ORM in JavaScript. It serves as the
 model-component for the [Geddy MVC Web framework](http://geddyjs.org/) for
 NodeJS.
 
+### License
+
+Apache License, Version 2
+
+### Prerequisites
+
+Model requires version 0.6.x of Node.js or higher. If you want to run the tests,
+or work on Model, you'll want the [Jake](https://github.com/mde/jake) JavaScript
+build-tool.
+
+### Installing with [NPM](http://npmjs.org/)
+
+```
+npm install model
+```
+
 ## Adapters
 
 Model currently implements adapters for:
@@ -16,7 +32,7 @@ Model currently implements adapters for:
 ## Definining models
 
 Model uses a pretty simple syntax for defining a model. (It should look familiar
-to anyone who has used ActiveRecord, DataMapper, Django's models, or
+to anyone who has used an ORM like ActiveRecord, DataMapper, Django's models, or
 SQLAlchemy.)
 
 ```javascript
@@ -49,9 +65,10 @@ User.prototype.someOtherMethod = function () {
 User = model.registerModel('User', User);
 ```
 
-### Simpler syntax
+### Abbreviated syntax
 
-Alternatively, you can use the `defineProperties` method to lay out your model:
+Alternatively, you can use the `defineProperties` method to lay out your model's
+properties in one go:
 
 ```javascript
 var User = function () {
@@ -64,7 +81,7 @@ var User = function () {
 }
 ```
 
-### Creating instances
+## Creating instances
 
 Creating an instance of one of these models is easy:
 
@@ -78,7 +95,7 @@ var params = {
 var user = User.create(params);
 ```
 
-### Validation and errors
+## Validation and errors
 
 Data-validation happens on the call to `create`, and any validation errors show
 up inside an `errors` property on the instance, keyed by field name. Instances
@@ -98,7 +115,7 @@ console.log(user.isValid());
 console.log(user.errors.password);
 ```
 
-### Saving items
+## Saving items
 
 After creating the instance, call the `save` method on the instance. This method
 takes a callbak in the familiar (err, data) format for Node.
@@ -114,7 +131,7 @@ if (user.isValid()) {
 }
 ```
 
-### Updating items
+## Updating items
 
 Use the `updateProperties` method to update the values of the properties on an
 instance with the appropriate validations. Then call `save` on the instance.
@@ -164,7 +181,10 @@ User.first({login: 'alerxst'}, function (err, data) {
 ### Collections of items
 
 Use the `all` method to find lots of items. Pass it a set of query parameters in
-the form of an object-literal, where each key is a field to compare, and the value is either a simple value for comparison (equal to), or another object-literal where the key is the comparison-operator, and the value is the value to use for the comparison.
+the form of an object-literal, where each key is a field to compare, and the
+value is either a simple value for comparison (equal to), or another
+object-literal where the key is the comparison-operator, and the value is the
+value to use for the comparison.
 
 ```javascript
 var users
@@ -210,7 +230,7 @@ like: like
 A simple string-value for a query parameter is the same as 'eql'. `{foo: 'bar'}`
 is the same as `{foo: {eql: 'bar'}}`.
 
-### More complex queries
+## More complex queries
 
 Model supports combining queries with OR and negating queries with NOT.
 
@@ -241,6 +261,44 @@ These OR and NOT queries can be nested and combined:
 {or: [{foo: {'like': 'b'}}, {foo: 'foo'}], not: {foo: 'baz'}}
 ```
 
+## Sorting
+
+The `all` API-call for querying accepts an optional options-object after the
+query-conditions. Set a 'sort' in that options-object to specifiy properties to
+sort on, and the sort-direction for each one.
+
+```javascript
+var users
+// Find all the users who have ever been updated, and sort by
+// creation-date, ascending, then last name, descending
+User.all({updatedAt: {ne: null}}, {sort: {createdAt: 'asc', lastName: 'desc'}},
+    function (err, data) {
+  if (err) {
+    throw err;
+  }
+  users = data;
+  console.log('Updated users');
+  console.dir(users);
+});
+```
+
+### Simplified syntax
+
+You can use a simplified syntax for specifying the sort. The default
+sort-direction is ascending ('asc'), so you can specify a property to sort on
+(or multiple properties as an array) if you want all sorts to be ascending:
+
+```javascript
+// Sort by createdAt, ascending
+{sort: 'createdAt'}
+// Sort by createdAt, then updatedAt, then lastName,
+// then firstName -- all ascending
+{sort: ['createdAt', 'updatedAt', 'lastName', 'firstName']}
+
+```
+
+- - -
+Model JavaScript ORM copyright 2112 mde@fleegix.org.
 
 
 

@@ -21,6 +21,9 @@
     "type": "git",
     "url": "git://github.com/mde/model.git"
   },
+  "dependencies": {
+    "utilities": "0.0.x"
+  },
   "engines": {
     "node": "*"
   }
