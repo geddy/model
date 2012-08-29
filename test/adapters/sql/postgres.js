@@ -201,6 +201,21 @@ tests = {
     });
   }
 
+, 'test remove, auto-increment id': function (next) {
+    Zooby.remove(currentId, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      Zooby.first(currentId, {}, function (err, data) {
+        if (err) {
+          throw err;
+        }
+        assert.ok(!data);
+        next();
+      });
+    });
+  }
+
 };
 
 utils.mixin(tests, require('../shared'));

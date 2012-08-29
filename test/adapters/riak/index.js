@@ -32,4 +32,6 @@ tests = {
 
 };
 
+utils.mixin(tests, require('../shared'));
+
 module.exports = tests;

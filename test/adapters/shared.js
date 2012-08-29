@@ -158,6 +158,7 @@ tests = {
     });
   }
 
+/*
 , 'test all, sort object literal desc': function (next) {
     Zooby.all({}, {sort: {zong: 'desc'}}, function (err, data) {
       // Sort by datetime
@@ -179,6 +180,7 @@ tests = {
       next();
     });
   }
+*/
 
 , 'test all, sort incorrect sort direction': function () {
     assert.throws(function () {
