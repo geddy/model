@@ -30,7 +30,7 @@ tests = {
       next();
     });
   }
-
+/*
 // TODO: Load via array of ids
 
 , 'test first via object': function (next) {
@@ -158,7 +158,6 @@ tests = {
     });
   }
 
-/*
 , 'test all, sort object literal desc': function (next) {
     Zooby.all({}, {sort: {zong: 'desc'}}, function (err, data) {
       // Sort by datetime
@@ -180,7 +179,6 @@ tests = {
       next();
     });
   }
-*/
 
 , 'test all, sort incorrect sort direction': function () {
     assert.throws(function () {
@@ -231,7 +229,7 @@ tests = {
       next();
     });
   }
-
+*/
 , 'test remove': function (next) {
     Zooby.remove(currentId, {}, function (err, data) {
       if (err) {
