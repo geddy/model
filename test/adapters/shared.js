@@ -30,7 +30,7 @@ tests = {
       next();
     });
   }
-/*
+
 // TODO: Load via array of ids
 
 , 'test first via object': function (next) {
@@ -101,6 +101,7 @@ tests = {
     });
   }
 
+/*
 , 'test all, by string LIKE case-sensitive': function (next) {
     Zooby.all({foo: {'like': 'B'}}, {}, function (err, data) {
       if (err) {
