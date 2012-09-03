@@ -11,7 +11,10 @@ var utils = require('utilities')
 tests = {
 
   'test save new, string UUID id': function (next) {
-    var z = Zooby.create({foo: 'FOO'});
+    var z = Zooby.create({
+      foo: 'FOO'
+    , zong: new Date()
+    });
     z.save(function (err, data) {
       if (err) {
         throw err;
@@ -149,7 +152,7 @@ tests = {
 
 , 'test all, sort array column names': function (next) {
     Zooby.all({}, {sort: ['foo', 'zong']}, function (err, data) {
-      // Should be sorted BAR, BAZ, FOO
+      // Should be BAR, BAZ, FOO, ZZZ
       assert.equal(data[0].id, testItems[1].id);
       if (err) {
         throw err;
@@ -158,9 +161,9 @@ tests = {
     });
   }
 
-/*
 , 'test all, sort object literal desc': function (next) {
     Zooby.all({}, {sort: {zong: 'desc'}}, function (err, data) {
+      // Should be sorted ZZZ, FOO, BAR, BAZ
       // Sort by datetime
       assert.equal(data[0].id, currentId);
       if (err) {
@@ -181,7 +184,6 @@ tests = {
     });
   }
 
-*/
 , 'test all, sort incorrect sort direction': function () {
     assert.throws(function () {
       Zooby.all({}, {sort: {foo: 'asc', bar: 'descX'}}, function (err, data) {
