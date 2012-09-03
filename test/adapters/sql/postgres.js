@@ -20,7 +20,8 @@ var utils = require('utilities')
   , Zooby = require('../../fixtures/zooby').Zooby
   , User = require('../../fixtures/user').User
   , Profile = require('../../fixtures/profile').Profile
-  , Account = require('../../fixtures/account').Account;
+  , Account = require('../../fixtures/account').Account
+  , shared = require('../shared');
 
 tests = {
   'before': function (next) {
@@ -218,6 +219,8 @@ tests = {
 
 };
 
-utils.mixin(tests, require('../shared'));
+for (var p in shared) {
+  tests[p + ' (Postgres)'] = shared[p];
+}
 
 module.exports = tests;
