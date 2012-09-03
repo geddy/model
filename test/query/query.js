@@ -32,7 +32,7 @@ var tests = {
       , operands;
   }
 
-, 'test not': function () {
+, 'test "not"': function () {
     var conditions = {foo: 'bar', not: {bar: 'baz', baz: 'zoobie'}}
       , query = new Query(Zooby, conditions, {})
       , operands;
@@ -44,7 +44,7 @@ var tests = {
     assert.ok(operands[0] instanceof operation.AndOperation);
   }
 
-, 'test or': function () {
+, 'test simple "or"': function () {
     var conditions = {or: [{foo: 'bar'}, {bar: 'baz'}]}
       , query = new Query(Zooby, conditions, {})
       , operands;
@@ -55,6 +55,22 @@ var tests = {
     assert.ok(operands[0] instanceof operation.AndOperation);
     assert.ok(operands[1] instanceof operation.AndOperation);
   }
+
+, 'test "and" with array of "or" sub-operations': function () {
+    var conditions = {and: [{or: [{foo: 'bar'}, {bar: 'baz'}]},
+            {or: [{foo: 'baz'}, {bar: 'quz'}]}]}
+      , query = new Query(Zooby, conditions, {})
+      , operands;
+
+    operands = query.conditions.operands;
+    assert.ok(operands[0] instanceof operation.OrOperation);
+    assert.ok(operands[1] instanceof operation.OrOperation);
+    operands = query.conditions.operands[0].operands;
+    assert.ok(operands[0] instanceof operation.AndOperation);
+    operands = query.conditions.operands[1].operands;
+    assert.ok(operands[0] instanceof operation.AndOperation);
+  }
+
 
 };
 

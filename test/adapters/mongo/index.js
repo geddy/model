@@ -14,7 +14,7 @@ var utils = require('utilities')
   , Account = require('../../fixtures/account').Account;
 
 tests = {
-  'before': function () {
+  'before': function (next) {
     adapter = new Adapter({
       dbname: 'model_test'
     });
@@ -25,6 +25,22 @@ tests = {
     , 'Profile': adapter
     , 'Account': adapter
     };
+
+    Zooby.remove({}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
+, 'after': function (next) {
+    Zooby.remove({}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      next();
+    });
   }
 
 , 'test create adapter': function () {

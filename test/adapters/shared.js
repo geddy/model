@@ -101,7 +101,6 @@ tests = {
     });
   }
 
-/*
 , 'test all, by string LIKE case-sensitive': function (next) {
     Zooby.all({foo: {'like': 'B'}}, {}, function (err, data) {
       if (err) {
@@ -113,7 +112,7 @@ tests = {
   }
 
 , 'test all, by string LIKE case-insensitive bool': function (next) {
-    Zooby.all({foo: {'like': 'b'}}, {lowercase: true}, function (err, data) {
+    Zooby.all({foo: {'like': 'b'}}, {nocase: true}, function (err, data) {
       if (err) {
         throw err;
       }
@@ -123,7 +122,7 @@ tests = {
   }
 
 , 'test all, by LIKE case-insensitive array': function (next) {
-    Zooby.all({foo: {'like': 'b'}}, {lowercase: ['foo']}, function (err, data) {
+    Zooby.all({foo: {'like': 'b'}}, {nocase: ['foo']}, function (err, data) {
       if (err) {
         throw err;
       }
@@ -159,6 +158,7 @@ tests = {
     });
   }
 
+/*
 , 'test all, sort object literal desc': function (next) {
     Zooby.all({}, {sort: {zong: 'desc'}}, function (err, data) {
       // Sort by datetime
@@ -181,6 +181,7 @@ tests = {
     });
   }
 
+*/
 , 'test all, sort incorrect sort direction': function () {
     assert.throws(function () {
       Zooby.all({}, {sort: {foo: 'asc', bar: 'descX'}}, function (err, data) {
@@ -190,7 +191,7 @@ tests = {
 
 , 'test all, using or, simple equality': function (next) {
     Zooby.all({or: [{foo: 'BAR'}, {foo: 'BAZ'}]}, {}, function (err, data) {
-      assert.equal(data.length, 2);
+      assert.equal(2, data.length);
       if (err) {
         throw err;
       }
@@ -199,9 +200,9 @@ tests = {
   }
 
 , 'test all, using or, like comparison': function (next) {
-    Zooby.all({or: [{foo: {'like': 'b'}}, {foo: 'foo'}]}, {lowercase: ['foo']},
+    Zooby.all({or: [{foo: {'like': 'b'}}, {foo: 'foo'}]}, {nocase: ['foo']},
         function (err, data) {
-      assert.equal(data.length, 3);
+      assert.equal(3, data.length);
       if (err) {
         throw err;
       }
@@ -211,7 +212,7 @@ tests = {
 
 , 'test all, using or, like comparison with not': function (next) {
     Zooby.all({or: [{foo: {'like': 'b'}}, {foo: 'foo'}], not: {foo: 'baz'}},
-        {lowercase: ['foo']}, function (err, data) {
+        {nocase: ['foo']}, function (err, data) {
       assert.equal(data.length, 2);
       if (err) {
         throw err;
@@ -230,7 +231,7 @@ tests = {
       next();
     });
   }
-*/
+
 , 'test remove': function (next) {
     Zooby.remove(currentId, {}, function (err, data) {
       if (err) {
