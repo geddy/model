@@ -1,0 +1,8 @@
+language: node_js
+node_js:
+  - "0.8"
+  - "0.6"
+
+before_install:
+  - sudo apt-get install libpq-dev libpq5 build-essential
+install: npm install utilities pg
