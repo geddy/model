@@ -1,6 +1,6 @@
 var utils = require('utilities')
   , model = require('../../../lib')
-  , Adapter = require('../../../lib/adapters/riak').Adapter
+  , Adapter = require('../../../lib/adapters/mongo').Adapter
   , Query = require('../../../lib/query/query').Query
   , generator = require('../../../lib/generators/sql')
   , adapter
@@ -15,8 +15,10 @@ var utils = require('utilities')
   , shared = require('../shared');
 
 tests = {
-  'before': function () {
-    adapter = new Adapter();
+  'before': function (next) {
+    adapter = new Adapter({
+      dbname: 'model_test'
+    });
 
     model.adapters = {
       'Zooby': adapter
@@ -24,16 +26,34 @@ tests = {
     , 'Profile': adapter
     , 'Account': adapter
     };
+
+    Zooby.remove({}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      next();
+    });
+  }
+
+, 'after': function (next) {
+    Zooby.remove({}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      next();
+    });
   }
 
 , 'test create adapter': function () {
     assert.ok(adapter instanceof Adapter);
   }
 
+
 };
 
 for (var p in shared) {
-  tests[p + ' (Riak)'] = shared[p];
+  tests[p + ' (Mongo)'] = shared[p];
 }
 
 module.exports = tests;
+
