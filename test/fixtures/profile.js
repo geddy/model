@@ -9,7 +9,7 @@ var Profile = function () {
 
   this.belongsTo('User');
 
-  this.autoIncrementId = true;
+  //this.autoIncrementId = true;
 };
 
 Profile.prototype.someMethod = function () {

@@ -14,11 +14,7 @@ _params = {
 
 tests = {
 
-  'test autoIncrementId': function () {
-    assert.ok(User.autoIncrementId);
-  }
-
-, 'test validity': function () {
+  'test validity': function () {
     var user = User.create(_params);
     assert.ok(user.isValid());
   }

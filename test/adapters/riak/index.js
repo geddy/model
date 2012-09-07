@@ -1,13 +1,9 @@
 var utils = require('utilities')
   , model = require('../../../lib')
   , Adapter = require('../../../lib/adapters/riak').Adapter
-  , Query = require('../../../lib/query/query').Query
-  , generator = require('../../../lib/generators/sql')
   , adapter
   , assert = require('assert')
-  , currentId
   , tests
-  , testItems = []
   , Zooby = require('../../fixtures/zooby').Zooby
   , User = require('../../fixtures/user').User
   , Profile = require('../../fixtures/profile').Profile

@@ -13,6 +13,34 @@ var tests = {
     assert.ok(query.conditions instanceof operation.AndOperation);
   }
 
+, 'test isValid, valid Like comparison': function () {
+    var query = new Query(Zooby, {foo: {like: 'foo'}, bar: null}, {});
+    assert.ok(query.conditions.isValid());
+  }
+
+, 'test isValid, valid Inclusion comparison': function () {
+    var query = new Query(Zooby, {foo: {'in': ['foo', 'bar', 'baz']}}, {});
+    assert.ok(query.conditions.isValid());
+  }
+
+, 'test isValid, invalid Like comparison': function () {
+    // 'bar' is numeric, doesn't support 'like'
+    var query = new Query(Zooby, {bar: {like: 'foo'}}, {});
+    assert.ok(!query.conditions.isValid());
+  }
+
+, 'test isValid, invalid EqualTo comparision': function () {
+    // 'zong' is a datetime, shouldn't parse to a valid date
+    var query = new Query(Zooby, {zong: 'hello'}, {});
+    assert.ok(!query.conditions.isValid());
+  }
+
+, 'test isValid, invalid Inclusion comparision': function () {
+    // In comparison requires an Array value
+    var query = new Query(Zooby, {zong: {'in': 'howdy'}}, {});
+    assert.ok(!query.conditions.isValid());
+  }
+
 , 'test nested conditions': function () {
     var conditions = {foo: 'bar', baz: 'qux', or: {foo: 'baz', baz: 'zoobie'}}
       , query = new Query(Zooby, conditions, {})

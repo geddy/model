@@ -72,6 +72,7 @@ tests = {
     });
   }
 
+/*
 , 'test save new, auto-increment id': function (next) {
     var u = User.create({
       login: 'asdf'
@@ -97,111 +98,6 @@ tests = {
     });
   }
 
-, 'test hasOne association, set from owner': function (next) {
-    var u = User.create({
-      login: 'asdf'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
-    });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
-      User.first(currentId, {}, function (err, data) {
-        var user = data
-          , profile;
-        if (err) {
-          throw err;
-        }
-        profile = Profile.create({});
-        user.setProfile(profile);
-        user.save(function (err, data) {
-          if (err) {
-            throw err;
-          }
-          user.getProfile(function (err, data) {
-            assert.equal(profile.id, data.id);
-            if (err) {
-              throw err;
-            }
-            next();
-          });
-        });
-      });
-    });
-  }
-
-, 'test hasOne association, set from owned': function (next) {
-    var u = User.create({
-      login: 'asdf'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
-    });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
-      User.first(currentId, {}, function (err, data) {
-        var user = data
-          , profile;
-        if (err) {
-          throw err;
-        }
-        profile = Profile.create({});
-        profile.setUser(user);
-        profile.save(function (err, data) {
-          if (err) {
-            throw err;
-          }
-          user.getProfile(function (err, data) {
-            assert.equal(profile.id, data.id);
-            if (err) {
-              throw err;
-            }
-            next();
-          });
-        });
-      });
-    });
-  }
-
-, 'test hasMany association, set from owner': function (next) {
-    var u = User.create({
-      login: 'asdf'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
-    });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
-      User.first(currentId, {}, function (err, data) {
-        var user = data
-          , account;
-        if (err) {
-          throw err;
-        }
-        user.addAccount(Account.create({}));
-        user.addAccount(Account.create({}));
-        user.save(function (err, data) {
-          if (err) {
-            throw err;
-          }
-          user.getAccounts(function (err, data) {
-            assert.equal(2, data.length);
-            if (err) {
-              throw err;
-            }
-            next();
-          });
-        });
-      });
-    });
-  }
-
 , 'test remove, auto-increment id': function (next) {
     Zooby.remove(currentId, {}, function (err, data) {
       if (err) {
@@ -216,6 +112,8 @@ tests = {
       });
     });
   }
+*/
+
 
 };
 
