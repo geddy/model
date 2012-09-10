@@ -22,6 +22,21 @@ tests = {
     };
   }
 
+, 'after': function (next) {
+    adapter.dropTable([
+      'User'
+    , 'Profile'
+    , 'Account'
+    ], function (err, data) {
+      if (err) {
+        throw err;
+      }
+      else {
+        next();
+      }
+    });
+  }
+
 , 'test create adapter': function () {
     assert.ok(adapter instanceof Adapter);
   }

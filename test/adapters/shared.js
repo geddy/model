@@ -261,6 +261,25 @@ tests = {
     });
   }
 
+, 'test remove collection': function (next) {
+    Zooby.remove({id: [
+      testItems[0].id
+    , testItems[1].id
+    , testItems[2].id
+    ]}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      Zooby.first(currentId, {}, function (err, data) {
+        if (err) {
+          throw err;
+        }
+        assert.ok(!data);
+        next();
+      });
+    });
+  }
+
 , 'test hasOne association, set from owner': function (next) {
     var u = User.create({
       login: 'asdf'
