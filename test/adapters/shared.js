@@ -2,7 +2,7 @@ var utils = require('utilities')
   , assert = require('assert')
   , currentId
   , tests
-  , testItems = []
+  , testItems
   , Zooby = require('../fixtures/zooby').Zooby
   , User = require('../fixtures/user').User
   , Profile = require('../fixtures/profile').Profile
@@ -73,6 +73,7 @@ tests = {
 
 , 'test save collection': function (next) {
     var dt = new Date();
+    testItems = [];
     testItems.push(Zooby.create({
       foo: 'FOO'
     , zong: utils.date.add(dt, 'day', -1)
