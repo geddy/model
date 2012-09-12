@@ -50,6 +50,7 @@ tests = {
     });
   }
 
+/*
 , 'test createTable in DB, autoIncrement id': function (next) {
     var client = new pg.Client('postgres://mde@localhost/model_test');
     var sql = generator.createTable(['User']);
@@ -74,6 +75,7 @@ tests = {
       });
     });
   }
+*/
 
 };
 
