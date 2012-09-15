@@ -1,7 +1,6 @@
 var utils = require('utilities')
   , model = require('../../../lib')
-  , Adapter = require('../../../lib/adapters/mongo').Adapter
-  , generator = require('../../../lib/generators/sql')
+  , Adapter = require('../../../lib/adapters/memory').Adapter
   , adapter
   , assert = require('assert')
   , tests
@@ -13,9 +12,7 @@ var utils = require('utilities')
 
 tests = {
   'before': function (next) {
-    adapter = new Adapter({
-      dbname: 'model_test'
-    });
+    adapter = new Adapter();
 
     model.adapters = {
       'Zooby': adapter
@@ -24,21 +21,10 @@ tests = {
     , 'Account': adapter
     };
 
-    Zooby.remove({}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      next();
-    });
+    adapter.createTable(Object.keys(model.adapters), next)
   }
 
-, 'after': function (next) {
-    Zooby.remove({}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      next();
-    });
+, 'after': function () {
   }
 
 , 'test create adapter': function () {
@@ -49,8 +35,9 @@ tests = {
 };
 
 for (var p in shared) {
-  tests[p + ' (Mongo)'] = shared[p];
+  tests[p + ' (Memory)'] = shared[p];
 }
 
 module.exports = tests;
+
 

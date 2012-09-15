@@ -1,17 +1,6 @@
-/*
-Notes:
-id, createdAt, updatedAt are auto-fields -- if not defined, handle
-  transparently. If defined, make sure it's present and valid before using
-
-Allow auto-increment setting for id
-
-Relies on 'saved' property to know if an instanced is new or existing
-*/
-
 var utils = require('utilities')
   , model = require('../../../lib')
   , Adapter = require('../../../lib/adapters/sql/postgres').Adapter
-  , Query = require('../../../lib/query/query').Query
   , generator = require('../../../lib/generators/sql')
   , adapter
   , assert = require('assert')
