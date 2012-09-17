@@ -21,7 +21,7 @@ tests = {
     , 'Account': adapter
     };
 
-    adapter.createTable(Object.keys(model.adapters), next)
+    adapter.createTable(Object.keys(model.adapters), next);
   }
 
 , 'after': function () {
