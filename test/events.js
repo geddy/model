@@ -72,12 +72,28 @@ tests = {
     user.save(function () {});
   }
 
+, 'emit instance beforeSave': function (next) {
+    var user = User.create(_params);
+    user.once('beforeSave', function () {
+      next();
+    });
+    user.save(function () {});
+  }
+
 , 'emit static save': function (next) {
     User.once('save', function (u) {
       assert.ok(u instanceof User);
       next();
     });
     var user = User.create(_params);
+    user.save(function () {});
+  }
+
+, 'emit instance save': function (next) {
+    var user = User.create(_params);
+    user.once('save', function (u) {
+      next();
+    });
     user.save(function () {});
   }
 
@@ -92,12 +108,32 @@ tests = {
     });
   }
 
+, 'emit instance beforeUpdate': function (next) {
+    var user = User.create(_params);
+    user.once('beforeUpdate', function (u) {
+      next();
+    });
+    user.save(function () {
+      user.save(function () {});
+    });
+  }
+
 , 'emit static update': function (next) {
     User.once('update', function (res) {
       assert.ok(res);
       next();
     });
     var user = User.create(_params);
+    user.save(function () {
+      user.save(function () {});
+    });
+  }
+
+, 'emit instance update': function (next) {
+    var user = User.create(_params);
+    user.once('update', function (res) {
+      next();
+    });
     user.save(function () {
       user.save(function () {});
     });
@@ -124,8 +160,6 @@ tests = {
       User.remove(user.id, function () {});
     });
   }
-
-, 'last': function () {}
 
 };
 
