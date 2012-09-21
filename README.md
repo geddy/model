@@ -330,6 +330,101 @@ sort-direction is ascending ('asc'), so you can specify a property to sort on
 
 ```
 
+## Associations
+
+Model has very basic support for associations: including hasMany/belongsTo and
+hasOne/belongsTo. For example, if you had a `User` model with a single
+`Profile`, and potentially many `Accounts`:
+
+```javascript
+var User = function () {
+  this.property('login', 'string', {required: true});
+  this.property('password', 'string', {required: true});
+  this.property('confirmPassword', 'string', {required: true});
+
+  this.hasOne('Profile');
+  this.hasMany('Accounts');
+};
+
+var Profile = function () {
+  this.property('nickname', 'string');
+  this.property('setting1', 'boolean');
+  this.property('setting2', 'boolean');
+
+  this.belongsTo('User');
+};
+
+var Account = function () {
+  this.property('location', 'string');
+
+  this.belongsTo('User');
+};
+```
+
+Add the `hasOne` relationship by calling 'set' plus the name of the belonging
+model in singular (in this case `setProfile`). Retrieve the associated item by
+using 'get' plus the name of the belonging model in singular (in this case
+`getProfile`). Here's an example:
+
+```javascript
+var u = User.create({
+  login: 'asdf'
+, password: 'zerb'
+, confirmPassword: 'zerb'
+});
+u.save(function (err, data) {
+  var profile;
+  if (err) {
+    throw err;
+  }
+  profile = Profile.create({});
+  user.setProfile(profile);
+  user.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    user.getProfile(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log(profile.id ' is the same as ' + data.id);
+    });
+  });
+});
+```
+
+Set up the `hasMany` relationship by calling 'add' plus the name of the
+belonging model in singular (in this case `addAccount`). Retrieve the associated
+items with a call to 'get' plus the name of the belonging model in plural (in
+this case `getAccounts`). An example:
+
+```javascript
+var u = User.create({
+  login: 'asdf'
+, password: 'zerb'
+, confirmPassword: 'zerb'
+});
+u.save(function (err, data) {
+  var account;
+  if (err) {
+    throw err;
+  }
+  user.addAccount(Account.create({}));
+  user.addAccount(Account.create({}));
+  user.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    user.getAccounts(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log('This number should be 2: ' + data.length);
+    });
+  });
+});
+```
+
 - - -
 Model JavaScript ORM copyright 2112 mde@fleegix.org.
 
