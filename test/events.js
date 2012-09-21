@@ -63,6 +63,49 @@ tests = {
     var user = User.create(_params);
   }
 
+, 'emit static beforeUpdateProperties': function (next) {
+    User.once('beforeUpdateProperties', function (u, p) {
+      assert.ok(u instanceof User);
+      assert.equal('zzz', u.login);
+      assert.equal('yyz', p.login);
+      next();
+    });
+    var user = User.create(_params);
+    user.updateProperties({login: 'yyz'});
+  }
+
+, 'emit instance beforeUpdateProperties': function (next) {
+    var user = User.create(_params);
+    user.once('beforeUpdateProperties', function () {
+      assert.equal('zzz', user.login);
+      next();
+    });
+    user.save(function () {
+      user.updateProperties({login: 'yyz'});
+    });
+  }
+
+, 'emit static updateProperties': function (next) {
+    User.once('updateProperties', function (u) {
+      assert.ok(u instanceof User);
+      assert.equal('yyz', u.login);
+      next();
+    });
+    var user = User.create(_params);
+    user.updateProperties({login: 'yyz'});
+  }
+
+, 'emit instance updateProperties': function (next) {
+    var user = User.create(_params);
+    user.once('updateProperties', function () {
+      assert.equal('yyz', user.login);
+      next();
+    });
+    user.save(function () {
+      user.updateProperties({login: 'yyz'});
+    });
+  }
+
 , 'emit static beforeSave': function (next) {
     User.once('beforeSave', function (u) {
       assert.ok(u instanceof User);

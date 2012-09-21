@@ -152,6 +152,37 @@ if (user.isValid()) {
 }
 ```
 
+## Lifecycle events
+
+Both the base model 'constructors,' and model instances are EventEmitters. The
+emit events during the create/update/remove lifecycle of model instances. In all
+cases, the plain-named event is fired after the event in question, the
+'before'-prefixed event, of course happens before.
+
+The 'constructor' for a model emits the following events:
+
+ * beforeCreate
+ * create
+ * beforeValidate
+ * validate
+ * beforeUpdateProperties
+ * updateProperties
+ * beforeSave (new instances, single and bulk)
+ * save (new instances, single and bulk)
+ * beforeUpdate (existing single instances, bulk updates)
+ * update (existing single instances, bulk updates)
+ * beforeRemove
+ * remove
+
+Model-item instances emit these events:
+
+ * beforeUpdateProperties
+ * updateProperties
+ * beforeSave
+ * save
+ * beforeUpdate
+ * update
+
 ## Querying
 
 Model uses a simple API for finding and sorting items. Again, it should look
