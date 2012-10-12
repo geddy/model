@@ -392,6 +392,7 @@ tests = {
       if (err) {
         throw err;
       }
+      next();
     });
   }
 };
