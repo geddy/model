@@ -22,6 +22,10 @@ User.prototype.someMethod = function () {
   // Do some stuff on a User instance
 };
 
+User.findByLogin = function (login, callback) {
+  User.all({login: login}, callback);
+}
+
 User = model.register('User', User);
 
 module.exports.User = User;

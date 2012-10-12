@@ -386,6 +386,14 @@ tests = {
     });
   }
 
+, 'test Static methods on model': function (next) {
+    User.findByLogin('asdf', function (err, data) {
+      assert.equal(data.length, 3);
+      if (err) {
+        throw err;
+      }
+    });
+  }
 };
 
 module.exports = tests;
