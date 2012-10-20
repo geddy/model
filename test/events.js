@@ -161,9 +161,9 @@ tests = {
     });
   }
 
-, 'emit static update': function (next) {
+, 'emit static update for single instance': function (next) {
     User.once('update', function (res) {
-      assert.ok(res);
+      assert.ok(res instanceof User);
       next();
     });
     var user = User.create(_params);
