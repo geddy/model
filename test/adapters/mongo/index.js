@@ -24,21 +24,11 @@ tests = {
     , 'Account': adapter
     };
 
-    Zooby.remove({}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      next();
-    });
+    adapter.dropTable(['Zooby', 'User'], next);
   }
 
 , 'after': function (next) {
-    Zooby.remove({}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      next();
-    });
+    adapter.dropTable(['Zooby', 'User'], next);
   }
 
 , 'test create adapter': function () {
