@@ -14,8 +14,7 @@ var User = function () {
 
   this.hasOne('Profile');
   this.hasMany('Accounts');
-
-  //this.autoIncrementId = true;
+  this.hasMany('Friends', {model: 'Users'});
 };
 
 User.prototype.someMethod = function () {

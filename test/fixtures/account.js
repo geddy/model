@@ -3,9 +3,7 @@ var model = require('../../lib');
 var Account = function () {
   this.property('location', 'string');
 
-  this.belongsTo('User');
-
-  this.autoIncrementId = false;
+  // Do this one without an inverse belongsTo
 };
 
 Account.prototype.someMethod = function () {

@@ -8,8 +8,6 @@ var Profile = function () {
   this.property('setting2', 'boolean');
 
   this.belongsTo('User');
-
-  //this.autoIncrementId = true;
 };
 
 Profile.prototype.someMethod = function () {

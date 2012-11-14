@@ -281,7 +281,7 @@ tests = {
     });
   }
 
-, 'test hasOne association, set from owner': function (next) {
+, 'test hasOne association': function (next) {
     var u = User.create({
       login: 'asdf'
     , password: 'zerb'
@@ -316,7 +316,7 @@ tests = {
     });
   }
 
-, 'test hasOne association, set from owned': function (next) {
+, 'test belongsTo association': function (next) {
     var u = User.create({
       login: 'asdf'
     , password: 'zerb'
@@ -339,8 +339,8 @@ tests = {
           if (err) {
             throw err;
           }
-          user.getProfile(function (err, data) {
-            assert.equal(profile.id, data.id);
+          profile.getUser(function (err, data) {
+            assert.equal('asdf', data.login);
             if (err) {
               throw err;
             }
@@ -351,7 +351,7 @@ tests = {
     });
   }
 
-, 'test hasMany association, set from owner': function (next) {
+, 'test hasMany association': function (next) {
     var u = User.create({
       login: 'asdf'
     , password: 'zerb'
@@ -386,9 +386,52 @@ tests = {
     });
   }
 
+, 'test named hasMany': function (next) {
+    var u = User.create({
+      login: 'asdf'
+    , password: 'zerb'
+    , confirmPassword: 'zerb'
+    });
+    u.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = u.id;
+      User.first(currentId, {}, function (err, data) {
+        var user = data
+          , account;
+        if (err) {
+          throw err;
+        }
+        user.addFriend(User.create({
+          login: 'qwer'
+        , password: 'zerb'
+        , confirmPassword: 'zerb'
+        }));
+        user.addFriend(User.create({
+          login: 'zxcv'
+        , password: 'zerb'
+        , confirmPassword: 'zerb'
+        }));
+        user.save(function (err, data) {
+          if (err) {
+            throw err;
+          }
+          user.getFriends(function (err, data) {
+            assert.equal(2, data.length);
+            if (err) {
+              throw err;
+            }
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test Static methods on model': function (next) {
     User.findByLogin('asdf', function (err, data) {
-      assert.equal(data.length, 3);
+      assert.equal(data.length, 4);
       if (err) {
         throw err;
       }
