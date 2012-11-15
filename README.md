@@ -332,7 +332,7 @@ sort-direction is ascending ('asc'), so you can specify a property to sort on
 
 ## Associations
 
-Model has very basic support for associations: including hasMany/belongsTo and
+Model has basic support for associations: including hasMany/belongsTo and
 hasOne/belongsTo. For example, if you had a `User` model with a single
 `Profile`, and potentially many `Accounts`:
 
@@ -345,40 +345,35 @@ var User = function () {
   this.hasOne('Profile');
   this.hasMany('Accounts');
 };
+```
 
-var Profile = function () {
-  this.property('nickname', 'string');
-  this.property('setting1', 'boolean');
-  this.property('setting2', 'boolean');
+A `Book` model that belongs to an `Author` would look like this:
 
-  this.belongsTo('User');
-};
+```javascript
+var Book = function () {
+  this.property('title', 'string');
+  this.property('description', 'text');
 
-var Account = function () {
-  this.property('location', 'string');
-
-  this.belongsTo('User');
+  this.belongsTo('Author');
 };
 ```
 
-Add the `hasOne` relationship by calling 'set' plus the name of the belonging
+Add the `hasOne` relationship by calling 'set' plus the name of the owned
 model in singular (in this case `setProfile`). Retrieve the associated item by
-using 'get' plus the name of the belonging model in singular (in this case
+using 'get' plus the name of the owned model in singular (in this case
 `getProfile`). Here's an example:
 
 ```javascript
-var u = User.create({
+var user = User.create({
   login: 'asdf'
 , password: 'zerb'
 , confirmPassword: 'zerb'
 });
-u.save(function (err, data) {
-  var profile;
+user.save(function (err, data) {
   if (err) {
     throw err;
   }
-  profile = Profile.create({});
-  user.setProfile(profile);
+  user.setProfile(Profile.create({}));
   user.save(function (err, data) {
     if (err) {
       throw err;
@@ -394,18 +389,17 @@ u.save(function (err, data) {
 ```
 
 Set up the `hasMany` relationship by calling 'add' plus the name of the
-belonging model in singular (in this case `addAccount`). Retrieve the associated
-items with a call to 'get' plus the name of the belonging model in plural (in
+owned model in singular (in this case `addAccount`). Retrieve the associated
+items with a call to 'get' plus the name of the owned model in plural (in
 this case `getAccounts`). An example:
 
 ```javascript
-var u = User.create({
+var user = User.create({
   login: 'asdf'
 , password: 'zerb'
 , confirmPassword: 'zerb'
 });
-u.save(function (err, data) {
-  var account;
+user.save(function (err, data) {
   if (err) {
     throw err;
   }
@@ -424,6 +418,58 @@ u.save(function (err, data) {
   });
 });
 ```
+
+A `belongsTo` relationship is created similarly to a `hasOne`: by calling 'set'
+plus the name of the owner model in singular (in this case `setAuthor`).
+Retrieve the associated item by using 'get' plus the name of the owner model
+in singular (in this case `getAuthor`). Here's an example:
+
+```javascript
+var book = Book.create({
+  title: 'How to Eat an Entire Ham'
+, description: 'Such a poignant book. I cried.'
+});
+book.save(function (err, data) {
+  if (err) {
+    throw err;
+  }
+  book.setAuthor(Author.create({
+    familyName: 'Neeble'
+  , givenName: 'Leonard'
+  }));
+  book.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    book.getAuthor(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log('This name should be "Neeble": ' + data.familyName);
+    });
+  });
+});
+```
+
+### Named associations
+
+Sometimes you need mutliple associations to the same type of model (e.g., I have
+lots of Friends and Relatives who are all Users). You can accomplish this in
+Model using named associations:
+
+```javascript
+var User = function () {
+  this.property('familyName', 'string', {required: true});
+  this.property('givenName', 'string', {required: true});
+
+  this.hasMany('Friends', {model: 'Users'});
+  this.hasMany('Relatives', {model: 'Users'});
+};
+```
+
+The API for this is the same as with normal associations, using the `set`/`add`
+and `get`, with the appropriate association name (not the model name). For
+example, in the case of `Friends`, you'd use `addFriend` and `getFriends`.
 
 - - -
 Model JavaScript ORM copyright 2112 mde@fleegix.org.
