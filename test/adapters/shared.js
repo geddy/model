@@ -429,6 +429,54 @@ tests = {
     });
   }
 
+, 'test named hasMany with hasOne of same model': function (next) {
+    var u = User.create({
+      login: 'zzzz'
+    , password: 'zerb'
+    , confirmPassword: 'zerb'
+    });
+    u.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = u.id;
+      User.first(currentId, {}, function (err, data) {
+        var user = data
+          , account;
+        if (err) {
+          throw err;
+        }
+        user.setProfile(Profile.create({
+          nickname: 'frang'
+        }));
+        user.addAvatar(Profile.create({
+          nickname: 'fffuuu'
+        }));
+        user.addAvatar(Profile.create({
+          nickname: 'derrrr'
+        }));
+        user.save(function (err, data) {
+          if (err) {
+            throw err;
+          }
+          user.getAvatars(function (err, data) {
+            if (err) {
+              throw err;
+            }
+            assert.equal(2, data.length);
+            user.getProfile(function (err, data) {
+              if (err) {
+                throw err;
+              }
+              assert.equal('frang', data.nickname);
+              next();
+            });
+          });
+        });
+      });
+    });
+  }
+
 , 'test Static methods on model': function (next) {
     User.findByLogin('asdf', function (err, data) {
       assert.equal(data.length, 4);
