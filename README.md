@@ -472,7 +472,4 @@ and `get`, with the appropriate association name (not the model name). For
 example, in the case of `Friends`, you'd use `addFriend` and `getFriends`.
 
 - - -
-Model JavaScript ORM copyright 2112 mde@fleegix.org.
-
-
-
+Model JavaScript ORM copyright 2012 mde@fleegix.org.
