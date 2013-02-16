@@ -64,7 +64,7 @@ User.prototype.someOtherMethod = function () {
   // Do some other stuff
 };
 
-User = model.registerModel('User', User);
+User = model.register('User', User);
 ```
 
 ### Abbreviated syntax
