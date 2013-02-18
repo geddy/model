@@ -165,34 +165,34 @@ tests = {
 
 , 'test all, sort array column names': function (next) {
     Zooby.all({}, {sort: ['foo', 'zong']}, function (err, data) {
-      // Should be BAR, BAZ, FOO, ZZZ
-      assert.equal(data[0].id, testItems[1].id);
       if (err) {
         throw err;
       }
+      // Should be BAR, BAZ, FOO, ZZZ
+      assert.equal(data[0].id, testItems[1].id);
       next();
     });
   }
 
 , 'test all, sort object literal desc': function (next) {
     Zooby.all({}, {sort: {zong: 'desc'}}, function (err, data) {
-      // Should be sorted ZZZ, FOO, BAR, BAZ
-      // Sort by datetime
-      assert.equal(data[0].id, currentId);
       if (err) {
         throw err;
       }
+      // Should be sorted ZZZ, FOO, BAR, BAZ
+      // Sort by datetime
+      assert.equal(data[0].id, currentId);
       next();
     });
   }
 
 , 'test all, sort object literal asc': function (next) {
     Zooby.all({}, {sort: {zong: 'asc'}}, function (err, data) {
-      // Sort by datetime reversed
-      assert.equal(data[0].id, testItems[2].id);
       if (err) {
         throw err;
       }
+      // Sort by datetime reversed
+      assert.equal(data[0].id, testItems[2].id);
       next();
     });
   }
@@ -202,6 +202,19 @@ tests = {
       Zooby.all({}, {sort: {foo: 'asc', bar: 'descX'}}, function (err, data) {
       });
     }, Error);
+  }
+
+, 'test all, sort object literal desc, limit 2': function (next) {
+    Zooby.all({}, {sort: {zong: 'desc'}, limit: 2}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      // Should be sorted ZZZ, FOO, BAR, BAZ
+      // Sort by datetime
+      assert.equal(data[0].id, currentId);
+      assert.equal(2, data.length);
+      next();
+    });
   }
 
 , 'test all, using or, simple equality': function (next) {
