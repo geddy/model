@@ -227,6 +227,20 @@ tests = {
     });
   }
 
+, 'test all, using or, simple equality on id field': function (next) {
+    Zooby.all({or: [
+      {id: testItems[0].id}
+    , {id: testItems[1].id}
+    , {id:testItems[2].id}
+    ]}, {}, function (err, data) {
+    if (err) {
+      throw err;
+    }
+    assert.equal(3, data.length);
+      next();
+    });
+  }
+
 , 'test all, using or, like comparison': function (next) {
     Zooby.all({or: [{foo: {'like': 'b'}}, {foo: 'foo'}]}, {nocase: ['foo']},
         function (err, data) {
