@@ -1,0 +1,17 @@
+v8.log
+*.swp
+*.swo
+auth_info.js
+dist
+.idea/
+tags
+nbproject/
+spec/browser/autogen_suite.js
+node_modules
+tmtags
+*.DS_Store
+examples/*/log/*
+site/log/*
+.log
+npm-debug.log
+doc/
