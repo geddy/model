@@ -2,6 +2,8 @@ var model = require('../lib')
   , utils = require('utilities')
   , assert = require('assert')
   , User = require('./fixtures/user').User
+  , Profile = require('./fixtures/profile').Profile
+  , Account = require('./fixtures/account').Account
   , _params
   , tests;
 
