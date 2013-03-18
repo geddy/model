@@ -513,6 +513,37 @@ tests = {
       next();
     });
   }
+
+, 'test save new with custom string id': function (next) {
+    var z = Zooby.create({
+      id: 'customid'
+    ,  foo: 'ZOO'
+    , zong: new Date()
+    });
+    z.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.id, 'customid');
+      next();
+    });
+  }
+
+, 'test save new with custom int id': function (next) {
+    var z = Zooby.create({
+      id: 'customid'
+    ,  foo: 'ZOO'
+    , zong: new Date()
+    });
+    z.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.id, 'customid');
+      next();
+    });
+  }
+
 };
 
 module.exports = tests;

@@ -110,4 +110,4 @@ for (var p in shared) {
   tests[p + ' (Postgres)'] = shared[p];
 }
 
-module.exports = tests;
+//module.exports = tests;
