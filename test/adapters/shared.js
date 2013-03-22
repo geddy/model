@@ -14,6 +14,22 @@ tests = {
     var z = Zooby.create({
       foo: 'ZOO'
     , zong: new Date()
+    , mar: 1
+    });
+    z.save(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = z.id;
+      next();
+    });
+  }
+
+  ,'test save new, required integer set to 0 UUID id': function (next) {
+    var z = Zooby.create({
+      foo: 'ZOO'
+    , zong: new Date()
+    , mar: 1
     });
     z.save(function (err, data) {
       if (err) {
@@ -77,14 +93,17 @@ tests = {
     testItems.push(Zooby.create({
       foo: 'FOO'
     , zong: utils.date.add(dt, 'day', -1)
+    , mar: 1
     }));
     testItems.push(Zooby.create({
       foo: 'BAR'
     , zong: utils.date.add(dt, 'day', -2)
+    , mar: 1
     }));
     testItems.push(Zooby.create({
       foo: 'BAZ'
     , zong: utils.date.add(dt, 'day', -3)
+    , mar: 1
     }));
     Zooby.save(testItems, function (err, data) {
       if (err) {
@@ -267,7 +286,7 @@ tests = {
 , 'test all, using less-than createdAt': function (next) {
     Zooby.all({createdAt: {lt: new Date()}},
         {}, function (err, data) {
-      assert.equal(data.length, 4);
+      assert.equal(data.length, 5);
       if (err) {
         throw err;
       }
