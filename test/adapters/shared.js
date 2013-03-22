@@ -29,7 +29,7 @@ tests = {
     var z = Zooby.create({
       foo: 'ZOO'
     , zong: new Date()
-    , mar: 1
+    , mar: 0
     });
     z.save(function (err, data) {
       if (err) {
