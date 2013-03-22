@@ -228,12 +228,16 @@ tests = {
   }
 
 , 'test all, using or, simple equality on id field': function (next) {
-    Zooby.all({or:[{id:testItems[0].id},{id:testItems[1].id},{id:testItems[2].id}]}, {}, function (err, data) {
-      if (err) {
-        throw err;
-      }
+    Zooby.all({or: [
+      {id: testItems[0].id}
+    , {id: testItems[1].id}
+    , {id:testItems[2].id}
+    ]}, {}, function (err, data) {
+    if (err) {
+      throw err;
+    }
       
-      assert.equal(3, data.length);
+    assert.equal(3, data.length);
       next();
     });
   }
