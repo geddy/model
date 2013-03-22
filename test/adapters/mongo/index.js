@@ -42,5 +42,5 @@ for (var p in shared) {
   tests[p + ' (Mongo)'] = shared[p];
 }
 
-//module.exports = tests;
+module.exports = tests;
 

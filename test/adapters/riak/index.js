@@ -47,4 +47,4 @@ for (var p in shared) {
   tests[p + ' (Riak)'] = shared[p];
 }
 
-//module.exports = tests;
+module.exports = tests;
