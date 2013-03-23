@@ -14,7 +14,7 @@
     "mongo",
     "mongodb"
   ],
-  "version": "0.0.39",
+  "version": "0.0.40",
   "author": "Matthew Eernisse <mde@fleegix.org> (http://fleegix.org)",
   "main": "./lib/index.js",
   "scripts": {
