@@ -40,19 +40,6 @@ tests = {
     });
   }
 
-  ,'test save new, required integer set to null UUID id': function (next) {
-    var z = Zooby.create({
-      foo: 'ZOO'
-    , zong: new Date()
-    , mar: null
-    });
-    z.save(function (err, data) {
-      //This *should* fail
-      assert.notStrictEqual(err,undefined);
-      next();
-    });
-  }
-
 , 'test first via string id': function (next) {
     Zooby.first(currentId, {}, function (err, data) {
       if (err) {
