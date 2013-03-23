@@ -6,6 +6,7 @@ var assert = require('assert')
   , Zooby = require('../fixtures/zooby').Zooby
   , User = require('../fixtures/user').User
   , Profile = require('../fixtures/profile').Profile
+  , Profile = require('../fixtures/account').Account
   , generator = require('../../lib/generators/sql')
   , tests
   , arrIncl;
