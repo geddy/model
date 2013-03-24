@@ -10,34 +10,43 @@ var utils = require('utilities')
 
 tests = {
 
-  'test save new, string UUID id': function (next) {
+  'test save new, string UUID id, required nunmber is 0': function (next) {
+    var z = Zooby.create({
+      foo: 'GROO'
+    , zong: new Date()
+    , mar: 0
+    });
+    if (z.isValid()) {
+      z.save(function (err, data) {
+        if (err) {
+          throw err;
+        }
+        next();
+      });
+    }
+    else {
+      throw new Error('model is not valid');
+    }
+  }
+
+, 'test save new, string UUID id, required number is 1': function (next) {
     var z = Zooby.create({
       foo: 'ZOO'
     , zong: new Date()
     , mar: 1
     });
-    z.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = z.id;
-      next();
-    });
-  }
-
-  ,'test save new, required integer set to 0 UUID id': function (next) {
-    var z = Zooby.create({
-      foo: 'ZOO'
-    , zong: new Date()
-    , mar: 0
-    });
-    z.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = z.id;
-      next();
-    });
+    if (z.isValid()) {
+      z.save(function (err, data) {
+        if (err) {
+          throw err;
+        }
+        currentId = z.id;
+        next();
+      });
+    }
+    else {
+      throw new Error('model is not valid');
+    }
   }
 
 , 'test first via string id': function (next) {
