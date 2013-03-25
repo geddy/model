@@ -61,8 +61,7 @@ tests = {
     });
   }
 
-/*
-, 'test save new, auto-increment id': function (next) {
+, 'test save new': function (next) {
     var u = User.create({
       login: 'asdf'
     , password: 'zerb'
@@ -77,7 +76,7 @@ tests = {
     });
   }
 
-, 'test first via auto-increment id': function (next) {
+, 'test first': function (next) {
     User.first(currentId, {}, function (err, data) {
       if (err) {
         throw err;
@@ -87,12 +86,12 @@ tests = {
     });
   }
 
-, 'test remove, auto-increment id': function (next) {
-    Zooby.remove(currentId, {}, function (err, data) {
+, 'test remove': function (next) {
+    User.remove(currentId, {}, function (err, data) {
       if (err) {
         throw err;
       }
-      Zooby.first(currentId, {}, function (err, data) {
+      User.first(currentId, {}, function (err, data) {
         if (err) {
           throw err;
         }
@@ -101,8 +100,6 @@ tests = {
       });
     });
   }
-*/
-
 
 };
 

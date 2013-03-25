@@ -533,6 +533,12 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of hasMany association': function (next) {
+    User.all({}, {includes: 'accounts'}, function (err, data) {
+      next();
+    });
+  }
+
 , 'test Static methods on model': function (next) {
     User.findByLogin('asdf', function (err, data) {
       assert.equal(data.length, 4);
