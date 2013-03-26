@@ -534,7 +534,8 @@ tests = {
   }
 
 , 'test includes eager-fetch of hasMany association': function (next) {
-    User.all({}, {includes: 'accounts'}, function (err, data) {
+    User.all({}, {includes: ['accounts', 'profiles']}, function (err, data) {
+      throw new Error();
       next();
     });
   }
