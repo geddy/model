@@ -459,12 +459,12 @@ tests = {
         if (err) {
           throw err;
         }
-        user.addFriend(User.create({
+        user.addKid(User.create({
           login: 'qwer'
         , password: 'zerb'
         , confirmPassword: 'zerb'
         }));
-        user.addFriend(User.create({
+        user.addKid(User.create({
           login: 'zxcv'
         , password: 'zerb'
         , confirmPassword: 'zerb'
@@ -473,7 +473,7 @@ tests = {
           if (err) {
             throw err;
           }
-          user.getFriends(function (err, data) {
+          user.getKids(function (err, data) {
             assert.equal(2, data.length);
             if (err) {
               throw err;
@@ -534,7 +534,7 @@ tests = {
   }
 
 , 'test includes eager-fetch of hasMany association': function (next) {
-    User.all({}, {includes: ['accounts', 'profiles']}, function (err, data) {
+    User.all({}, {includes: ['kids']}, function (err, data) {
       throw new Error();
       next();
     });

@@ -14,7 +14,7 @@ var User = function () {
 
   this.hasOne('Profile');
   this.hasMany('Accounts');
-  this.hasMany('Friends', {model: 'Users'});
+  this.hasMany('Kids', {model: 'Users'});
   this.hasMany('Avatars', {model: 'Profiles'});
 };
 
