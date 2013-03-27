@@ -370,10 +370,12 @@ var user = User.create({
 , confirmPassword: 'zerb'
 });
 user.save(function (err, data) {
+  var profile;
   if (err) {
     throw err;
   }
-  user.setProfile(Profile.create({}));
+  profile = Profile.create({});
+  user.setProfile(profile);
   user.save(function (err, data) {
     if (err) {
       throw err;
