@@ -534,8 +534,12 @@ tests = {
   }
 
 , 'test includes eager-fetch of hasMany association': function (next) {
-    User.all({}, {includes: ['kids']}, function (err, data) {
-      throw new Error();
+    User.all({}, {includes: ['kids', 'avatars']}, function (err, data) {
+      data.forEach(function (u) {
+        if (u.id == currentId) {
+          assert.equal(2, u.avatars.length); 
+        }
+      });
       next();
     });
   }
