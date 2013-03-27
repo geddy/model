@@ -120,7 +120,7 @@ console.log(user.errors.password);
 ## Saving items
 
 After creating the instance, call the `save` method on the instance. This method
-takes a callbak in the familiar (err, data) format for Node.
+takes a callback in the familiar (err, data) format for Node.
 
 ```javascript
 if (user.isValid()) {
@@ -154,7 +154,7 @@ if (user.isValid()) {
 
 ## Lifecycle events
 
-Both the base model 'constructors,' and model instances are EventEmitters. The
+Both the base model 'constructors,' and model instances are EventEmitters. They
 emit events during the create/update/remove lifecycle of model instances. In all
 cases, the plain-named event is fired after the event in question, the
 'before'-prefixed event, of course happens before.
