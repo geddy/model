@@ -552,12 +552,21 @@ tests = {
         throw err;
       }
       var u = data;
-      var t = Team.create({
+      u.addTeam(Team.create({
         name: 'foo'
-      });
-      u.addTeam(t);
+      }));
+      u.addTeam(Team.create({
+        name: 'bar'
+      }));
       u.save(function (err, data) {
-        next();
+        console.log('save completed');
+        u.getTeams(function (err, data) {
+          assert.equal(2, data.length);
+          data.forEach(function (item) {
+            assert.equal('Team', item.type);
+          });
+          next();
+        });
       });
     });
   }
