@@ -6,7 +6,9 @@ var utils = require('utilities')
   , Zooby = require('../fixtures/zooby').Zooby
   , User = require('../fixtures/user').User
   , Profile = require('../fixtures/profile').Profile
-  , Account = require('../fixtures/account').Account;
+  , Account = require('../fixtures/account').Account
+  , Team = require('../fixtures/team').Team
+  , Membership = require('../fixtures/membership').Membership;
 
 tests = {
 

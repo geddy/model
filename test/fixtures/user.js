@@ -16,6 +16,9 @@ var User = function () {
   this.hasMany('Accounts');
   this.hasMany('Kids', {model: 'Users'});
   this.hasMany('Avatars', {model: 'Profiles'});
+  this.hasMany('Memberships');
+  this.hasMany('Teams', {through: 'Memberships'});
+
 };
 
 User.prototype.someMethod = function () {
