@@ -21,7 +21,7 @@ tests = {
     });
     adapter.once('connect', function () {
       var sql = generator.createTable(['Zooby',
-          'User', 'Profile', 'Account']);
+          'User', 'Profile', 'Account', 'Membership', 'Team']);
       adapter.exec(sql, function (err, data) {
         if (err) {
           throw err;
@@ -36,6 +36,8 @@ tests = {
     , 'User': adapter
     , 'Profile': adapter
     , 'Account': adapter
+    , 'Membership': adapter
+    , 'Team': adapter
     };
 
   }

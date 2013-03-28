@@ -539,10 +539,26 @@ tests = {
     User.all({}, {includes: ['kids', 'avatars']}, function (err, data) {
       data.forEach(function (u) {
         if (u.id == currentId) {
-          assert.equal(2, u.avatars.length); 
+          assert.equal(2, u.avatars.length);
         }
       });
       next();
+    });
+  }
+
+, 'test hasMany through': function (next) {
+    User.first({login: 'asdf'}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      var u = data;
+      var t = Team.create({
+        name: 'foo'
+      });
+      u.addTeam(t);
+      u.save(function (err, data) {
+        next();
+      });
     });
   }
 
