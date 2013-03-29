@@ -10,6 +10,8 @@ var utils = require('utilities')
   , User = require('../../fixtures/user').User
   , Profile = require('../../fixtures/profile').Profile
   , Account = require('../../fixtures/account').Account
+  , Team = require('../../fixtures/team').Team
+  , Membership = require('../../fixtures/membership').Membership
   , shared = require('../shared');
 
 tests = {
@@ -107,6 +109,60 @@ tests = {
 
 for (var p in shared) {
   tests[p + ' (Postgres)'] = shared[p];
+}
+
+var eagerAssnTests = {
+  'test includes eager-fetch of hasMany association': function (next) {
+    User.all({}, {includes: ['kids', 'avatars']}, function (err, data) {
+      data.forEach(function (u) {
+        if (u.id == currentId) {
+          assert.equal(2, u.avatars.length);
+        }
+      });
+      next();
+    });
+  }
+
+, 'test hasMany through': function (next) {
+    User.first({login: 'asdf'}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      var u = data;
+      u.addTeam(Team.create({
+        name: 'foo'
+      }));
+      u.addTeam(Team.create({
+        name: 'bar'
+      }));
+      u.save(function (err, data) {
+        currentId = u.id;
+        u.getTeams(function (err, data) {
+          assert.equal(2, data.length);
+          data.forEach(function (item) {
+            assert.equal('Team', item.type);
+          });
+          next();
+        });
+      });
+    });
+  }
+
+, 'test includes eager-fetch of hasMany/through association': function (next) {
+    User.all({login: 'asdf'}, {includes: 'teams'}, function (err, data) {
+      data.forEach(function (u) {
+        if (u.id == currentId) {
+          assert.equal(2, u.teams.length);
+        }
+      });
+      next();
+    });
+  }
+
+};
+
+for (var p in eagerAssnTests) {
+  tests[p + ' (Postgres)'] = eagerAssnTests[p];
 }
 
 module.exports = tests;

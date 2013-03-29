@@ -535,42 +535,6 @@ tests = {
     });
   }
 
-, 'test includes eager-fetch of hasMany association': function (next) {
-    User.all({}, {includes: ['kids', 'avatars']}, function (err, data) {
-      data.forEach(function (u) {
-        if (u.id == currentId) {
-          assert.equal(2, u.avatars.length);
-        }
-      });
-      next();
-    });
-  }
-
-, 'test hasMany through': function (next) {
-    User.first({login: 'asdf'}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      var u = data;
-      u.addTeam(Team.create({
-        name: 'foo'
-      }));
-      u.addTeam(Team.create({
-        name: 'bar'
-      }));
-      u.save(function (err, data) {
-        console.log('save completed');
-        u.getTeams(function (err, data) {
-          assert.equal(2, data.length);
-          data.forEach(function (item) {
-            assert.equal('Team', item.type);
-          });
-          next();
-        });
-      });
-    });
-  }
-
 , 'test Static methods on model': function (next) {
     User.findByLogin('asdf', function (err, data) {
       assert.equal(data.length, 4);
