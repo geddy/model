@@ -6,7 +6,9 @@ var utils = require('utilities')
   , Zooby = require('../fixtures/zooby').Zooby
   , User = require('../fixtures/user').User
   , Profile = require('../fixtures/profile').Profile
-  , Account = require('../fixtures/account').Account;
+  , Account = require('../fixtures/account').Account
+  , Team = require('../fixtures/team').Team
+  , Membership = require('../fixtures/membership').Membership;
 
 tests = {
 
@@ -459,12 +461,12 @@ tests = {
         if (err) {
           throw err;
         }
-        user.addFriend(User.create({
+        user.addKid(User.create({
           login: 'qwer'
         , password: 'zerb'
         , confirmPassword: 'zerb'
         }));
-        user.addFriend(User.create({
+        user.addKid(User.create({
           login: 'zxcv'
         , password: 'zerb'
         , confirmPassword: 'zerb'
@@ -473,7 +475,7 @@ tests = {
           if (err) {
             throw err;
           }
-          user.getFriends(function (err, data) {
+          user.getKids(function (err, data) {
             assert.equal(2, data.length);
             if (err) {
               throw err;

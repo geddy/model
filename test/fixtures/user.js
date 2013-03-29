@@ -14,8 +14,11 @@ var User = function () {
 
   this.hasOne('Profile');
   this.hasMany('Accounts');
-  this.hasMany('Friends', {model: 'Users'});
+  this.hasMany('Kids', {model: 'Users'});
   this.hasMany('Avatars', {model: 'Profiles'});
+  this.hasMany('Memberships');
+  this.hasMany('Teams', {through: 'Memberships'});
+
 };
 
 User.prototype.someMethod = function () {
