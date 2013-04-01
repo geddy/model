@@ -266,7 +266,7 @@ tests = {
     if (err) {
       throw err;
     }
-      
+
     assert.equal(3, data.length);
       next();
     });
