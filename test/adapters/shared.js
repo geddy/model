@@ -163,7 +163,6 @@ tests = {
     });
   }
 
-/*
 , 'test all, by IN': function (next) {
     Zooby.all({foo: {'in': ['BAR', 'BAZ']}}, function (err, data) {
       if (err) {
@@ -173,7 +172,6 @@ tests = {
       next();
     });
   }
-*/
 
 , 'test all, sort string column name': function (next) {
     Zooby.all({}, {sort: 'zong'}, function (err, data) {
@@ -264,7 +262,7 @@ tests = {
     if (err) {
       throw err;
     }
-      
+
     assert.equal(3, data.length);
       next();
     });
