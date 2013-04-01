@@ -122,6 +122,33 @@ tests = {
     });
   }
 
+, 'single-quote in string property': function (next) {
+    var z = Zooby.create({
+          foo: "QUX's awesome Zooby"
+        , zong: new Date()
+        , mar: 0
+        });
+    z.save(function (err, data) {
+      var id;
+      if (err) {
+        throw err;
+      }
+      id = data.id;
+      Zooby.first({foo: "QUX's awesome Zooby"}, function (err, data) {
+        if (err) {
+          throw err;
+        }
+        assert.equal(id, data.id);
+        Zooby.remove({id: id}, function (err, data) {
+          if (err) {
+            throw err;
+          }
+          next();
+        });
+      });
+    });
+  }
+
 , 'test all, by string equality': function (next) {
     Zooby.all({foo: 'FOO'}, {}, function (err, data) {
       if (err) {
