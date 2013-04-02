@@ -183,6 +183,182 @@ Model-item instances emit these events:
  * beforeUpdate
  * update
 
+## Associations
+
+Model has support for associations: including hasMany/belongsTo and
+hasOne/belongsTo. For example, if you had a `User` model with a single
+`Profile`, and potentially many `Accounts`:
+
+```javascript
+var User = function () {
+  this.property('login', 'string', {required: true});
+  this.property('password', 'string', {required: true});
+  this.property('confirmPassword', 'string', {required: true});
+
+  this.hasOne('Profile');
+  this.hasMany('Accounts');
+};
+```
+
+A `Book` model that belongs to an `Author` would look like this:
+
+```javascript
+var Book = function () {
+  this.property('title', 'string');
+  this.property('description', 'text');
+
+  this.belongsTo('Author');
+};
+```
+
+Add the `hasOne` relationship by calling 'set' plus the name of the owned
+model in singular (in this case `setProfile`). Retrieve the associated item by
+using 'get' plus the name of the owned model in singular (in this case
+`getProfile`). Here's an example:
+
+```javascript
+var user = User.create({
+  login: 'asdf'
+, password: 'zerb'
+, confirmPassword: 'zerb'
+});
+user.save(function (err, data) {
+  var profile;
+  if (err) {
+    throw err;
+  }
+  profile = Profile.create({});
+  user.setProfile(profile);
+  user.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    user.getProfile(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log(profile.id ' is the same as ' + data.id);
+    });
+  });
+});
+```
+
+Set up the `hasMany` relationship by calling 'add' plus the name of the
+owned model in singular (in this case `addAccount`). Retrieve the associated
+items with a call to 'get' plus the name of the owned model in plural (in
+this case `getAccounts`). An example:
+
+```javascript
+var user = User.create({
+  login: 'asdf'
+, password: 'zerb'
+, confirmPassword: 'zerb'
+});
+user.save(function (err, data) {
+  if (err) {
+    throw err;
+  }
+  user.addAccount(Account.create({}));
+  user.addAccount(Account.create({}));
+  user.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    user.getAccounts(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log('This number should be 2: ' + data.length);
+    });
+  });
+});
+```
+
+A `belongsTo` relationship is created similarly to a `hasOne`: by calling 'set'
+plus the name of the owner model in singular (in this case `setAuthor`).
+Retrieve the associated item by using 'get' plus the name of the owner model
+in singular (in this case `getAuthor`). Here's an example:
+
+```javascript
+var book = Book.create({
+  title: 'How to Eat an Entire Ham'
+, description: 'Such a poignant book. I cried.'
+});
+book.save(function (err, data) {
+  if (err) {
+    throw err;
+  }
+  book.setAuthor(Author.create({
+    familyName: 'Neeble'
+  , givenName: 'Leonard'
+  }));
+  book.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    book.getAuthor(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log('This name should be "Neeble": ' + data.familyName);
+    });
+  });
+});
+```
+
+### 'Through' associations
+
+'Through' associations allow a model to be associated with another *through* a
+third model. A good example would be a Team linked to Players through
+Memberships.
+
+```javascript
+var Player = function () {
+  this.property('familyName', 'string', {required: true});
+  this.property('givenName', 'string', {required: true});
+  this.property('jerseyNumber', 'string', {required: true});
+
+  this.hasMany('Memberships');
+  this.hasMany('Teams', {through: 'Memberships'});
+};
+
+var Team = function () {
+  this.property('name', 'string', {required: true});
+
+  this.hasMany('Memberships');
+  this.hasMany('Players', {through: 'Memberships'});
+};
+
+var Membership = function () {
+  this.hasMany('Memberships');
+  this.hasMany('Teams');
+};
+```
+
+The API for this is the same as with normal associations, using the `set`/`add`
+and `get`, with the appropriate association name (not the model name). For
+example, in the case of the Team adding Players, you'd use `addPlayer` and
+`getPlayer`.
+
+### Named associations
+
+Sometimes you need mutliple associations to the same type of model (e.g., I have
+lots of Friends and Relatives who are all Users). You can accomplish this in
+Model using named associations:
+
+```javascript
+var User = function () {
+  this.property('familyName', 'string', {required: true});
+  this.property('givenName', 'string', {required: true});
+
+  this.hasMany('Kids', {model: 'Users'});
+};
+```
+
+The API for this is the same as with normal associations, using the `set`/`add`
+and `get`, with the appropriate association name (not the model name). For
+example, in the case of `Kids`, you'd use `addKid` and `getKids`.
+
 ## Querying
 
 Model uses a simple API for finding and sorting items. Again, it should look
@@ -330,148 +506,46 @@ sort-direction is ascending ('asc'), so you can specify a property to sort on
 
 ```
 
-## Associations
+## Eager loading of associations (SQL adpaters only)
 
-Model has basic support for associations: including hasMany/belongsTo and
-hasOne/belongsTo. For example, if you had a `User` model with a single
-`Profile`, and potentially many `Accounts`:
+You can use the 'includes' option to specify second-order associations that
+should be eager-loaded in a particular query (avoiding the so-called N + 1 Query
+Problem). This will also work for 'through' associations.
 
-```javascript
-var User = function () {
-  this.property('login', 'string', {required: true});
-  this.property('password', 'string', {required: true});
-  this.property('confirmPassword', 'string', {required: true});
-
-  this.hasOne('Profile');
-  this.hasMany('Accounts');
-};
-```
-
-A `Book` model that belongs to an `Author` would look like this:
+For example, with a Team that `hasMany` Players through Memberships, you might
+want to display the roster of player for every team when you display teams in a
+list. You could do it like so:
 
 ```javascript
-var Book = function () {
-  this.property('title', 'string');
-  this.property('description', 'text');
-
-  this.belongsTo('Author');
-};
-```
-
-Add the `hasOne` relationship by calling 'set' plus the name of the owned
-model in singular (in this case `setProfile`). Retrieve the associated item by
-using 'get' plus the name of the owned model in singular (in this case
-`getProfile`). Here's an example:
-
-```javascript
-var user = User.create({
-  login: 'asdf'
-, password: 'zerb'
-, confirmPassword: 'zerb'
-});
-user.save(function (err, data) {
-  var profile;
+Team.all({}, {includes: ['player']}, function (err, data) {
+  var teams;
   if (err) {
     throw err;
   }
-  profile = Profile.create({});
-  user.setProfile(profile);
-  user.save(function (err, data) {
-    if (err) {
-      throw err;
-    }
-    user.getProfile(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      console.log(profile.id ' is the same as ' + data.id);
+  teams = data;
+  teams.forEach(function (team) {
+    console.log(team.name);
+    team.players.forEach(function (player) {
+      console.log(player.familyName + ', ' + player.givenName);
     });
   });
 });
 ```
 
-Set up the `hasMany` relationship by calling 'add' plus the name of the
-owned model in singular (in this case `addAccount`). Retrieve the associated
-items with a call to 'get' plus the name of the owned model in plural (in
-this case `getAccounts`). An example:
+The eagerly fetched association will be in a property on the top-level item with
+the same name as the association (e.g., Players will be in `players`).
+
+If you have an item, and you're not certain whether an association is already
+loaded, you can check for the existence of this property before doing a per-item
+fetch:
 
 ```javascript
-var user = User.create({
-  login: 'asdf'
-, password: 'zerb'
-, confirmPassword: 'zerb'
-});
-user.save(function (err, data) {
-  if (err) {
-    throw err;
-  }
-  user.addAccount(Account.create({}));
-  user.addAccount(Account.create({}));
-  user.save(function (err, data) {
-    if (err) {
-      throw err;
-    }
-    user.getAccounts(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      console.log('This number should be 2: ' + data.length);
-    });
+if (!someTeam.players) {
+  someTeam.getPlayers(function (err, data) {
+    console.dir(data);
   });
-});
+}
 ```
-
-A `belongsTo` relationship is created similarly to a `hasOne`: by calling 'set'
-plus the name of the owner model in singular (in this case `setAuthor`).
-Retrieve the associated item by using 'get' plus the name of the owner model
-in singular (in this case `getAuthor`). Here's an example:
-
-```javascript
-var book = Book.create({
-  title: 'How to Eat an Entire Ham'
-, description: 'Such a poignant book. I cried.'
-});
-book.save(function (err, data) {
-  if (err) {
-    throw err;
-  }
-  book.setAuthor(Author.create({
-    familyName: 'Neeble'
-  , givenName: 'Leonard'
-  }));
-  book.save(function (err, data) {
-    if (err) {
-      throw err;
-    }
-    book.getAuthor(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      console.log('This name should be "Neeble": ' + data.familyName);
-    });
-  });
-});
-```
-
-### Named associations
-
-Sometimes you need mutliple associations to the same type of model (e.g., I have
-lots of Friends and Relatives who are all Users). You can accomplish this in
-Model using named associations:
-
-```javascript
-var User = function () {
-  this.property('familyName', 'string', {required: true});
-  this.property('givenName', 'string', {required: true});
-
-  this.hasMany('Friends', {model: 'Users'});
-  this.hasMany('Relatives', {model: 'Users'});
-};
-```
-
-The API for this is the same as with normal associations, using the `set`/`add`
-and `get`, with the appropriate association name (not the model name). For
-example, in the case of `Friends`, you'd use `addFriend` and `getFriends`.
 
 - - -
 Model JavaScript ORM copyright 2112 mde@fleegix.org.
