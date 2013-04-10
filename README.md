@@ -83,6 +83,20 @@ var User = function () {
 }
 ```
 
+### Datatypes
+
+Model supports the following datatypes:
+
+* string
+* text
+* number
+* int
+* boolean
+* date
+* datetime
+* time
+* object
+
 ## Creating instances
 
 Creating an instance of one of these models is easy:
