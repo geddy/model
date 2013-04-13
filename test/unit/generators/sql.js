@@ -4,18 +4,12 @@ var assert = require('assert')
   , Zooby = require('../../fixtures/zooby').Zooby
   , generator = require('../../../lib/generators/sql')
   , tests
-  , arrIncl;
-
-arrIncl = function (array, item) {
-  return array.some(function (arrItem) {
-    return strIncl(arrItem, item);
-  });
-};
+  , strIncl;
 
 strIncl = function (searchIn, searchFor) {
     var sIn = utils.string.trim(searchIn.toLowerCase());
     var sFor = utils.string.trim(searchFor.toLowerCase());
-    return sIn.indexOf(sFor) == 0;
+    return sIn.indexOf(sFor) > -1;
 };
 
 tests = {
@@ -35,35 +29,33 @@ tests = {
       , datatype: 'string'
       }
     });
-    sql = sql.split('\n');
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'drop table if exists zerbs;'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'create table zerbs ('));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'id varchar(256) primary key'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'foo varchar(256)'));
   }
 
 , 'createTable with single model object': function () {
     var sql = generator.createTable(['Zooby']);
-    sql = sql.split('\n');
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'drop table if exists zoobies;'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'create table zoobies ('));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'foo varchar(256)'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'bar real'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'woot boolean'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'freen date'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'zong timestamp'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'blarg time'));
   }
 
