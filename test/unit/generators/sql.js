@@ -14,12 +14,12 @@ strIncl = function (searchIn, searchFor) {
 
 tests = {
 
-  'columnStatement': function () {
-    var sql = generator.columnStatement({
+  'addColumnStatement': function () {
+    var sql = generator.addColumnStatement({
       name: 'barBazQux'
     , datatype: 'string'
     });
-    assert.ok(strIncl(sql, 'bar_baz_qux varchar(256)'));
+    assert.ok(strIncl(sql, 'ADD COLUMN bar_baz_qux varchar(256)'));
   }
 
 , 'createTableStatement': function () {
@@ -37,6 +37,52 @@ tests = {
         'id varchar(256) primary key'));
     assert.ok(strIncl(sql,
         'foo varchar(256)'));
+  }
+
+, 'alterTableStatement single alteration': function () {
+    var sql = generator.alterTableStatement('Zerb', {
+      operation: 'add'
+    , property: {
+        name: 'foo'
+      , datatype: 'string'
+      }
+    });
+    assert.ok(strIncl(sql,
+        'alter table zerbs'));
+    assert.ok(strIncl(sql,
+        'add column foo varchar(256)'));
+  }
+
+, 'alterTableStatement array of alterations': function () {
+    var alter = [
+          { operation: 'alter'
+          , property: {
+              name: 'foo'
+            , datatype: 'int'
+            }
+          }
+        , { operation: 'drop'
+          , property: {
+              name: 'bar'
+            }
+          }
+        , { operation: 'rename'
+          , property: {
+              name: 'bar'
+            , newName: 'bazBar'
+            }
+          }
+        ]
+      , sql = generator.alterTableStatement('Zerb', alter);
+
+    assert.ok(strIncl(sql,
+        'alter table zerbs'));
+    assert.ok(strIncl(sql,
+        'alter column foo type integer'));
+    assert.ok(strIncl(sql,
+        'drop column bar'));
+    assert.ok(strIncl(sql,
+        'rename column bar to baz_bar'));
   }
 
 , 'createTable with single model object': function () {

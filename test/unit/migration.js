@@ -52,6 +52,10 @@ tests = {
     });
   }
 
+, 'alterTable': function (next) {
+    var m = new Migration(fakeAdapter);
+  }
+
 };
 
 module.exports = tests;
