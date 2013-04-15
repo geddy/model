@@ -25,10 +25,12 @@ strIncl = function (searchIn, searchFor) {
     return sIn.indexOf(sFor) > -1;
 };
 
+Migration.setDefaultAdapter(fakeAdapter);
+
 tests = {
 
   'createTable': function (next) {
-    var m = new Migration('foo', fakeAdapter)
+    var m = new Migration('foo')
       , def = function (t) {
           t.column('fooBarBaz', 'string');
           t.column('bazBarQux', 'int');
@@ -53,7 +55,7 @@ tests = {
   }
 
 , 'addColumn': function (next) {
-    var m = new Migration('foo', fakeAdapter);
+    var m = new Migration('foo');
     m.addColumn('zerbs', 'fooBarBaz', 'int', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
@@ -63,7 +65,7 @@ tests = {
   }
 
 , 'removeColumn': function (next) {
-    var m = new Migration('foo', fakeAdapter);
+    var m = new Migration('foo');
     m.removeColumn('zerbs', 'fooBarBaz', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
@@ -73,7 +75,7 @@ tests = {
   }
 
 , 'changeColumn': function (next) {
-    var m = new Migration('foo', fakeAdapter);
+    var m = new Migration('foo');
     m.changeColumn('zerbs', 'fooBarBaz', 'string', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
@@ -83,7 +85,7 @@ tests = {
   }
 
 , 'renameColumn': function (next) {
-    var m = new Migration('foo', fakeAdapter);
+    var m = new Migration('foo');
     m.renameColumn('zerbs', 'fooBarBaz', 'bazBarQux', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
@@ -93,7 +95,7 @@ tests = {
   }
 
 , 'dropTable': function (next) {
-    var m = new Migration('foo', fakeAdapter);
+    var m = new Migration('foo');
     m.dropTable('zerbs', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'drop table if exists zerbs'));
