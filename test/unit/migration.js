@@ -35,7 +35,7 @@ tests = {
           t.column('quxBazBar', 'boolean');
         };
     m.createTable('zerbs', def, function (err, data) {
-      sql = data;
+      var sql = data;
       assert.ok(strIncl(sql,
           'drop table if exists zerbs;'));
       assert.ok(strIncl(sql,
@@ -52,8 +52,53 @@ tests = {
     });
   }
 
-, 'alterTable': function (next) {
+, 'addColumn': function (next) {
     var m = new Migration(fakeAdapter);
+    m.addColumn('zerbs', 'fooBarBaz', 'int', function (err, data) {
+      var sql = data;
+      assert.ok(strIncl(sql, 'alter table zerbs'));
+      assert.ok(strIncl(sql, 'add column foo_bar_baz integer'));
+      next();
+    });
+  }
+
+, 'removeColumn': function (next) {
+    var m = new Migration(fakeAdapter);
+    m.removeColumn('zerbs', 'fooBarBaz', function (err, data) {
+      var sql = data;
+      assert.ok(strIncl(sql, 'alter table zerbs'));
+      assert.ok(strIncl(sql, 'drop column foo_bar_baz'));
+      next();
+    });
+  }
+
+, 'changeColumn': function (next) {
+    var m = new Migration(fakeAdapter);
+    m.changeColumn('zerbs', 'fooBarBaz', 'string', function (err, data) {
+      var sql = data;
+      assert.ok(strIncl(sql, 'alter table zerbs'));
+      assert.ok(strIncl(sql, 'alter column foo_bar_baz type varchar(256)'));
+      next();
+    });
+  }
+
+, 'renameColumn': function (next) {
+    var m = new Migration(fakeAdapter);
+    m.renameColumn('zerbs', 'fooBarBaz', 'bazBarQux', function (err, data) {
+      var sql = data;
+      assert.ok(strIncl(sql, 'alter table zerbs'));
+      assert.ok(strIncl(sql, 'rename column foo_bar_baz to baz_bar_qux'));
+      next();
+    });
+  }
+
+, 'dropTable': function (next) {
+    var m = new Migration(fakeAdapter);
+    m.dropTable('zerbs', function (err, data) {
+      var sql = data;
+      assert.ok(strIncl(sql, 'drop table if exists zerbs'));
+      next();
+    });
   }
 
 };
