@@ -24,6 +24,21 @@ tests = {
         requiredPropertyAddedByProperty.validations.present);
   }
 
+, 'Validating present with 0': function () {
+    var msg = validators.present('foo', 0, null, {qualifier:true});
+    assert.ok(!msg);
+  }
+
+, 'Validating present with null': function () {
+    var msg = validators.present('foo', null, null, {qualifier:true});
+    assert.equal('[[model.validatesPresent]]', msg);
+  }
+
+, 'Validating present with undefined': function () {
+    var msg = validators.present('foo', undefined, null, {qualifier:true});
+    assert.equal('[[model.validatesPresent]]', msg);
+  }
+
 , 'Validating exact length with incorrect length': function () {
     var msg = validators.length('foo', '1111', null, {qualifier: 3});
     assert.equal('[[model.validatesExactLength]]', msg);

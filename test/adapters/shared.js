@@ -6,22 +6,49 @@ var utils = require('utilities')
   , Zooby = require('../fixtures/zooby').Zooby
   , User = require('../fixtures/user').User
   , Profile = require('../fixtures/profile').Profile
-  , Account = require('../fixtures/account').Account;
+  , Account = require('../fixtures/account').Account
+  , Team = require('../fixtures/team').Team
+  , Membership = require('../fixtures/membership').Membership;
 
 tests = {
 
-  'test save new, string UUID id': function (next) {
+  'test save new, string UUID id, required nunmber is 0': function (next) {
+    var z = Zooby.create({
+      foo: 'GROO'
+    , zong: new Date()
+    , mar: 0
+    });
+    if (z.isValid()) {
+      z.save(function (err, data) {
+        if (err) {
+          throw err;
+        }
+        next();
+      });
+    }
+    else {
+      throw new Error('model is not valid');
+    }
+  }
+
+, 'test save new, string UUID id, required number is 1': function (next) {
     var z = Zooby.create({
       foo: 'ZOO'
     , zong: new Date()
+    , mar: 1
     });
-    z.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = z.id;
-      next();
-    });
+    if (z.isValid()) {
+      z.save(function (err, data) {
+        if (err) {
+          throw err;
+        }
+        currentId = z.id;
+        next();
+      });
+    }
+    else {
+      throw new Error('model is not valid');
+    }
   }
 
 , 'test first via string id': function (next) {
@@ -77,20 +104,50 @@ tests = {
     testItems.push(Zooby.create({
       foo: 'FOO'
     , zong: utils.date.add(dt, 'day', -1)
+    , mar: 1
     }));
     testItems.push(Zooby.create({
       foo: 'BAR'
     , zong: utils.date.add(dt, 'day', -2)
+    , mar: 1
     }));
     testItems.push(Zooby.create({
       foo: 'BAZ'
     , zong: utils.date.add(dt, 'day', -3)
+    , mar: 1
     }));
     Zooby.save(testItems, function (err, data) {
       if (err) {
         throw err;
       }
       next();
+    });
+  }
+
+, 'single-quote in string property': function (next) {
+    var z = Zooby.create({
+          foo: "QUX's awesome Zooby"
+        , zong: new Date()
+        , mar: 0
+        });
+    z.save(function (err, data) {
+      var id;
+      if (err) {
+        throw err;
+      }
+      id = data.id;
+      Zooby.first({foo: "QUX's awesome Zooby"}, function (err, data) {
+        if (err) {
+          throw err;
+        }
+        assert.equal(id, data.id);
+        Zooby.remove({id: id}, function (err, data) {
+          if (err) {
+            throw err;
+          }
+          next();
+        });
+      });
     });
   }
 
@@ -135,7 +192,6 @@ tests = {
     });
   }
 
-/*
 , 'test all, by IN': function (next) {
     Zooby.all({foo: {'in': ['BAR', 'BAZ']}}, function (err, data) {
       if (err) {
@@ -145,7 +201,6 @@ tests = {
       next();
     });
   }
-*/
 
 , 'test all, sort string column name': function (next) {
     Zooby.all({}, {sort: 'zong'}, function (err, data) {
@@ -236,6 +291,7 @@ tests = {
     if (err) {
       throw err;
     }
+
     assert.equal(3, data.length);
       next();
     });
@@ -266,7 +322,7 @@ tests = {
 , 'test all, using less-than createdAt': function (next) {
     Zooby.all({createdAt: {lt: new Date()}},
         {}, function (err, data) {
-      assert.equal(data.length, 4);
+      assert.equal(data.length, 5);
       if (err) {
         throw err;
       }
@@ -430,12 +486,12 @@ tests = {
         if (err) {
           throw err;
         }
-        user.addFriend(User.create({
+        user.addKid(User.create({
           login: 'qwer'
         , password: 'zerb'
         , confirmPassword: 'zerb'
         }));
-        user.addFriend(User.create({
+        user.addKid(User.create({
           login: 'zxcv'
         , password: 'zerb'
         , confirmPassword: 'zerb'
@@ -444,7 +500,7 @@ tests = {
           if (err) {
             throw err;
           }
-          user.getFriends(function (err, data) {
+          user.getKids(function (err, data) {
             assert.equal(2, data.length);
             if (err) {
               throw err;
