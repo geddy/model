@@ -1,17 +1,17 @@
 var utils = require('utilities')
-  , model = require('../../../lib')
-  , Adapter = require('../../../lib/adapters/sql/postgres').Adapter
-  , generator = require('../../../lib/generators/sql')
-  , adapter
   , assert = require('assert')
+  , model = require('../../../../lib')
+  , Adapter = require('../../../../lib/adapters/sql/postgres').Adapter
+  , generator = require('../../../../lib/generators/sql')
+  , adapter
   , currentId
   , tests
-  , Zooby = require('../../fixtures/zooby').Zooby
-  , User = require('../../fixtures/user').User
-  , Profile = require('../../fixtures/profile').Profile
-  , Account = require('../../fixtures/account').Account
-  , Team = require('../../fixtures/team').Team
-  , Membership = require('../../fixtures/membership').Membership
+  , Zooby = require('../../../fixtures/zooby').Zooby
+  , User = require('../../../fixtures/user').User
+  , Profile = require('../../../fixtures/profile').Profile
+  , Account = require('../../../fixtures/account').Account
+  , Team = require('../../../fixtures/team').Team
+  , Membership = require('../../../fixtures/membership').Membership
   , shared = require('../shared');
 
 tests = {
