@@ -1,5 +1,5 @@
-var model = require('../lib')
-  , assert = require('assert')
+var assert = require('assert')
+  , model = require('../../lib')
   , tests;
 
 var ByTor = function () {
