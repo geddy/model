@@ -1,10 +1,10 @@
-var model = require('../../lib/index')
-  , Query = require('../../lib/query/query').Query
-  , operation = require('../../lib/query/operation')
-  , comparison = require('../../lib/query/comparison')
-  , utils = require('utilities')
+var utils = require('utilities')
   , assert = require('assert')
-  , Zooby = require('../fixtures/zooby').Zooby
+  , model = require('../../../lib/index')
+  , Query = require('../../../lib/query/query').Query
+  , operation = require('../../../lib/query/operation')
+  , comparison = require('../../../lib/query/comparison')
+  , Zooby = require('../../fixtures/zooby').Zooby
   , tests;
 
 var tests = {
