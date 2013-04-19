@@ -1,6 +1,6 @@
-var model = require('../lib')
+var assert = require('assert')
+  , model = require('../../lib')
   , validators = model.validators
-  , assert = require('assert')
   , tests;
 
 var ModelWithValidations = function () {
