@@ -123,6 +123,21 @@ var eagerAssnTests = {
     });
   }
 
+, 'test includes eager-fetch of hasMany with association sort': function (next) {
+    User.all({}, {
+        includes: ['kids'
+      , 'avatars'], sort: {'login': 'desc', 'Kids.login': 'asc'}
+    }, function (err, data) {
+      assert.equal('zzzz', data[0].login);
+      data.forEach(function (u) {
+        if (u.kids && u.kids.length) {
+          assert.equal('zxcv', u.kids[1].login);
+        }
+      });
+      next();
+    });
+  }
+
 , 'test hasMany through': function (next) {
     User.first({login: 'asdf'}, function (err, data) {
       if (err) {
