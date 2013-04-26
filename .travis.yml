@@ -5,4 +5,3 @@ node_js:
 
 before_install:
   - sudo apt-get install libpq-dev libpq5 build-essential
-install: npm install utilities pg
