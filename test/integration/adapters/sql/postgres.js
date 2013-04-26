@@ -1,17 +1,17 @@
 var utils = require('utilities')
-  , model = require('../../../lib')
-  , Adapter = require('../../../lib/adapters/sql/postgres').Adapter
-  , generator = require('../../../lib/generators/sql')
-  , adapter
   , assert = require('assert')
+  , model = require('../../../../lib')
+  , Adapter = require('../../../../lib/adapters/sql/postgres').Adapter
+  , generator = require('../../../../lib/generators/sql')
+  , adapter
   , currentId
   , tests
-  , Zooby = require('../../fixtures/zooby').Zooby
-  , User = require('../../fixtures/user').User
-  , Profile = require('../../fixtures/profile').Profile
-  , Account = require('../../fixtures/account').Account
-  , Team = require('../../fixtures/team').Team
-  , Membership = require('../../fixtures/membership').Membership
+  , Zooby = require('../../../fixtures/zooby').Zooby
+  , User = require('../../../fixtures/user').User
+  , Profile = require('../../../fixtures/profile').Profile
+  , Account = require('../../../fixtures/account').Account
+  , Team = require('../../../fixtures/team').Team
+  , Membership = require('../../../fixtures/membership').Membership
   , shared = require('../shared');
 
 tests = {
@@ -117,6 +117,21 @@ var eagerAssnTests = {
       data.forEach(function (u) {
         if (u.id == currentId) {
           assert.equal(2, u.avatars.length);
+        }
+      });
+      next();
+    });
+  }
+
+, 'test includes eager-fetch of hasMany with association sort': function (next) {
+    User.all({}, {
+        includes: ['kids'
+      , 'avatars'], sort: {'login': 'desc', 'Kids.login': 'asc'}
+    }, function (err, data) {
+      assert.equal('zzzz', data[0].login);
+      data.forEach(function (u) {
+        if (u.kids && u.kids.length) {
+          assert.equal('zxcv', u.kids[1].login);
         }
       });
       next();

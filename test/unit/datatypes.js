@@ -1,12 +1,11 @@
-var model = require('../lib')
-  , assert = require('assert')
+var assert = require('assert')
+  , model = require('../../lib')
   , tests;
 
 var ByTor = function () {
   this.property('numberProp', 'number');
   this.property('intProp', 'int');
   this.property('objectProp', 'object');
-  this.property('arrayProp', 'array');
   this.property('dateProp', 'date');
   this.property('datetimeProp', 'datetime');
   this.property('timeProp', 'time');
@@ -65,28 +64,9 @@ var tests = {
     byTor = ByTor.create({objectProp: {}});
     assert.ok(byTor.isValid());
 
-    // Sure, technically Arrays are Objects, but this still isn't right
-    byTor = ByTor.create({objectProp: []});
-    assert.notStrictEqual(byTor.errors.objectProp, undefined);
-
     // string, should fail
     byTor = ByTor.create({objectProp: 'As gray traces of dawn ...'});
     assert.notStrictEqual(byTor.errors.objectProp, undefined);
-  }
-
-, 'test array': function () {
-    var byTor;
-    // Actual Array, valid
-    byTor = ByTor.create({arrayProp: []});
-    assert.ok(byTor.isValid());
-
-    // Sure, technically Arrays are Objects, but this still isn't right
-    byTor = ByTor.create({arrayProp: {}});
-    assert.notStrictEqual(byTor.errors.arrayProp, undefined);
-
-    // string, should fail
-    byTor = ByTor.create({arrayProp: 'As gray traces of dawn ...'});
-    assert.notStrictEqual(byTor.errors.arrayProp, undefined);
   }
 
 , 'test date': function () {
