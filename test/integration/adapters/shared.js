@@ -573,16 +573,22 @@ tests = {
 , 'test save new with custom string id': function (next) {
     var z = Zooby.create({
       id: 'customid'
-    ,  foo: 'ZOO'
+    , foo: 'ZOO'
     , zong: new Date()
+    , mar: 1
     });
-    z.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      assert.equal(data.id, 'customid');
-      next();
-    });
+    if(z.isValid()) {
+      z.save(function (err, data) {
+        if (err) {
+          throw err;
+        }
+        assert.equal(data.id, 'customid');
+        next();
+      });
+    } 
+    else {
+      throw new Error('model is not valid');
+    }
   }
 
 , 'test save new with custom int id': function (next) {
@@ -590,14 +596,20 @@ tests = {
       id: 'customid'
     ,  foo: 'ZOO'
     , zong: new Date()
+    , mar: 1
     });
-    z.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      assert.equal(data.id, 'customid');
-      next();
-    });
+    if (z.isValid()) {
+      z.save(function (err, data) {
+        if (err) {
+          throw err;
+        }
+        assert.equal(data.id, 'customid');
+        next();
+      });
+    }
+    else {
+      throw new Error('model is not valid');
+    }
   }
 
 };
