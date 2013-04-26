@@ -593,7 +593,7 @@ tests = {
 
 , 'test save new with custom int id': function (next) {
     var z = Zooby.create({
-      id: 'customid'
+      id: 42
     ,  foo: 'ZOO'
     , zong: new Date()
     , mar: 1
@@ -603,7 +603,7 @@ tests = {
         if (err) {
           throw err;
         }
-        assert.equal(data.id, 'customid');
+        assert.equal(data.id, 42);
         next();
       });
     }
