@@ -29,6 +29,9 @@
     "mongodb-wrapper": "0.4.x",
     "pg": "0.9.x"
   },
+  "devDependencies": {
+    "jake": "0.5.x"
+  },
   "engines": {
     "node": "*"
   }
