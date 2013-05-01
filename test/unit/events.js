@@ -1,13 +1,13 @@
-var model = require('../lib')
+var assert = require('assert')
   , utils = require('utilities')
-  , assert = require('assert')
-  , User = require('./fixtures/user').User
-  , Profile = require('./fixtures/profile').Profile
-  , Account = require('./fixtures/account').Account
-  , Membership = require('./fixtures/membership').Membership
-  , Team = require('./fixtures/team').Team
-  , BaseAdapter = require('../lib/adapters/base_adapter').BaseAdapter
   , EventEmitter = require('events').EventEmitter
+  , model = require('../../lib')
+  , User = require('../fixtures/user').User
+  , Profile = require('../fixtures/profile').Profile
+  , Account = require('../fixtures/account').Account
+  , Membership = require('../fixtures/membership').Membership
+  , Team = require('../fixtures/team').Team
+  , BaseAdapter = require('../../lib/adapters/base_adapter').BaseAdapter
   , _params
   , tests;
 

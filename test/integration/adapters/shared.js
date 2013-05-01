@@ -1,14 +1,15 @@
 var utils = require('utilities')
   , assert = require('assert')
   , currentId
+  , currentDateProp
   , tests
   , testItems
-  , Zooby = require('../fixtures/zooby').Zooby
-  , User = require('../fixtures/user').User
-  , Profile = require('../fixtures/profile').Profile
-  , Account = require('../fixtures/account').Account
-  , Team = require('../fixtures/team').Team
-  , Membership = require('../fixtures/membership').Membership;
+  , Zooby = require('../../fixtures/zooby').Zooby
+  , User = require('../../fixtures/user').User
+  , Profile = require('../../fixtures/profile').Profile
+  , Account = require('../../fixtures/account').Account
+  , Team = require('../../fixtures/team').Team
+  , Membership = require('../../fixtures/membership').Membership;
 
 tests = {
 
@@ -32,9 +33,10 @@ tests = {
   }
 
 , 'test save new, string UUID id, required number is 1': function (next) {
+    currentDateProp = new Date();
     var z = Zooby.create({
       foo: 'ZOO'
-    , zong: new Date()
+    , zong: currentDateProp
     , mar: 1
     });
     if (z.isValid()) {
@@ -57,6 +59,16 @@ tests = {
         throw err;
       }
       assert.equal(data.id, currentId);
+      next();
+    });
+  }
+
+, 'test datetime round-trip': function (next) {
+    Zooby.first(currentId, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.zong.getTime(), currentDateProp.getTime());
       next();
     });
   }
@@ -569,6 +581,49 @@ tests = {
       next();
     });
   }
+
+, 'test save new with custom string id': function (next) {
+    var z = Zooby.create({
+      id: 'customid'
+    , foo: 'ZOO'
+    , zong: new Date()
+    , mar: 1
+    });
+    if(z.isValid()) {
+      z.save(function (err, data) {
+        if (err) {
+          throw err;
+        }
+        assert.equal(data.id, 'customid');
+        next();
+      });
+    } 
+    else {
+      throw new Error('model is not valid');
+    }
+  }
+
+, 'test save new with custom int id': function (next) {
+    var z = Zooby.create({
+      id: 42
+    ,  foo: 'ZOO'
+    , zong: new Date()
+    , mar: 1
+    });
+    if (z.isValid()) {
+      z.save(function (err, data) {
+        if (err) {
+          throw err;
+        }
+        assert.equal(data.id, 42);
+        next();
+      });
+    }
+    else {
+      throw new Error('model is not valid');
+    }
+  }
+
 };
 
 module.exports = tests;

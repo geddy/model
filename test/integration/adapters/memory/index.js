@@ -1,13 +1,13 @@
 var utils = require('utilities')
-  , model = require('../../../lib')
-  , Adapter = require('../../../lib/adapters/memory').Adapter
-  , adapter
   , assert = require('assert')
+  , model = require('../../../../lib')
+  , Adapter = require('../../../../lib/adapters/memory').Adapter
+  , adapter
   , tests
-  , Zooby = require('../../fixtures/zooby').Zooby
-  , User = require('../../fixtures/user').User
-  , Profile = require('../../fixtures/profile').Profile
-  , Account = require('../../fixtures/account').Account
+  , Zooby = require('../../../fixtures/zooby').Zooby
+  , User = require('../../../fixtures/user').User
+  , Profile = require('../../../fixtures/profile').Profile
+  , Account = require('../../../fixtures/account').Account
   , shared = require('../shared');
 
 tests = {
