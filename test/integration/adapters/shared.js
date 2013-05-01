@@ -1,6 +1,7 @@
 var utils = require('utilities')
   , assert = require('assert')
   , currentId
+  , currentDateProp
   , tests
   , testItems
   , Zooby = require('../../fixtures/zooby').Zooby
@@ -32,9 +33,10 @@ tests = {
   }
 
 , 'test save new, string UUID id, required number is 1': function (next) {
+    currentDateProp = new Date();
     var z = Zooby.create({
       foo: 'ZOO'
-    , zong: new Date()
+    , zong: currentDateProp
     , mar: 1
     });
     if (z.isValid()) {
@@ -57,6 +59,16 @@ tests = {
         throw err;
       }
       assert.equal(data.id, currentId);
+      next();
+    });
+  }
+
+, 'test datetime round-trip': function (next) {
+    Zooby.first(currentId, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.zong.getTime(), currentDateProp.getTime());
       next();
     });
   }
