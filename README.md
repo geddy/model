@@ -531,7 +531,15 @@ want to display the roster of player for every team when you display teams in a
 list. You could do it like so:
 
 ```javascript
-Team.all({}, {includes: ['player']}, function (err, data) {
+var opts = {
+  includes: ['players']
+, sort: {
+    name: 'desc'
+  , 'players.familyName': 'desc'
+  , 'players.givenName': 'desc'
+  }
+};
+Team.all({}, opts, function (err, data) {
   var teams;
   if (err) {
     throw err;
@@ -545,6 +553,19 @@ Team.all({}, {includes: ['player']}, function (err, data) {
   });
 });
 ```
+
+### Sorting results
+
+Notice that it's possible to sort the eager-loaded associations in the above
+query. Just pass the association-names + properties in the 'sort' property.
+
+In the above example, the 'name' property of the sort refers to the team-names.
+The other two, 'players.familyName' and 'players.givenName', refer to the loaded
+associations. This will result in a list where the teams are initially sorted by
+name, and the contents of their 'players' list have the players sorted by given
+name, then first name.
+
+### Checking for loaded associations
 
 The eagerly fetched association will be in a property on the top-level item with
 the same name as the association (e.g., Players will be in `players`).
