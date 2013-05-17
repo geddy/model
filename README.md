@@ -442,17 +442,28 @@ Here are some more examples of queries:
 
 Here is the list of comparison operators currently supported:
 
-eql: equal to
-ne: not equal to
-gt: greater than
-lt: less than
-gte: greater than or equal
-lte: less than or equal
-like: like
+ * eql: equal to
+ * ne: not equal to
+ * gt: greater than
+ * lt: less than
+ * gte: greater than or equal
+ * lte: less than or equal
+ * like: like
 
 A simple string-value for a query parameter is the same as 'eql'. `{foo: 'bar'}`
 is the same as `{foo: {eql: 'bar'}}`.
 
+For case-insensitive comparisons, use the 'nocase' option. Set it to `true` to
+affect all 'like' or equality comparisons, or use an array of specific keys you
+want to affect.
+
+```javascript
+// Zoobies whose "foo" begin with 'b', with no case-sensitivity
+Zooby.all({foo: {'like': 'b'}}, {nocase: true}, ...
+// Zoobies whose "foo" begin with 'b' and "bar" is 'baz'
+// The "bar" comparison will be case-sensitive, and the "foo" will not
+Zooby.all({or: [{foo: {'like': 'b'}}, {bar: 'baz'}]}, {nocase: ['foo']},
+```
 ## More complex queries
 
 Model supports combining queries with OR and negating queries with NOT.
