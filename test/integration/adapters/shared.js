@@ -174,6 +174,16 @@ tests = {
     });
   }
 
+, 'test all, by string case-insensitive bool': function (next) {
+    Zooby.all({foo:'BAR'}, {nocase: true}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.length, 1);
+      next();
+    });
+  }
+
 , 'test all, by string LIKE case-sensitive': function (next) {
     Zooby.all({foo: {'like': 'B'}}, {}, function (err, data) {
       if (err) {
