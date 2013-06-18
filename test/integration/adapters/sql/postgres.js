@@ -137,7 +137,7 @@ var eagerAssnTests = {
 , 'test includes eager-fetch of hasMany with association sort': function (next) {
     User.all({}, {
         includes: ['kids'
-      , 'avatars'], sort: {'login': 'desc', 'Kids.login': 'asc'}
+      , 'avatars'], sort: {'login': 'desc', 'kids.login': 'asc'}
     }, function (err, data) {
       assert.equal('zzzz', data[0].login);
       data.forEach(function (u) {

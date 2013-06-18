@@ -442,17 +442,28 @@ Here are some more examples of queries:
 
 Here is the list of comparison operators currently supported:
 
-eql: equal to
-ne: not equal to
-gt: greater than
-lt: less than
-gte: greater than or equal
-lte: less than or equal
-like: like
+ * eql: equal to
+ * ne: not equal to
+ * gt: greater than
+ * lt: less than
+ * gte: greater than or equal
+ * lte: less than or equal
+ * like: like
 
 A simple string-value for a query parameter is the same as 'eql'. `{foo: 'bar'}`
 is the same as `{foo: {eql: 'bar'}}`.
 
+For case-insensitive comparisons, use the 'nocase' option. Set it to `true` to
+affect all 'like' or equality comparisons, or use an array of specific keys you
+want to affect.
+
+```javascript
+// Zoobies whose "foo" begin with 'b', with no case-sensitivity
+Zooby.all({foo: {'like': 'b'}}, {nocase: true}, ...
+// Zoobies whose "foo" begin with 'b' and "bar" is 'baz'
+// The "bar" comparison will be case-sensitive, and the "foo" will not
+Zooby.all({or: [{foo: {'like': 'b'}}, {bar: 'baz'}]}, {nocase: ['foo']},
+```
 ## More complex queries
 
 Model supports combining queries with OR and negating queries with NOT.
@@ -531,7 +542,15 @@ want to display the roster of player for every team when you display teams in a
 list. You could do it like so:
 
 ```javascript
-Team.all({}, {includes: ['player']}, function (err, data) {
+var opts = {
+  includes: ['players']
+, sort: {
+    name: 'desc'
+  , 'players.familyName': 'desc'
+  , 'players.givenName': 'desc'
+  }
+};
+Team.all({}, opts, function (err, data) {
   var teams;
   if (err) {
     throw err;
@@ -545,6 +564,19 @@ Team.all({}, {includes: ['player']}, function (err, data) {
   });
 });
 ```
+
+### Sorting results
+
+Notice that it's possible to sort the eager-loaded associations in the above
+query. Just pass the association-names + properties in the 'sort' property.
+
+In the above example, the 'name' property of the sort refers to the team-names.
+The other two, 'players.familyName' and 'players.givenName', refer to the loaded
+associations. This will result in a list where the teams are initially sorted by
+name, and the contents of their 'players' list have the players sorted by given
+name, then first name.
+
+### Checking for loaded associations
 
 The eagerly fetched association will be in a property on the top-level item with
 the same name as the association (e.g., Players will be in `players`).
