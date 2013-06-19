@@ -39,8 +39,6 @@ tests = {
     m.createTable('zerbs', def, function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql,
-          'drop table if exists zerbs;'));
-      assert.ok(strIncl(sql,
           'create table zerbs ('));
       assert.ok(strIncl(sql,
           'id varchar(256) primary key'));

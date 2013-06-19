@@ -1,6 +1,7 @@
 
 var assert = require('assert')
   , utils = require('utilities')
+  , model = require('../../../lib')
   , Zooby = require('../../fixtures/zooby').Zooby
   , generator = require('../../../lib/generators/sql')
   , tests
@@ -29,8 +30,6 @@ tests = {
       , datatype: 'string'
       }
     });
-    assert.ok(strIncl(sql,
-        'drop table if exists zerbs;'));
     assert.ok(strIncl(sql,
         'create table zerbs ('));
     assert.ok(strIncl(sql,
@@ -87,8 +86,6 @@ tests = {
 
 , 'createTable with single model object': function () {
     var sql = generator.createTable(['Zooby']);
-    assert.ok(strIncl(sql,
-        'drop table if exists zoobies;'));
     assert.ok(strIncl(sql,
         'create table zoobies ('));
     assert.ok(strIncl(sql,
