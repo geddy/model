@@ -533,6 +533,7 @@ sort-direction is ascending ('asc'), so you can specify a property to sort on
 // Sort by createdAt, then updatedAt, then lastName,
 // then firstName -- all ascending
 {sort: ['createdAt', 'updatedAt', 'lastName', 'firstName']}
+```
 
 ### Skip and limit
 
