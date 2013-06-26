@@ -1,31 +1,26 @@
 
 var assert = require('assert')
   , utils = require('utilities')
+  , model = require('../../../lib')
   , Zooby = require('../../fixtures/zooby').Zooby
   , generator = require('../../../lib/generators/sql')
   , tests
-  , arrIncl;
-
-arrIncl = function (array, item) {
-  return array.some(function (arrItem) {
-    return strIncl(arrItem, item);
-  });
-};
+  , strIncl;
 
 strIncl = function (searchIn, searchFor) {
     var sIn = utils.string.trim(searchIn.toLowerCase());
     var sFor = utils.string.trim(searchFor.toLowerCase());
-    return sIn.indexOf(sFor) == 0;
+    return sIn.indexOf(sFor) > -1;
 };
 
 tests = {
 
-  'columnStatement': function () {
-    var sql = generator.columnStatement({
+  'addColumnStatement': function () {
+    var sql = generator.addColumnStatement({
       name: 'barBazQux'
     , datatype: 'string'
     });
-    assert.ok(strIncl(sql, 'bar_baz_qux varchar(256)'));
+    assert.ok(strIncl(sql, 'ADD COLUMN bar_baz_qux varchar(256)'));
   }
 
 , 'createTableStatement': function () {
@@ -35,35 +30,75 @@ tests = {
       , datatype: 'string'
       }
     });
-    sql = sql.split('\n');
-    assert.ok(arrIncl(sql,
-        'drop table if exists zerbs;'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'create table zerbs ('));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'id varchar(256) primary key'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'foo varchar(256)'));
+  }
+
+, 'alterTableStatement single alteration': function () {
+    var sql = generator.alterTableStatement('Zerb', {
+      operation: 'add'
+    , property: {
+        name: 'foo'
+      , datatype: 'string'
+      }
+    });
+    assert.ok(strIncl(sql,
+        'alter table zerbs'));
+    assert.ok(strIncl(sql,
+        'add column foo varchar(256)'));
+  }
+
+, 'alterTableStatement array of alterations': function () {
+    var alter = [
+          { operation: 'alter'
+          , property: {
+              name: 'foo'
+            , datatype: 'int'
+            }
+          }
+        , { operation: 'drop'
+          , property: {
+              name: 'bar'
+            }
+          }
+        , { operation: 'rename'
+          , property: {
+              name: 'bar'
+            , newName: 'bazBar'
+            }
+          }
+        ]
+      , sql = generator.alterTableStatement('Zerb', alter);
+
+    assert.ok(strIncl(sql,
+        'alter table zerbs'));
+    assert.ok(strIncl(sql,
+        'alter column foo type integer'));
+    assert.ok(strIncl(sql,
+        'drop column bar'));
+    assert.ok(strIncl(sql,
+        'rename column bar to baz_bar'));
   }
 
 , 'createTable with single model object': function () {
     var sql = generator.createTable(['Zooby']);
-    sql = sql.split('\n');
-    assert.ok(arrIncl(sql,
-        'drop table if exists zoobies;'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'create table zoobies ('));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'foo varchar(256)'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'bar real'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'woot boolean'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'freen date'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'zong timestamp'));
-    assert.ok(arrIncl(sql,
+    assert.ok(strIncl(sql,
         'blarg time'));
   }
 

@@ -22,8 +22,19 @@ tests = {
       database: 'model_test'
     });
     adapter.once('connect', function () {
-      var sql = generator.createTable(['Zooby',
-          'User', 'Profile', 'Account', 'Membership', 'Team']);
+      var sql = ''
+        , relations = [
+            'Zooby'
+          , 'User'
+          , 'Profile'
+          , 'Account'
+          , 'Membership'
+          , 'Team'
+          ];
+
+      sql += generator.dropTable(relations);
+      sql += generator.createTable(relations);
+
       adapter.exec(sql, function (err, data) {
         if (err) {
           throw err;

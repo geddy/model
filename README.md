@@ -442,17 +442,28 @@ Here are some more examples of queries:
 
 Here is the list of comparison operators currently supported:
 
-eql: equal to
-ne: not equal to
-gt: greater than
-lt: less than
-gte: greater than or equal
-lte: less than or equal
-like: like
+ * eql: equal to
+ * ne: not equal to
+ * gt: greater than
+ * lt: less than
+ * gte: greater than or equal
+ * lte: less than or equal
+ * like: like
 
 A simple string-value for a query parameter is the same as 'eql'. `{foo: 'bar'}`
 is the same as `{foo: {eql: 'bar'}}`.
 
+For case-insensitive comparisons, use the 'nocase' option. Set it to `true` to
+affect all 'like' or equality comparisons, or use an array of specific keys you
+want to affect.
+
+```javascript
+// Zoobies whose "foo" begin with 'b', with no case-sensitivity
+Zooby.all({foo: {'like': 'b'}}, {nocase: true}, ...
+// Zoobies whose "foo" begin with 'b' and "bar" is 'baz'
+// The "bar" comparison will be case-sensitive, and the "foo" will not
+Zooby.all({or: [{foo: {'like': 'b'}}, {bar: 'baz'}]}, {nocase: ['foo']},
+```
 ## More complex queries
 
 Model supports combining queries with OR and negating queries with NOT.
@@ -484,11 +495,16 @@ These OR and NOT queries can be nested and combined:
 {or: [{foo: {'like': 'b'}}, {foo: 'foo'}], not: {foo: 'baz'}}
 ```
 
-## Sorting
+## Options: sort, skip, limit
 
 The `all` API-call for querying accepts an optional options-object after the
-query-conditions. Set a 'sort' in that options-object to specifiy properties to
-sort on, and the sort-direction for each one.
+query-conditions for doing sorting, skipping to particular records (i.e., SQL
+OFFSET), and limiting the number of results returned.
+
+### Sorting
+
+Set a 'sort' in that options-object to specifiy properties to
+sort on, and the sort-direction for each one:
 
 ```javascript
 var users
@@ -505,7 +521,7 @@ User.all({updatedAt: {ne: null}}, {sort: {createdAt: 'asc', lastName: 'desc'}},
 });
 ```
 
-### Simplified syntax
+### Simplified syntax for sorting
 
 You can use a simplified syntax for specifying the sort. The default
 sort-direction is ascending ('asc'), so you can specify a property to sort on
@@ -517,6 +533,21 @@ sort-direction is ascending ('asc'), so you can specify a property to sort on
 // Sort by createdAt, then updatedAt, then lastName,
 // then firstName -- all ascending
 {sort: ['createdAt', 'updatedAt', 'lastName', 'firstName']}
+```
+
+### Skip and limit
+
+The 'skip' option allows you to return records beginning at a certain item
+number. Using 'limit' will return you only the desired number of items in your
+response. Using these options together allow you to implement pagination.
+
+Remember that both these option assume you have your items sorted in the
+desired order. If you don't sort your items before using these options, you'll
+end up with a random subset instead of the items you want.
+
+```javascript
+// Returns items 501-600
+{skip: 500, limit: 100}
 
 ```
 
