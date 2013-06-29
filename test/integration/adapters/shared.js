@@ -554,17 +554,17 @@ tests = {
         user.setProfile(Profile.create({
           nickname: 'frang'
         }));
-        user.addAvatar(Profile.create({
+        user.addAvatarProfile(Profile.create({
           nickname: 'fffuuu'
         }));
-        user.addAvatar(Profile.create({
+        user.addAvatarProfile(Profile.create({
           nickname: 'derrrr'
         }));
         user.save(function (err, data) {
           if (err) {
             throw err;
           }
-          user.getAvatars(function (err, data) {
+          user.getAvatarProfiles(function (err, data) {
             if (err) {
               throw err;
             }

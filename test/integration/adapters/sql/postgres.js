@@ -124,10 +124,10 @@ for (var p in shared) {
 
 var eagerAssnTests = {
   'test includes eager-fetch of hasMany association': function (next) {
-    User.all({}, {includes: ['kids', 'avatars']}, function (err, data) {
+    User.all({}, {includes: ['kids', 'avatarProfiles']}, function (err, data) {
       data.forEach(function (u) {
         if (u.id == currentId) {
-          assert.equal(2, u.avatars.length);
+          assert.equal(2, u.avatarProfiles.length);
         }
       });
       next();
@@ -137,7 +137,7 @@ var eagerAssnTests = {
 , 'test includes eager-fetch of hasMany with association sort': function (next) {
     User.all({}, {
         includes: ['kids'
-      , 'avatars'], sort: {'login': 'desc', 'kids.login': 'asc'}
+      , 'avatarProfiles'], sort: {'login': 'desc', 'kids.login': 'asc'}
     }, function (err, data) {
       assert.equal('zzzz', data[0].login);
       data.forEach(function (u) {
