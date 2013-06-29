@@ -194,6 +194,36 @@ tests = {
     });
   }
 
+, 'test all, by string LIKE percent in front': function (next) {
+    Zooby.all({foo: {'like': '%AR'}}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.length, 1);
+      next();
+    });
+  }
+
+, 'test all, by string LIKE percent in back': function (next) {
+    Zooby.all({foo: {'like': 'BA%'}}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.length, 2);
+      next();
+    });
+  }
+
+, 'test all, by string LIKE percent front and back': function (next) {
+    Zooby.all({foo: {'like': '%A%'}}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.length, 2);
+      next();
+    });
+  }
+
 , 'test all, by string LIKE case-insensitive bool': function (next) {
     Zooby.all({foo: {'like': 'b'}}, {nocase: true}, function (err, data) {
       if (err) {
@@ -206,6 +236,36 @@ tests = {
 
 , 'test all, by LIKE case-insensitive array': function (next) {
     Zooby.all({foo: {'like': 'b'}}, {nocase: ['foo']}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.length, 2);
+      next();
+    });
+  }
+
+, 'test all, by string LIKE case-insensitive percent in front': function (next) {
+    Zooby.all({foo: {'like': '%ar'}}, {nocase: true}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.length, 1);
+      next();
+    });
+  }
+
+, 'test all, by string LIKE case-insensitive percent in back': function (next) {
+    Zooby.all({foo: {'like': 'ba%'}}, {nocase: true}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.length, 2);
+      next();
+    });
+  }
+
+, 'test all, by string LIKE case-insensitive percent front and back': function (next) {
+    Zooby.all({foo: {'like': '%ba%'}}, {nocase: true}, function (err, data) {
       if (err) {
         throw err;
       }
