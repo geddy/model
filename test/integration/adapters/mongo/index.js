@@ -34,8 +34,6 @@ tests = {
 , 'test create adapter': function () {
     assert.ok(adapter instanceof Adapter);
   }
-
-
 };
 
 for (var p in shared) {
