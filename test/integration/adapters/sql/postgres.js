@@ -16,21 +16,21 @@ var utils = require('utilities')
 
 tests = {
   'before': function (next) {
-    var sql;
+    var relations = [
+          'Zooby'
+        , 'User'
+        , 'Profile'
+        , 'Account'
+        , 'Membership'
+        , 'Team'
+        ]
+      , models = [];
 
     adapter = new Adapter({
       database: 'model_test'
     });
     adapter.once('connect', function () {
-      var sql = ''
-        , relations = [
-            'Zooby'
-          , 'User'
-          , 'Profile'
-          , 'Account'
-          , 'Membership'
-          , 'Team'
-          ];
+      var sql = '';
 
       sql += generator.dropTable(relations);
       sql += generator.createTable(relations);
@@ -44,15 +44,15 @@ tests = {
     });
     adapter.connect();
 
-    model.adapters = {
-      'Zooby': adapter
-    , 'User': adapter
-    , 'Profile': adapter
-    , 'Account': adapter
-    , 'Membership': adapter
-    , 'Team': adapter
-    };
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model.adapters[r] = adapter;
+      models.push({
+        ctorName: r
+      });
+    });
 
+    model.registerDefinitions(models);
   }
 
 , 'after': function (next) {
