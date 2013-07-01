@@ -28,6 +28,8 @@ tests = {
 
     adapter = new Adapter({
       database: 'model_test'
+    , user: process.env.CI ? 'postgres' : null
+    , host: process.env.CI ? '127.0.0.1' : null
     });
     adapter.once('connect', function () {
       var sql = '';
