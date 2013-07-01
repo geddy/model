@@ -15,7 +15,6 @@ fakeAdapter = {
 };
 createCallback = function (next) {
   return function (err, data) {
-    console.log(data);
     next();
   };
 };
