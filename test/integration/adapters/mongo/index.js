@@ -13,16 +13,28 @@ var utils = require('utilities')
 
 tests = {
   'before': function (next) {
+    var relations = [
+          'Zooby'
+        , 'User'
+        , 'Profile'
+        , 'Account'
+        , 'Membership'
+        , 'Team'
+        ]
+      , models = [];
     adapter = new Adapter({
       dbname: 'model_test'
     });
 
-    model.adapters = {
-      'Zooby': adapter
-    , 'User': adapter
-    , 'Profile': adapter
-    , 'Account': adapter
-    };
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model.adapters[r] = adapter;
+      models.push({
+        ctorName: r
+      });
+    });
+
+    model.registerDefinitions(models);
 
     adapter.dropTable(['Zooby', 'User'], next);
   }
