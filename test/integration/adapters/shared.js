@@ -174,6 +174,16 @@ tests = {
     });
   }
 
+, 'test all, by string with metacharacters equality': function (next) {
+    Zooby.all({foo: '.*'}, {nocase:true}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(0, data.length);
+      next();
+    });
+  }
+
 , 'test all, by string case-insensitive bool': function (next) {
     Zooby.all({foo:'BAR'}, {nocase: true}, function (err, data) {
       if (err) {
