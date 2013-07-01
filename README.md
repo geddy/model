@@ -613,6 +613,14 @@ if (!someTeam.players) {
 }
 ```
 
+## Testing
+
+Run the tests with `jake test`. Run only unit tests with `jake test-no-integration`.
+
+The integration tests require mongo and postgres. To run the tests on a specific adapter, use `jake test[mongo]`, `jake test[postgres]`, or `jake test[memory]`.
+
+Configure adapter options by creating a `test/db.json` file. See `test/db.sample.json` for available options.
+
 - - -
 Model JavaScript ORM copyright 2112 mde@fleegix.org.
 

@@ -12,6 +12,7 @@ var utils = require('utilities')
   , Account = require('../../../fixtures/account').Account
   , Team = require('../../../fixtures/team').Team
   , Membership = require('../../../fixtures/membership').Membership
+  , config = require('../../../config')
   , shared = require('../shared');
 
 tests = {
@@ -26,11 +27,7 @@ tests = {
         ]
       , models = [];
 
-    adapter = new Adapter({
-      database: 'model_test'
-    , user: process.env.CI ? 'postgres' : null
-    , host: process.env.CI ? '127.0.0.1' : null
-    });
+    adapter = new Adapter(config.postgres);
     adapter.once('connect', function () {
       var sql = '';
 

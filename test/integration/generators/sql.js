@@ -10,6 +10,7 @@ var assert = require('assert')
   , Membership = require('../../fixtures/membership').Membership
   , Team = require('../../fixtures/team').Team
   , generator = require('../../../lib/generators/sql')
+  , config = require('../../config')
   , tests
   , arrIncl;
 
@@ -23,7 +24,7 @@ arrIncl = function (array, item) {
 tests = {
 
   'test createTable in DB, string id': function (next) {
-    var client = new pg.Client('postgres://' + (process.env.CI ? 'postgres' : 'mde') + '@localhost/model_test');
+    var client = new pg.Client('postgres://' + config.postgres.user + '@' + config.postgres.host + '/' + config.postgres.database);
     var sql = generator.createTable(['Zooby']);
     client.connect(function () {
       client.on('drain', client.end.bind(client));
