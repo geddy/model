@@ -25,7 +25,7 @@ tests = {
 
     model.adapters = {};
     relations.forEach(function (r) {
-      model.adapters[r] = adapter;
+      model[r].adapter = adapter;
       models.push({
         ctorName: r
       });
