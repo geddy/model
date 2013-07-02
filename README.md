@@ -7,6 +7,14 @@ Model is a datastore-agnostic ORM in JavaScript. It serves as the
 model-component for the [Geddy MVC Web framework](http://geddyjs.org/) for
 NodeJS.
 
+## Overview
+
+Model currently implements adapters for:
+
+* Postgres
+* Riak
+* MongoDB
+
 ### License
 
 Apache License, Version 2
@@ -23,13 +31,15 @@ build-tool.
 npm install model
 ```
 
-## Adapters
+## Hacking on Model: running tests
 
-Model currently implements adapters for:
+Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
 
-* Postgres
-* Riak
-* MongoDB
+The integration tests require mongo and postgres. To run the tests on a specific
+adapter, use `jake test[mongo]`, `jake test[postgres]`, or `jake test[memory]`.
+
+Configure adapter options by creating a `test/db.json` file. See
+`test/db.sample.json` for available options.
 
 ## Defining models
 
@@ -612,14 +622,6 @@ if (!someTeam.players) {
   });
 }
 ```
-
-## Testing
-
-Run the tests with `jake test`. Run only unit tests with `jake test-no-integration`.
-
-The integration tests require mongo and postgres. To run the tests on a specific adapter, use `jake test[mongo]`, `jake test[postgres]`, or `jake test[memory]`.
-
-Configure adapter options by creating a `test/db.json` file. See `test/db.sample.json` for available options.
 
 - - -
 Model JavaScript ORM copyright 2112 mde@fleegix.org.
