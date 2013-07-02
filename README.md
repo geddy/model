@@ -31,7 +31,7 @@ build-tool.
 npm install model
 ```
 
-## Hacking on Model: running tests
+### Hacking on Model: running tests
 
 Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
 
