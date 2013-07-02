@@ -9,6 +9,7 @@ var utils = require('utilities')
   , User = require('../../../fixtures/user').User
   , Profile = require('../../../fixtures/profile').Profile
   , Account = require('../../../fixtures/account').Account
+  , config = require('../../../config')
   , shared = require('../shared');
 
 tests = {
@@ -22,9 +23,7 @@ tests = {
         , 'Team'
         ]
       , models = [];
-    adapter = new Adapter({
-      dbname: 'model_test'
-    });
+    adapter = new Adapter(config.mongo);
 
     model.adapters = {};
     relations.forEach(function (r) {
