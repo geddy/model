@@ -18,7 +18,7 @@ _params = {
   firstName: 'Neil'
 };
 
-model.adapters.User = new BaseAdapter();
+model.User.adapter = new BaseAdapter();
 
 tests = {
   'static has EventEmitter emit': function () {
