@@ -472,6 +472,9 @@ tests = {
         // Ensure that reification worked
         assert.ok(typeof data.toObj === 'function');
         
+        // Since confirmPassword should only trigger on 'create', ensure that there were no errors
+        assert.ok(!err);
+        
         // Cleanup
         User.remove(data.id, next);
       });
@@ -488,7 +491,7 @@ tests = {
       if (err) {
         throw err;
       }
-      currentId = u.id;
+      currentId = data.id;
       User.first(currentId, {}, function (err, data) {
         var user = data
           , profile;
@@ -498,14 +501,11 @@ tests = {
         profile = Profile.create({});
         user.setProfile(profile);
         user.save(function (err, data) {
-          if (err) {
-            throw err;
-          }
+          assert.ok(!err, err);
+          
           user.getProfile(function (err, data) {
+            assert.ok(!err, err);
             assert.equal(profile.id, data.id);
-            if (err) {
-              throw err;
-            }
             next();
           });
         });

@@ -3,14 +3,13 @@ var model = require('../../lib');
 var User = function () {
   this.property('login', 'string', {required: true});
   this.property('password', 'string', {required: true});
-  this.property('confirmPassword', 'string', {required: true});
   this.property('lastName', 'string');
   this.property('firstName', 'string');
 
   this.validatesPresent('login');
   this.validatesFormat('login', /[a-z]+/, {message: 'Subdivisions!'});
-  this.validatesLength('login', {min: 3});
-  this.validatesConfirmed('password', 'confirmPassword');
+  this.validatesLength('login', {min: 3}, {on: 'create'});
+  this.validatesConfirmed('password', 'confirmPassword', {on: 'create'});
 
   this.hasOne('Profile');
   this.hasMany('Accounts');
