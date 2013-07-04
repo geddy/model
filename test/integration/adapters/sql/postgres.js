@@ -133,6 +133,20 @@ var eagerAssnTests = {
     });
   }
 
+, 'test includes eager-fetch of belongsTo association': function (next) {
+    Profile.all({}, {includes: ['user']}, function (err, data) {
+      var foundUser = false;
+      data.forEach(function (p) {
+        // One of these dudes should have a user
+        if (p.user) {
+          foundUser = p.user;
+        }
+      });
+      assert.ok(foundUser);
+      next();
+    });
+  }
+
 , 'test includes eager-fetch of hasMany with association sort': function (next) {
     User.all({}, {
         includes: ['kids'
