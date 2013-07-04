@@ -121,27 +121,7 @@ var params = {
 var user = User.create(params);
 ```
 
-## Validation and errors
-
-Data-validation happens on the call to `create`, and any validation errors show
-up inside an `errors` property on the instance, keyed by field name. Instances
-have an `isValid` method that returns a Boolean indicating whether the instance is
-valid.
-
-```javascript
-// Leaving out the required password field
-var params = {
-  login: 'alex'
-};
-var user = User.create(params);
-
-// Prints 'false'
-console.log(user.isValid());
-// Prints 'Field "password" is required'
-console.log(user.errors.password);
-```
-
-### Validations
+## Validations
 
 Validations provide a nice API for making sure your data items are in a good
 state. When an item is "valid," it means that its data meet all the criteria
@@ -205,6 +185,25 @@ myUser = User.create({name: 'aa'}, {scenario: 'reify'});
 User.first(query, {scenario: 'create'}, cb);
 // Do some special validations you need for credit-card payment
 User.updateProperties(newAttrs, {scenario: 'creditCardPayment'});
+```
+
+### Validation errors
+
+Any validation errors show up inside an `errors` property on the instance, keyed
+by field name. Instances have an `isValid` method that returns a Boolean
+indicating whether the instance is valid.
+
+```javascript
+// Leaving out the required password field
+var params = {
+  login: 'alex'
+};
+var user = User.create(params);
+
+// Prints 'false'
+console.log(user.isValid());
+// Prints 'Field "password" is required'
+console.log(user.errors.password);
 ```
 
 ## Saving items
