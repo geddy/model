@@ -456,6 +456,28 @@ tests = {
     });
   }
 
+, 'test reification of invalid model': function (next) {
+    var u = User.create({
+      login: 'asdf'
+      // Invalid model as confirmPassword should fail
+    });
+    u.save({force: true}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = u.id;
+      
+      // Fetch the invalid model
+      User.first(currentId, {}, function (err, data) {
+        // Ensure that reification worked
+        assert.ok(typeof data.toObj === 'function');
+        
+        // Cleanup
+        User.remove(data.id, next);
+      });
+    });
+  }
+
 , 'test hasOne association': function (next) {
     var u = User.create({
       login: 'asdf'
