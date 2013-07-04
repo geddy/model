@@ -123,7 +123,7 @@ tests = {
   }
 
 , 'Validating present with null scenario array active back': function () {
-    var msg = validators.present('foo', null, null, {qualifier:true, on:['create', 'update'], scenario:'update'}, null);
+    var msg = validators.present('foo', null, null, {qualifier:true, on:['create', 'reify'], scenario:'reify'}, null);
     assert.equal('[[model.validatesPresent]]', msg);
   }
 

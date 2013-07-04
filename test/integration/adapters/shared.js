@@ -481,6 +481,32 @@ tests = {
     });
   }
 
+, 'test validations on reification': function (next) {
+    var u = User.create({
+      login: 'as' // Too short, will cause validation error on reify
+      // Invalid model as confirmPassword should fail
+    });
+    u.save({force: true}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = data.id;
+      
+      // Fetch the invalid model
+      User.first(currentId, {}, function (err, data) {
+        // Ensure that reification worked
+        assert.ok(typeof data.toObj === 'function');
+        
+        // Ensure that we get an error
+        assert.ok(typeof data.errors.login !== 'undefined');
+        assert.ok(typeof data.errors.password !== 'undefined');
+        
+        // Cleanup
+        User.remove(data.id, next);
+      });
+    });
+  }
+
 , 'test hasOne association': function (next) {
     var u = User.create({
       login: 'asdf'
