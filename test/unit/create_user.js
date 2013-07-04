@@ -45,6 +45,23 @@ tests = {
     assert.ok(user.errors == null);
   }
 
+, 'test login is not too short when creating with scenario option': function () {
+    _params.login = 'zz'; // Long enough to create
+    var user = User.create(_params, {scenario: 'update'});
+    assert.ok(user.errors == null);
+  }
+
+, 'test login is too short when updating with scenario option': function () {
+    _params.login = 'zzzzzz';
+    var user = User.create(_params, {scenario: 'update'});
+    assert.ok(user.errors == null);
+    
+    _params.login = 'zz'; // Usually valid on updates, we're going to make it invalid by passing scenario:create
+    
+    user.updateProperties(_params, {scenario: 'create'});
+    assert.ok(typeof user.errors.login != 'undefined');
+  }
+
 , 'test missing login': function () {
     delete _params.login; // Contains numbers, invalid
     var user = User.create(_params);

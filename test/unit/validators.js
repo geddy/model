@@ -108,22 +108,22 @@ tests = {
   }
 
 , 'Validating present with null scenario inactive': function () {
-    var msg = validators.present('foo', null, null, {qualifier:true, on:'create'}, null, 'update');
+    var msg = validators.present('foo', null, null, {qualifier:true, on:'create', scenario:'update'}, null);
     assert.ok(!msg);
   }
 
 , 'Validating present with null scenario active': function () {
-    var msg = validators.present('foo', null, null, {qualifier:true, on:'create'}, null, 'create');
+    var msg = validators.present('foo', null, null, {qualifier:true, on:'create', scenario:'create'}, null);
     assert.equal('[[model.validatesPresent]]', msg);
   }
 
-, 'Validating present with null scenario array active': function () {
-    var msg = validators.present('foo', null, null, {qualifier:true, on:['create', 'update']}, null, 'create');
+, 'Validating present with null scenario array active front': function () {
+    var msg = validators.present('foo', null, null, {qualifier:true, on:['create', 'update'], scenario:'create'}, null);
     assert.equal('[[model.validatesPresent]]', msg);
   }
 
-, 'Validating present with null scenario array active': function () {
-    var msg = validators.present('foo', null, null, {qualifier:true, on:['create', 'update']}, null, 'update');
+, 'Validating present with null scenario array active back': function () {
+    var msg = validators.present('foo', null, null, {qualifier:true, on:['create', 'update'], scenario:'update'}, null);
     assert.equal('[[model.validatesPresent]]', msg);
   }
 
