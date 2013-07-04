@@ -36,6 +36,15 @@ tests = {
     assert.ok(user.errors.login, 'Subdivisions!');
   }
 
+, 'test login is not too short when updating': function () {
+    _params.login = 'zzzzz'; // Long enough to create
+    var user = User.create(_params);
+    assert.ok(user.errors == null);
+    _params.login = 'zz'; // Too short, but should be valid on updates
+    user.updateProperties(_params);
+    assert.ok(user.errors == null);
+  }
+
 , 'test missing login': function () {
     delete _params.login; // Contains numbers, invalid
     var user = User.create(_params);
