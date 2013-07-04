@@ -507,6 +507,32 @@ tests = {
     });
   }
 
+, 'test validations on fetch with scenario': function (next) {
+    var u = User.create({
+      login: 'as' // Too short, will cause validation error on reify
+      // Invalid model as confirmPassword should fail
+    });
+    u.save({force: true}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      currentId = data.id;
+      
+      // Fetch the invalid model
+      User.first(currentId, {scenario: 'update'}, function (err, data) {
+        // Ensure that reification worked
+        assert.ok(typeof data.toObj === 'function');
+        
+        // Ensure that we get errors about the password, but not the login
+        assert.ok(!data.errors.login);
+        assert.ok(typeof data.errors.password !== 'undefined');
+        
+        // Cleanup
+        User.remove(data.id, next);
+      });
+    });
+  }
+
 , 'test hasOne association': function (next) {
     var u = User.create({
       login: 'asdf'
