@@ -141,6 +141,51 @@ console.log(user.isValid());
 console.log(user.errors.password);
 ```
 
+### Validation scenarios
+
+You can specify on which of three default scenarios you want validations to run on.
+If no scenario is specified, it will be run on all of them. If one or more scenarios 
+are specified, the validations will *only* run on those.
+
+ * `reify` - validates on `.first` or `.all`
+ * `create` - validates on `.create`
+ * `update` - validates on `.updateProperties`
+
+```javascript
+var User = function () {
+  this.property('name', 'string', {required: false});
+  this.property('password', 'string', {required: false});
+  
+  this.validatesLength('name', {min: 3}, {on: ['create', 'reify']});
+  this.validatesPresent('password', true, {on: 'create'});
+};
+
+// Validates with the `create` scenario, so both properties are invalid:
+myUser = User.create({name: 'aa'});
+
+// Validates with the `reify` scenario, so only the `name` property is invalid
+User.first(myUser.id, function(err, user) {
+  // user.errors reports that name is too short
+});
+
+```
+
+In rare cases, you might want to specify a different validation scenario than the defaults.
+
+```javascript
+
+// Force validation with the `reify` scenario, so only the `name` property is invalid:
+myUser = User.create({name: 'aa'}, {scenario: 'reify'});
+
+// Force validation with the `update` scenario, no errors as neither validation runs on `update`
+myUser = User.create({name: 'aa'}, {scenario: 'update'});
+
+// You can also specify a scenario with these methods:
+User.first(query, {scenario: 'create'}, cb);
+User.all(query, {scenario: 'create'}, cb);
+User.updateProperties(newAttrs, {scenario: 'create'});
+```
+
 ## Saving items
 
 After creating the instance, call the `save` method on the instance. This method
