@@ -8,7 +8,7 @@ var User = function () {
 
   this.validatesPresent('login');
   this.validatesFormat('login', /[a-z]+/, {message: 'Subdivisions!'});
-  this.validatesLength('login', {min: 3}, {on: 'create'});
+  this.validatesLength('login', {min: 3}, {on: ['create', 'reify']});
   this.validatesConfirmed('password', 'confirmPassword', {on: 'create'});
 
   this.hasOne('Profile');
