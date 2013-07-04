@@ -107,6 +107,26 @@ tests = {
     });
   }
 
+, 'Validating present with null scenario inactive': function () {
+    var msg = validators.present('foo', null, null, {qualifier:true, on:'create', scenario:'update'}, null);
+    assert.ok(!msg);
+  }
+
+, 'Validating present with null scenario active': function () {
+    var msg = validators.present('foo', null, null, {qualifier:true, on:'create', scenario:'create'}, null);
+    assert.equal('[[model.validatesPresent]]', msg);
+  }
+
+, 'Validating present with null scenario array active front': function () {
+    var msg = validators.present('foo', null, null, {qualifier:true, on:['create', 'update'], scenario:'create'}, null);
+    assert.equal('[[model.validatesPresent]]', msg);
+  }
+
+, 'Validating present with null scenario array active back': function () {
+    var msg = validators.present('foo', null, null, {qualifier:true, on:['create', 'reify'], scenario:'reify'}, null);
+    assert.equal('[[model.validatesPresent]]', msg);
+  }
+
 };
 
 module.exports = tests;
