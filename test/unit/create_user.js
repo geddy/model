@@ -39,10 +39,10 @@ tests = {
 , 'test login is not too short when updating': function () {
     _params.login = 'zzzzz'; // Long enough to create
     var user = User.create(_params);
-    assert.ok(user.errors == null);
+    assert.ok(!user.errors);
     _params.login = 'zz'; // Too short, but should be valid on updates
     user.updateProperties(_params);
-    assert.ok(user.errors == null);
+    assert.ok(!user.errors);
   }
 
 , 'test login is not too short when creating with scenario option': function () {
