@@ -141,49 +141,70 @@ console.log(user.isValid());
 console.log(user.errors.password);
 ```
 
-### Validation scenarios
+### Validations
 
-You can specify on which of three default scenarios you want validations to run on.
-If no scenario is specified, it will be run on all of them. If one or more scenarios 
-are specified, the validations will *only* run on those.
+Validations provide a nice API for making sure your data items are in a good
+state. When an item is "valid," it means that its data meet all the criteria
+you've set for it. You can specify that certain fields have to be present, have
+to be certain length, or meet any other specific criteria you want to set.
 
- * `reify` - validates on `.first` or `.all`
- * `create` - validates on `.create`
- * `update` - validates on `.updateProperties`
+Here's a list of supported validation methods:
+
+ * validatesPresent -- ensures the property exists
+ * validatesAbsent -- ensures the property does not exist
+ * validatesLength -- ensures the minimum, maximum, or exact length
+ * validatesFormat -- validates using a passed-in regex
+ * validatesConfirmed -- validates a match against another named parameter
+ * validatesWithFunction -- uses an arbitrary function to validate
+
+#### Common options
+
+You can specify a custom error message for when a validation fails using the
+'message' option:
+
+```javascript
+var Zerb = function () {
+  this.property('name', 'string');
+  this.validatesLength('name', {is: 3, message: 'Try again, gotta be 3!'});
+};
+```
+
+You can decide when you want validations to run by passing the 'on' option.
 
 ```javascript
 var User = function () {
   this.property('name', 'string', {required: false});
   this.property('password', 'string', {required: false});
-  
-  this.validatesLength('name', {min: 3}, {on: ['create', 'reify']});
-  this.validatesPresent('password', true, {on: 'create'});
+
+  this.validatesLength('name', {min: 3, on: ['create', 'update']});
+  this.validatesPresent('password', {on: 'create'});
+  this.validatesConfirmed('password', 'confirmPassword', {on: 'create'});
 };
 
-// Validates with the `create` scenario, so both properties are invalid:
-myUser = User.create({name: 'aa'});
-
-// Validates with the `reify` scenario, so only the `name` property is invalid
-User.first(myUser.id, function(err, user) {
-  // user.errors reports that name is too short
-});
+// Name validation will pass, but password will fail
+myUser = User.create({name: 'aaa'});
 
 ```
 
-In rare cases, you might want to specify a different validation scenario than the defaults.
+The default behavior is for validation on both 'create' and 'update':
+
+ * `create` - validates on <MyModelDefinition>`.create`
+ * `update` - validates on <myModelInstance>`.updateProperties`
+
+You can also define custom validation scenarios other than create and update.
+(There is a builtin custom 'reify' scenario which is uses when instantiating
+items out of your datastore. This happens on the `first` and `all` query
+methods.)
 
 ```javascript
-
-// Force validation with the `reify` scenario, so only the `name` property is invalid:
+// Force validation with the `reify` scenario, ignore the too-short name property
 myUser = User.create({name: 'aa'}, {scenario: 'reify'});
 
-// Force validation with the `update` scenario, no errors as neither validation runs on `update`
-myUser = User.create({name: 'aa'}, {scenario: 'update'});
-
 // You can also specify a scenario with these methods:
+// Enforce 'create' validations on a fetch -- may result in invalid instances
 User.first(query, {scenario: 'create'}, cb);
-User.all(query, {scenario: 'create'}, cb);
-User.updateProperties(newAttrs, {scenario: 'create'});
+// Do some special validations you need for credit-card payment
+User.updateProperties(newAttrs, {scenario: 'creditCardPayment'});
 ```
 
 ## Saving items
