@@ -85,20 +85,20 @@ tests = {
     });
   }
 
-, 'test updatePropeties does not affect datastore': function (next) {
+, 'test updatePropeties without save does not affect datastore': function (next) {
     Zooby.first({id: currentId}, {}, function (err, data) {
       if (err) {
         throw err;
       }
       assert.equal(data.id, currentId);
       data.updateProperties({
-        foo: 'ppp'
+        foo: 'bdb'
       });
       Zooby.first({id: currentId}, {}, function (err, fetchData) {
         if (err) {
           throw err;
         }
-        assert.notStrictEqual(data.foo, fetchData.foo);
+        assert.equal(data.foo, fetchData.foo);
         next();
       });
     });
