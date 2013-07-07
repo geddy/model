@@ -85,6 +85,25 @@ tests = {
     });
   }
 
+, 'test updatePropeties does not affect datastore': function (next) {
+    Zooby.first({id: currentId}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(data.id, currentId);
+      data.updateProperties({
+        foo: 'ppp'
+      });
+      Zooby.first({id: currentId}, {}, function (err, fetchData) {
+        if (err) {
+          throw err;
+        }
+        assert.notStrictEqual(data.foo, fetchData.foo);
+        next();
+      });
+    });
+  }
+
 , 'test save existing': function (next) {
     Zooby.first(currentId, {}, function (err, data) {
       if (err) {
@@ -466,15 +485,15 @@ tests = {
         throw err;
       }
       currentId = u.id;
-      
+
       // Fetch the invalid model
       User.first(currentId, {}, function (err, data) {
         // Ensure that reification worked
         assert.ok(typeof data.toObj === 'function');
-        
+
         // Since confirmPassword should only trigger on 'create', ensure that there were no errors
         assert.ok(!err);
-        
+
         // Cleanup
         User.remove(data.id, next);
       });
@@ -491,16 +510,16 @@ tests = {
         throw err;
       }
       currentId = data.id;
-      
+
       // Fetch the invalid model
       User.first(currentId, {}, function (err, data) {
         // Ensure that reification worked
         assert.ok(typeof data.toObj === 'function');
-        
+
         // Ensure that we get an error
         assert.ok(typeof data.errors.login !== 'undefined');
         assert.ok(typeof data.errors.password !== 'undefined');
-        
+
         // Cleanup
         User.remove(data.id, next);
       });
@@ -517,16 +536,16 @@ tests = {
         throw err;
       }
       currentId = data.id;
-      
+
       // Fetch the invalid model
       User.first(currentId, {scenario: 'update'}, function (err, data) {
         // Ensure that reification worked
         assert.ok(typeof data.toObj === 'function');
-        
+
         // Ensure that we get errors about the password, but not the login
         assert.ok(!data.errors.login);
         assert.ok(typeof data.errors.password !== 'undefined');
-        
+
         // Cleanup
         User.remove(data.id, next);
       });
@@ -554,7 +573,7 @@ tests = {
         user.setProfile(profile);
         user.save(function (err, data) {
           assert.ok(!err, err);
-          
+
           user.getProfile(function (err, data) {
             assert.ok(!err, err);
             assert.equal(profile.id, data.id);
@@ -751,7 +770,7 @@ tests = {
         assert.equal(data.id, 'customid');
         next();
       });
-    } 
+    }
     else {
       throw new Error('model is not valid');
     }
