@@ -85,7 +85,7 @@ tests = {
     });
   }
 
-, 'test updatePropeties without save does not affect datastore': function (next) {
+, 'test updateProperties without save does not affect datastore': function (next) {
     Zooby.first({id: currentId}, {}, function (err, data) {
       if (err) {
         throw err;
@@ -98,7 +98,7 @@ tests = {
         if (err) {
           throw err;
         }
-        assert.equal(data.foo, fetchData.foo);
+        assert.notStrictEqual(data.foo, fetchData.foo);
         next();
       });
     });
