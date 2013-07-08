@@ -536,8 +536,8 @@ tests = {
 , 'test hasOne association': function (next) {
     var u = User.create({
       login: 'asdf'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
+    , password: 'zerb1'
+    , confirmPassword: 'zerb1'
     });
     u.save(function (err, data) {
       if (err) {
@@ -568,8 +568,8 @@ tests = {
 , 'test belongsTo association': function (next) {
     var u = User.create({
       login: 'asdf'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
+    , password: 'zerb2'
+    , confirmPassword: 'zerb2'
     });
     u.save(function (err, data) {
       if (err) {
@@ -603,8 +603,8 @@ tests = {
 , 'test hasMany association': function (next) {
     var u = User.create({
       login: 'asdf'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
+    , password: 'zerb3'
+    , confirmPassword: 'zerb3'
     });
     u.save(function (err, data) {
       if (err) {
@@ -638,8 +638,8 @@ tests = {
 , 'test named hasMany': function (next) {
     var u = User.create({
       login: 'asdf'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
+    , password: 'zerb4'
+    , confirmPassword: 'zerb4'
     });
     u.save(function (err, data) {
       if (err) {
@@ -654,13 +654,13 @@ tests = {
         }
         user.addKid(User.create({
           login: 'qwer'
-        , password: 'zerb'
-        , confirmPassword: 'zerb'
+        , password: 'zerb1'
+        , confirmPassword: 'zerb1'
         }));
         user.addKid(User.create({
           login: 'zxcv'
-        , password: 'zerb'
-        , confirmPassword: 'zerb'
+        , password: 'zerb2'
+        , confirmPassword: 'zerb2'
         }));
         user.save(function (err, data) {
           if (err) {
@@ -681,8 +681,8 @@ tests = {
 , 'test named hasMany with hasOne of same model': function (next) {
     var u = User.create({
       login: 'zzzz'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
+    , password: 'zerb5'
+    , confirmPassword: 'zerb5'
     });
     u.save(function (err, data) {
       if (err) {

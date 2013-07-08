@@ -78,8 +78,8 @@ tests = {
 , 'test save new': function (next) {
     var u = User.create({
       login: 'asdf'
-    , password: 'zerb'
-    , confirmPassword: 'zerb'
+    , password: 'zerbzerb'
+    , confirmPassword: 'zerbzerb'
     });
     u.save(function (err, data) {
       if (err) {
@@ -162,8 +162,16 @@ var eagerAssnTests = {
     });
   }
 
+, 'test includes eager-fetch of hasMany with `first` lookup for owner obj': function (next) {
+    User.first({login: 'asdf', password: 'zerb4'}, {includes: ['kids', 'avatarProfiles']},
+        function (err, data) {
+      assert.equal(2, data.kids.length);
+      next();
+    });
+  }
+
 , 'test hasMany through': function (next) {
-    User.first({login: 'asdf'}, function (err, data) {
+    User.first({login: 'asdf', password: 'zerb1'}, function (err, data) {
       if (err) {
         throw err;
       }
