@@ -9,7 +9,7 @@ var User = function () {
   this.validatesPresent('login');
   this.validatesFormat('login', /[a-z]+/, {message: 'Subdivisions!'});
   this.validatesLength('login', {min: 3, on: ['create', 'reify']});
-  this.validatesConfirmed('password', 'confirmPassword', {on: 'create'});
+  this.validatesConfirmed('password', 'confirmPassword', {on: 'create', message: 'Parallax!'});
 
   this.hasOne('Profile');
   this.hasMany('Accounts');

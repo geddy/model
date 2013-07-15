@@ -33,11 +33,20 @@ tests = {
     _params.login = '2112'; // Contains numbers, invalid
     var user = User.create(_params);
     // Error message should be customized
-    assert.ok(user.errors.login, 'Subdivisions!');
+    assert.equal(user.errors.login, 'Subdivisions!');
+  }
+
+, 'test invalid password with custom error message': function () {
+    _params.login = 'zzzz';
+    _params.password = 'bbbb'; // Wrong
+    var user = User.create(_params);
+    // Error message should be customized
+    assert.equal(user.errors.password, 'Parallax!');
   }
 
 , 'test login is not too short when updating': function () {
     _params.login = 'zzzzz'; // Long enough to create
+    _params.password = 'asdf';
     var user = User.create(_params);
     assert.ok(!user.errors);
     _params.login = 'zz'; // Too short, but should be valid on updates
@@ -55,9 +64,9 @@ tests = {
     _params.login = 'zzzzzz';
     var user = User.create(_params, {scenario: 'update'});
     assert.ok(user.errors == null);
-    
+
     _params.login = 'zz'; // Usually valid on updates, we're going to make it invalid by passing scenario:create
-    
+
     user.updateProperties(_params, {scenario: 'create'});
     assert.ok(typeof user.errors.login != 'undefined');
   }
