@@ -419,8 +419,8 @@ var Team = function () {
 };
 
 var Membership = function () {
-  this.hasMany('Memberships');
-  this.hasMany('Teams');
+  this.belongsTo('User');
+  this.belongsTo('Team');
 };
 ```
 
