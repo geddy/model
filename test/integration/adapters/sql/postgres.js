@@ -170,7 +170,7 @@ var eagerAssnTests = {
     });
   }
 
-, 'test hasMany through': function (next) {
+, 'test hasMany through with auto-save for add side': function (next) {
     User.first({login: 'asdf', password: 'zerb1'}, function (err, data) {
       if (err) {
         throw err;
@@ -179,17 +179,40 @@ var eagerAssnTests = {
       u.addTeam(Team.create({
         name: 'foo'
       }));
-      u.addTeam(Team.create({
-        name: 'bar'
-      }));
       u.save(function (err, data) {
         currentId = u.id;
         u.getTeams(function (err, data) {
-          assert.equal(2, data.length);
+          assert.equal(1, data.length);
           data.forEach(function (item) {
             assert.equal('Team', item.type);
           });
           next();
+        });
+      });
+    });
+  }
+
+, 'test hasMany through with already saved on both sides': function (next) {
+    User.first({login: 'asdf', password: 'zerb1'}, function (err, data) {
+      var u, t;
+      if (err) {
+        throw err;
+      }
+      u = data;
+      t = Team.create({
+        name: 'bar'
+      });
+      t.save(function (err, data) {
+        u.addTeam(t);
+        u.save(function (err, data) {
+          currentId = u.id;
+          u.getTeams(function (err, data) {
+            assert.equal(2, data.length);
+            data.forEach(function (item) {
+              assert.equal('Team', item.type);
+            });
+            next();
+          });
         });
       });
     });
