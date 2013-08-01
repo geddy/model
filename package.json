@@ -22,11 +22,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/mde/model.git"
+    "url": "git://github.com/ILUMY/model.git"
   },
   "dependencies": {
     "utilities": "0.0.x",
-    "mongodb-wrapper": "0.4.x",
+    "mongodb-wrapper": "https://github.com/ILUMY/node-mongodb-wrapper/tarball/master",
     "pg": "0.9.x"
   },
   "devDependencies": {
