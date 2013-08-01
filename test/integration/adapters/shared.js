@@ -193,6 +193,24 @@ tests = {
     });
   }
 
+, 'test all, id does not override other conditions': function (next) {
+    Zooby.all({foo: 'FOO'}, {}, function (err, data) {
+      if (err) {
+        throw err;
+      }
+      assert.equal(1, data.length);
+      assert.equal(testItems[0].foo, data[0].foo);
+
+      Zooby.first({id: data[0].id, foo:'NOTFOO'}, function(err, datab) {
+        if (err) {
+          throw err;
+        }
+        assert.equal(datab, null);
+        next();
+      });
+    });
+  }
+
 , 'test all, by string with metacharacters equality': function (next) {
     Zooby.all({foo: '.*'}, {nocase:true}, function (err, data) {
       if (err) {
