@@ -6,6 +6,7 @@ node_js:
 services:
   - mongodb
   - postgresql
+  - riak
 
 before_script:
   - sudo /etc/init.d/postgresql stop
