@@ -11,6 +11,8 @@ var t = new jake.TestTask('Model', function () {
   this.testFiles.exclude('test/config.js');
   this.testFiles.exclude('test/db.json');
   this.testFiles.exclude('test/db.sample.json');
+  // TODO: Re-include after Travis supports Riak
+  this.testFiles.exclude('test/integration/adapters/riak/index.js');
 });
 
 var p = new jake.NpmPublishTask('model', [

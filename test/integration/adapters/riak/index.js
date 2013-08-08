@@ -10,33 +10,37 @@ var utils = require('utilities')
   , Account = require('../../../fixtures/account').Account
   , Team = require('../../../fixtures/team').Team
   , Membership = require('../../../fixtures/membership').Membership
+  , config = require('../../../config')
   , shared = require('../shared');
 
 tests = {
-  'before': function () {
-    adapter = new Adapter();
+  'before': function (next) {
+    var relations = [
+          'Zooby'
+        , 'User'
+        , 'Profile'
+        , 'Account'
+        , 'Membership'
+        , 'Team'
+        ]
+      , models = [];
+    adapter = new Adapter(config.mongo);
 
-    model.adapters = {
-      'Zooby': adapter
-    , 'User': adapter
-    , 'Profile': adapter
-    , 'Account': adapter
-    };
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r].adapter = adapter;
+      models.push({
+        ctorName: r
+      });
+    });
+
+    model.registerDefinitions(models);
+
+    adapter.dropTable(['Zooby', 'User'], next);
   }
 
 , 'after': function (next) {
-    adapter.dropTable([
-      'User'
-    , 'Profile'
-    , 'Account'
-    ], function (err, data) {
-      if (err) {
-        throw err;
-      }
-      else {
-        next();
-      }
-    });
+    adapter.dropTable(['Zooby', 'User'], next);
   }
 
 , 'test create adapter': function () {

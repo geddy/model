@@ -14,6 +14,11 @@
       , database: process.env.POSTGRES_DATABASE || 'model_test'
       , host:     process.env.POSTGRES_HOST     || '127.0.0.1'
       }
+    , riak: {
+        protocol: 'http'
+      , host: process.env.RIAK_HOST || 'localhost'
+      , port: process.env.RIAK_PORT || 8098
+      }
     };
   
   try {
