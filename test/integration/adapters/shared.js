@@ -507,7 +507,7 @@ tests = {
       // Fetch the invalid model
       User.first(currentId, {}, function (err, data) {
         // Ensure that reification worked
-        assert.ok(typeof data.toObj === 'function');
+        assert.ok(typeof data.toJSON === 'function');
 
         // Since confirmPassword should only trigger on 'create', ensure that there were no errors
         assert.ok(!err);
@@ -532,7 +532,7 @@ tests = {
       // Fetch the invalid model
       User.first(currentId, {}, function (err, data) {
         // Ensure that reification worked
-        assert.ok(typeof data.toObj === 'function');
+        assert.ok(typeof data.toJSON === 'function');
 
         // Ensure that we get an error
         assert.ok(typeof data.errors.login !== 'undefined');
@@ -558,7 +558,7 @@ tests = {
       // Fetch the invalid model
       User.first(currentId, {scenario: 'update'}, function (err, data) {
         // Ensure that reification worked
-        assert.ok(typeof data.toObj === 'function');
+        assert.ok(typeof data.toJSON === 'function');
 
         // Ensure that we get errors about the password, but not the login
         assert.ok(!data.errors.login);
