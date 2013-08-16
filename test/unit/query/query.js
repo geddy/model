@@ -99,6 +99,18 @@ var tests = {
     assert.ok(operands[0] instanceof operation.AndOperation);
   }
 
+, 'test condition witn nocase opts flag': function () {
+    var query = new Query(Zooby, {foo: {like: 'foo'}, bar: null}, {nocase: true});
+    assert.ok(query.conditions.operands[0].opts.nocase);
+    assert.ok(!query.conditions.operands[1].opts.nocase);
+  }
+
+, 'test condition witn nocase opts array': function () {
+    var query = new Query(Zooby, {foo: {like: 'foo'}, derf: 'blarg'}, {nocase: ['derf']});
+    assert.ok(!query.conditions.operands[0].opts.nocase);
+    assert.ok(query.conditions.operands[1].opts.nocase);
+  }
+
 
 };
 
