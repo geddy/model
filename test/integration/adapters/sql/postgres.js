@@ -6,14 +6,67 @@ var utils = require('utilities')
   , adapter
   , currentId
   , tests
+  , config = require('../../../config')
+  , shared = require('../shared')
+  , createFixtures
+  , deleteFixtures
+  // Fixtures
   , Zooby = require('../../../fixtures/zooby').Zooby
   , User = require('../../../fixtures/user').User
   , Profile = require('../../../fixtures/profile').Profile
   , Account = require('../../../fixtures/account').Account
   , Team = require('../../../fixtures/team').Team
   , Membership = require('../../../fixtures/membership').Membership
-  , config = require('../../../config')
-  , shared = require('../shared');
+
+  , Event = require('../../../fixtures/event').Event
+  , Person = require('../../../fixtures/person').Person
+  , Message = require('../../../fixtures/message').Message
+  , Photo = require('../../../fixtures/photo').Photo;
+
+createFixtures = function (cb) {
+  var relations = ['Event', 'Person', 'Message', 'Photo']
+    , doIt = function () {
+        var relation = relations.shift()
+          , items = []
+          , letter;
+        if (relation) {
+          letters = 'abcdefghijklmnopqrst'.split('');
+          letters.forEach(function (letter) {
+            items.push(model[relation].create({title: letter}));
+          });
+          model[relation].save(items);
+          doIt();
+        }
+        else {
+          cb();
+        }
+      };
+  doIt();
+};
+
+deleteFixtures = function (cb) {
+  var relations = ['Event', 'Person', 'Message', 'Photo']
+    , doIt = function () {
+        var relation = relations.shift();
+        if (relation) {
+          model[relation].all({}, function (err, data) {
+            var ids = [];
+            if (err) { throw err; }
+            data.forEach(function (item) {
+              ids.push(item.id);
+            });
+            model[relation].remove({id: ids}, function (err, data) {
+              if (err) { throw err; }
+              doIt();
+            });
+          });
+        }
+        else {
+          cb();
+        }
+      };
+  doIt();
+};
 
 tests = {
   'before': function (next) {
@@ -24,6 +77,10 @@ tests = {
         , 'Account'
         , 'Membership'
         , 'Team'
+        , 'Event'
+        , 'Person'
+        , 'Message'
+        , 'Photo'
         ]
       , models = [];
 
@@ -38,7 +95,9 @@ tests = {
         if (err) {
           throw err;
         }
-        next();
+        createFixtures(function () {
+          deleteFixtures(next);
+        });
       });
     });
     adapter.connect();
