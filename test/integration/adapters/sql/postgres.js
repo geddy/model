@@ -120,6 +120,14 @@ tests = {
     adapter.disconnect();
   }
 
+, 'beforeEach': function (next) {
+    next();
+  }
+
+, 'afterEach': function (next) {
+    next();
+  }
+
 , 'test create adapter': function () {
     assert.ok(adapter instanceof Adapter);
   }
