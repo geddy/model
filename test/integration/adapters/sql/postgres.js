@@ -169,17 +169,6 @@ for (var p in shared) {
 var eagerAssnTests = {
 
   'test includes eager-fetch of hasMany association': function (next) {
-    User.all({}, {includes: ['kids', 'avatarProfiles']}, function (err, data) {
-      data.forEach(function (u) {
-        if (u.id == currentId) {
-          assert.equal(2, u.avatarProfiles.length);
-        }
-      });
-      next();
-    });
-  }
-
-, 'test includes eager-fetch of hasMany association': function (next) {
     Event.all(function (err, data) {
       if (err) { throw err; }
       var ev = data[0];

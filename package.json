@@ -18,7 +18,7 @@
   "author": "Matthew Eernisse <mde@fleegix.org> (http://fleegix.org)",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "jake test"
+    "test": "jake test --trace"
   },
   "repository": {
     "type": "git",
