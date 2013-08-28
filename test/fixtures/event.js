@@ -6,7 +6,8 @@ var Event = function () {
 
   this.hasMany('Participants', {model: 'People'});
   this.hasMany('Admins', {model: 'People'});
-  this.hasMany('Admins', {model: 'People'});
+  this.hasMany('Photos');
+  this.hasMany('Comments', {model: 'Messages'});
 };
 
 Event.prototype.someMethod = function () {

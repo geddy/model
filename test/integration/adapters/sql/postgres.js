@@ -10,6 +10,8 @@ var utils = require('utilities')
   , shared = require('../shared')
   , createFixtures
   , deleteFixtures
+  , updateItems
+
   // Fixtures
   , Zooby = require('../../../fixtures/zooby').Zooby
   , User = require('../../../fixtures/user').User
@@ -68,6 +70,22 @@ deleteFixtures = function (cb) {
   doIt();
 };
 
+updateItems = function (collection, cb) {
+  var doIt = function () {
+    var item = collection.pop();
+    if (item) {
+      item.save(function (err, data) {
+        if (err) { throw err; }
+        doIt();
+      });
+    }
+    else {
+      cb();
+    }
+  };
+  doIt();
+};
+
 tests = {
   'before': function (next) {
     var relations = [
@@ -121,11 +139,11 @@ tests = {
   }
 
 , 'beforeEach': function (next) {
-    next();
+    createFixtures(next);
   }
 
 , 'afterEach': function (next) {
-    next();
+    deleteFixtures(next);
   }
 
 , 'test create adapter': function () {
@@ -142,46 +160,6 @@ tests = {
     });
   }
 
-, 'test save new': function (next) {
-    var u = User.create({
-      login: 'asdf'
-    , password: 'zerbzerb'
-    , confirmPassword: 'zerbzerb'
-    });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
-      next();
-    });
-  }
-
-, 'test first': function (next) {
-    User.first(currentId, {}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      assert.equal(data.id, currentId);
-      next();
-    });
-  }
-
-, 'test remove': function (next) {
-    User.remove(currentId, {}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      User.first(currentId, {}, function (err, data) {
-        if (err) {
-          throw err;
-        }
-        assert.ok(!data);
-        next();
-      });
-    });
-  }
-
 };
 
 for (var p in shared) {
@@ -189,6 +167,7 @@ for (var p in shared) {
 }
 
 var eagerAssnTests = {
+
   'test includes eager-fetch of hasMany association': function (next) {
     User.all({}, {includes: ['kids', 'avatarProfiles']}, function (err, data) {
       data.forEach(function (u) {
@@ -197,6 +176,49 @@ var eagerAssnTests = {
         }
       });
       next();
+    });
+  }
+
+, 'test includes eager-fetch of hasMany association': function (next) {
+    Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      Person.all(function (err, data) {
+        var people = data;
+        people.forEach(function (person) {
+          ev.addParticipant(person);
+        });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          Event.first({id: ev.id}, {includes: 'participant'}, function (err, data) {
+            assert.equal(20, data.participants.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test includes eager-fetch of multiple hasMany associations': function (next) {
+    Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      Person.all(function (err, data) {
+        var people = data;
+        people.forEach(function (person) {
+          ev.addParticipant(person);
+          ev.addAdmin(person);
+        });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          Event.first({id: ev.id}, {includes: ['participant',
+              'admin']}, function (err, data) {
+            assert.equal(20, data.participants.length);
+            assert.equal(20, data.admins.length);
+            next();
+          });
+        });
+      });
     });
   }
 
