@@ -30,7 +30,7 @@
     "pg": "0.9.x"
   },
   "devDependencies": {
-    "jake": "0.5.x"
+    "jake": "0.6.x"
   },
   "engines": {
     "node": "*"
