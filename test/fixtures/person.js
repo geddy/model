@@ -4,6 +4,8 @@ var Person = function () {
   this.property('familyName', 'string');
   this.property('givenName', 'string');
   this.property('title', 'string');
+
+  this.hasMany('Events', {through: 'Participations'});
 };
 
 Person.prototype.someMethod = function () {
