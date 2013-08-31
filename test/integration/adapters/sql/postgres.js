@@ -222,22 +222,6 @@ var eagerAssnTests = {
     });
   }
 
-// Old tests start here -- we want to start replacing these
-
-, 'test includes eager-fetch of belongsTo association': function (next) {
-    Profile.all({}, {includes: ['user']}, function (err, data) {
-      var foundUser = false;
-      data.forEach(function (p) {
-        // One of these dudes should have a user
-        if (p.user) {
-          foundUser = p.user;
-        }
-      });
-      assert.ok(foundUser);
-      next();
-    });
-  }
-
 , 'test includes eager-fetch of belongsTo association': function (next) {
     model.Event.all(function (err, data) {
       if (err) { throw err; }
@@ -262,19 +246,46 @@ var eagerAssnTests = {
   }
 
 , 'test includes eager-fetch of hasMany with association sort': function (next) {
-    User.all({}, {
-        includes: ['kids'
-      , 'avatarProfiles'], sort: {'login': 'desc', 'kids.login': 'asc'}
-    }, function (err, data) {
-      assert.equal('zzzz', data[0].login);
-      data.forEach(function (u) {
-        if (u.kids && u.kids.length) {
-          assert.equal('zxcv', u.kids[1].login);
-        }
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var evA = data[0]
+        , evB = data[1];
+      model.Photo.all(function (err, data) {
+        var incr = 0;
+        if (err) { throw err; }
+        data.forEach(function (p) {
+          // Half to A, half to B
+          if (!!(incr % 2)) {
+            p.setEvent(evA);
+          }
+          else {
+            p.setEvent(evB);
+          }
+          incr++;
+        });
+        updateItems(data, function () {
+          model.Event.all({id: [evA.id, evB.id]},
+              {includes: ['photos'], sort: {'title': 'desc',
+              'photo.title': 'asc'}}, function (err, data) {
+            var foundOutOfOrderItem = function (item, index) {
+                  var nextItem = this[index + 1];
+                  if (nextItem && (item.title.charCodeAt(0) >
+                      nextItem.title.charCodeAt(0))) {
+                    return true;
+                  }
+                };
+            assert.equal('b', data[0].title);
+            assert.equal('a', data[1].title);
+            assert.ok(!(data[0].photos.some(foundOutOfOrderItem, data[0].photos)));
+            assert.ok(!(data[1].photos.some(foundOutOfOrderItem, data[1].photos)));
+            next();
+          });
+        });
       });
-      next();
     });
   }
+
+// Old tests start here -- we want to start replacing these
 
 , 'test includes eager-fetch of hasMany with `first` lookup for owner obj': function (next) {
     User.first({login: 'asdf', password: 'zerb4'}, {includes: ['kids', 'avatarProfiles']},
