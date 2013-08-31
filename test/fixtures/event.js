@@ -4,8 +4,8 @@ var Event = function () {
   this.property('title', 'string');
   this.property('description', 'text');
 
-  this.hasMany('Participants', {model: 'People'});
   this.hasMany('Admins', {model: 'People'});
+  this.hasMany('Participants', {model: 'People', through: 'Participations'});
   this.hasMany('Photos');
   this.hasMany('Comments', {model: 'Messages'});
 };

@@ -11,6 +11,7 @@ var utils = require('utilities')
   , createFixtures
   , deleteFixtures
   , updateItems
+  , fixtures = ['Event', 'Person', 'Participation', 'Message', 'Photo']
 
   // Fixtures
   , Zooby = require('../../../fixtures/zooby').Zooby
@@ -18,15 +19,15 @@ var utils = require('utilities')
   , Profile = require('../../../fixtures/profile').Profile
   , Account = require('../../../fixtures/account').Account
   , Team = require('../../../fixtures/team').Team
-  , Membership = require('../../../fixtures/membership').Membership
+  , Membership = require('../../../fixtures/membership').Membership;
 
-  , Event = require('../../../fixtures/event').Event
-  , Person = require('../../../fixtures/person').Person
-  , Message = require('../../../fixtures/message').Message
-  , Photo = require('../../../fixtures/photo').Photo;
+
+fixtures.forEach(function (f) {
+  model[f] = require('../../../fixtures/' + f.toLowerCase())[f];
+});
 
 createFixtures = function (cb) {
-  var relations = ['Event', 'Person', 'Message', 'Photo']
+  var relations = fixtures.slice()
     , doIt = function () {
         var relation = relations.shift()
           , items = []
@@ -47,7 +48,7 @@ createFixtures = function (cb) {
 };
 
 deleteFixtures = function (cb) {
-  var relations = ['Event', 'Person', 'Message', 'Photo']
+  var relations = fixtures.slice()
     , doIt = function () {
         var relation = relations.shift();
         if (relation) {
@@ -70,19 +71,20 @@ deleteFixtures = function (cb) {
   doIt();
 };
 
-updateItems = function (collection, cb) {
-  var doIt = function () {
-    var item = collection.pop();
-    if (item) {
-      item.save(function (err, data) {
-        if (err) { throw err; }
-        doIt();
-      });
-    }
-    else {
-      cb();
-    }
-  };
+updateItems = function (coll, cb) {
+  var collection = coll.slice()
+    , doIt = function () {
+        var item = collection.pop();
+        if (item) {
+          item.save(function (err, data) {
+            if (err) { throw err; }
+            doIt();
+          });
+        }
+        else {
+          cb();
+        }
+      };
   doIt();
 };
 
@@ -95,11 +97,8 @@ tests = {
         , 'Account'
         , 'Membership'
         , 'Team'
-        , 'Event'
-        , 'Person'
-        , 'Message'
-        , 'Photo'
         ]
+        relations = relations.concat(fixtures)
       , models = [];
 
     adapter = new Adapter(config.postgres);
@@ -169,17 +168,29 @@ for (var p in shared) {
 var eagerAssnTests = {
 
   'test includes eager-fetch of hasMany association': function (next) {
-    Event.all(function (err, data) {
+    User.all({}, {includes: ['kids', 'avatarProfiles']}, function (err, data) {
+      data.forEach(function (u) {
+        if (u.id == currentId) {
+          assert.equal(2, u.avatarProfiles.length);
+        }
+      });
+      next();
+    });
+  }
+
+, 'test includes eager-fetch of named hasMany/through association': function (next) {
+    model.Event.all(function (err, data) {
       if (err) { throw err; }
       var ev = data[0];
-      Person.all(function (err, data) {
+      model.Person.all(function (err, data) {
         var people = data;
         people.forEach(function (person) {
           ev.addParticipant(person);
         });
         ev.save(function (err, data) {
           if (err) { throw err; }
-          Event.first({id: ev.id}, {includes: 'participant'}, function (err, data) {
+          model.Event.first({id: ev.id}, {includes: 'participant'}, function (err, data) {
+            if (err) { throw err; }
             assert.equal(20, data.participants.length);
             next();
           });
@@ -189,10 +200,10 @@ var eagerAssnTests = {
   }
 
 , 'test includes eager-fetch of multiple hasMany associations': function (next) {
-    Event.all(function (err, data) {
+    model.Event.all(function (err, data) {
       if (err) { throw err; }
       var ev = data[0];
-      Person.all(function (err, data) {
+      model.Person.all(function (err, data) {
         var people = data;
         people.forEach(function (person) {
           ev.addParticipant(person);
@@ -200,7 +211,7 @@ var eagerAssnTests = {
         });
         ev.save(function (err, data) {
           if (err) { throw err; }
-          Event.first({id: ev.id}, {includes: ['participant',
+          model.Event.first({id: ev.id}, {includes: ['participant',
               'admin']}, function (err, data) {
             assert.equal(20, data.participants.length);
             assert.equal(20, data.admins.length);
@@ -210,6 +221,8 @@ var eagerAssnTests = {
       });
     });
   }
+
+// Old tests start here -- we want to start replacing these
 
 , 'test includes eager-fetch of belongsTo association': function (next) {
     Profile.all({}, {includes: ['user']}, function (err, data) {
