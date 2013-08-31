@@ -238,6 +238,29 @@ var eagerAssnTests = {
     });
   }
 
+, 'test includes eager-fetch of belongsTo association': function (next) {
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      model.Photo.all(function (err, data) {
+        if (err) { throw err; }
+        data.forEach(function (p) {
+          p.setEvent(ev);
+        });
+        updateItems(data, function () {
+          model.Photo.all({}, {includes: ['event']}, function (err, data) {
+            if (err) { throw err; }
+            var every = data.every(function (p) {
+              return !!p.event;
+            });
+            assert.ok(every);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test includes eager-fetch of hasMany with association sort': function (next) {
     User.all({}, {
         includes: ['kids'
