@@ -285,57 +285,20 @@ var eagerAssnTests = {
     });
   }
 
-// Old tests start here -- we want to start replacing these
-
 , 'test includes eager-fetch of hasMany with `first` lookup for owner obj': function (next) {
-    User.first({login: 'asdf', password: 'zerb4'}, {includes: ['kids', 'avatarProfiles']},
-        function (err, data) {
-      assert.equal(2, data.kids.length);
-      next();
-    });
-  }
-
-, 'test hasMany through with auto-save for add side': function (next) {
-    User.first({login: 'asdf', password: 'zerb1'}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      var u = data;
-      u.addTeam(Team.create({
-        name: 'foo'
-      }));
-      u.save(function (err, data) {
-        currentId = u.id;
-        u.getTeams(function (err, data) {
-          assert.equal(1, data.length);
-          data.forEach(function (item) {
-            assert.equal('Team', item.type);
-          });
-          next();
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      model.Person.all(function (err, data) {
+        if (err) { throw err; }
+        data.forEach(function (p) {
+          ev.addAdmin(p);
         });
-      });
-    });
-  }
-
-, 'test hasMany through with already saved on both sides': function (next) {
-    User.first({login: 'asdf', password: 'zerb1'}, function (err, data) {
-      var u, t;
-      if (err) {
-        throw err;
-      }
-      u = data;
-      t = Team.create({
-        name: 'bar'
-      });
-      t.save(function (err, data) {
-        u.addTeam(t);
-        u.save(function (err, data) {
-          currentId = u.id;
-          u.getTeams(function (err, data) {
-            assert.equal(2, data.length);
-            data.forEach(function (item) {
-              assert.equal('Team', item.type);
-            });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          model.Event.first({id: ev.id}, {includes: 'admins'}, function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.admins.length);
             next();
           });
         });
@@ -344,13 +307,42 @@ var eagerAssnTests = {
   }
 
 , 'test includes eager-fetch of hasMany/through association': function (next) {
-    User.all({login: 'asdf'}, {includes: 'teams'}, function (err, data) {
-      data.forEach(function (u) {
-        if (u.id == currentId) {
-          assert.equal(2, u.teams.length);
-        }
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      model.Person.all(function (err, data) {
+        var people = data;
+        people.forEach(function (person) {
+          ev.addParticipant(person);
+        });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          model.Event.first({id: ev.id}, {includes: ['participant',
+              'admin']}, function (err, data) {
+            assert.equal(20, data.participants.length);
+            next();
+          });
+        });
       });
-      next();
+    });
+  }
+
+, 'test hasMany/through with auto-save for owned-object side': function (next) {
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      ev.addPhoto(model.Photo.create({
+        title: 'u'
+      }));
+      ev.save(function (err, data) {
+        if (err) { throw err; }
+        model.Event.first({id: ev.id}, {includes: 'photos'},
+            function (err, data) {
+          assert.equal(1, data.photos.length);
+          assert.equal('u', data.photos[0].title);
+          next();
+        });
+      });
     });
   }
 
