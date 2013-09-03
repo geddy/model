@@ -1,6 +1,7 @@
 var utils = require('utilities')
   , assert = require('assert')
   , model = require('../../../../lib')
+  , helpers = require('.././helpers')
   , Adapter = require('../../../../lib/adapters/sql/postgres').Adapter
   , generator = require('../../../../lib/generators/sql')
   , adapter
@@ -8,11 +9,6 @@ var utils = require('utilities')
   , tests
   , config = require('../../../config')
   , shared = require('../shared')
-  , createFixtures
-  , deleteFixtures
-  , updateItems
-  , fixtures = ['Event', 'Person', 'Participation', 'Message', 'Photo']
-
   // Fixtures
   , Zooby = require('../../../fixtures/zooby').Zooby
   , User = require('../../../fixtures/user').User
@@ -22,71 +18,6 @@ var utils = require('utilities')
   , Membership = require('../../../fixtures/membership').Membership;
 
 
-fixtures.forEach(function (f) {
-  model[f] = require('../../../fixtures/' + f.toLowerCase())[f];
-});
-
-createFixtures = function (cb) {
-  var relations = fixtures.slice()
-    , doIt = function () {
-        var relation = relations.shift()
-          , items = []
-          , letter;
-        if (relation) {
-          letters = 'abcdefghijklmnopqrst'.split('');
-          letters.forEach(function (letter) {
-            items.push(model[relation].create({title: letter}));
-          });
-          model[relation].save(items);
-          doIt();
-        }
-        else {
-          cb();
-        }
-      };
-  doIt();
-};
-
-deleteFixtures = function (cb) {
-  var relations = fixtures.slice()
-    , doIt = function () {
-        var relation = relations.shift();
-        if (relation) {
-          model[relation].all({}, function (err, data) {
-            var ids = [];
-            if (err) { throw err; }
-            data.forEach(function (item) {
-              ids.push(item.id);
-            });
-            model[relation].remove({id: ids}, function (err, data) {
-              if (err) { throw err; }
-              doIt();
-            });
-          });
-        }
-        else {
-          cb();
-        }
-      };
-  doIt();
-};
-
-updateItems = function (coll, cb) {
-  var collection = coll.slice()
-    , doIt = function () {
-        var item = collection.pop();
-        if (item) {
-          item.save(function (err, data) {
-            if (err) { throw err; }
-            doIt();
-          });
-        }
-        else {
-          cb();
-        }
-      };
-  doIt();
-};
 
 tests = {
   'before': function (next) {
@@ -98,7 +29,7 @@ tests = {
         , 'Membership'
         , 'Team'
         ]
-        relations = relations.concat(fixtures)
+        relations = relations.concat(helpers.fixtures)
       , models = [];
 
     adapter = new Adapter(config.postgres);
@@ -112,9 +43,7 @@ tests = {
         if (err) {
           throw err;
         }
-        createFixtures(function () {
-          deleteFixtures(next);
-        });
+        next();
       });
     });
     adapter.connect();
@@ -137,14 +66,6 @@ tests = {
     adapter.disconnect();
   }
 
-, 'beforeEach': function (next) {
-    createFixtures(next);
-  }
-
-, 'afterEach': function (next) {
-    deleteFixtures(next);
-  }
-
 , 'test create adapter': function () {
     assert.ok(adapter instanceof Adapter);
   }
@@ -162,7 +83,12 @@ tests = {
 };
 
 for (var p in shared) {
-  tests[p + ' (Postgres)'] = shared[p];
+  if (p == 'beforeEach' || p == 'afterEach') {
+    tests[p] = shared[p];
+  }
+  else {
+    tests[p + ' (Postgres)'] = shared[p];
+  }
 }
 
 var eagerAssnTests = {
@@ -231,7 +157,7 @@ var eagerAssnTests = {
         data.forEach(function (p) {
           p.setEvent(ev);
         });
-        updateItems(data, function () {
+        helpers.updateItems(data, function () {
           model.Photo.all({}, {includes: ['event']}, function (err, data) {
             if (err) { throw err; }
             var every = data.every(function (p) {
@@ -263,7 +189,7 @@ var eagerAssnTests = {
           }
           incr++;
         });
-        updateItems(data, function () {
+        helpers.updateItems(data, function () {
           model.Event.all({id: [evA.id, evB.id]},
               {includes: ['photos'], sort: {'title': 'desc',
               'photo.title': 'asc'}}, function (err, data) {

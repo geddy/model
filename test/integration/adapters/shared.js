@@ -1,9 +1,13 @@
 var utils = require('utilities')
   , assert = require('assert')
+  , model = require('../../../lib')
+  , helpers = require('./helpers')
   , currentId
   , currentDateProp
   , tests
   , testItems
+
+  // Old fixtures
   , Zooby = require('../../fixtures/zooby').Zooby
   , User = require('../../fixtures/user').User
   , Profile = require('../../fixtures/profile').Profile
@@ -11,9 +15,23 @@ var utils = require('utilities')
   , Team = require('../../fixtures/team').Team
   , Membership = require('../../fixtures/membership').Membership;
 
+// Import the model description for each fixture
+helpers.fixtures.forEach(function (f) {
+  model[f] = require('../../fixtures/' + f.toLowerCase())[f];
+});
+
+
 tests = {
 
-  'test save new, string UUID id, required nunmber is 0': function (next) {
+  'beforeEach': function (next) {
+    helpers.createFixtures(next);
+  }
+
+, 'afterEach': function (next) {
+    helpers.deleteFixtures(next);
+  }
+
+, 'test save new, string UUID id, required nunmber is 0': function (next) {
     var z = Zooby.create({
       foo: 'GROO'
     , zong: new Date()

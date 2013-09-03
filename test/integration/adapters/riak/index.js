@@ -1,6 +1,7 @@
 var utils = require('utilities')
   , assert = require('assert')
   , model = require('../../../../lib')
+  , helpers = require('.././helpers')
   , Adapter = require('../../../../lib/adapters/riak').Adapter
   , adapter
   , tests
@@ -23,6 +24,7 @@ tests = {
         , 'Membership'
         , 'Team'
         ]
+        relations = relations.concat(helpers.fixtures)
       , models = [];
     adapter = new Adapter(config.mongo);
 
@@ -50,7 +52,12 @@ tests = {
 };
 
 for (var p in shared) {
-  tests[p + ' (Riak)'] = shared[p];
+  if (p == 'beforeEach' || p == 'afterEach') {
+    tests[p] = shared[p];
+  }
+  else {
+    tests[p + ' (Riak)'] = shared[p];
+  }
 }
 
 module.exports = tests;

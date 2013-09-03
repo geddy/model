@@ -8,6 +8,7 @@ var t = new jake.TestTask('Model', function () {
   this.testFiles.include('test/**/*.js');
   this.testFiles.exclude('test/fixtures/*.js');
   this.testFiles.exclude('test/integration/adapters/shared.js');
+  this.testFiles.exclude('test/integration/adapters/helpers.js');
   this.testFiles.exclude('test/config.js');
   this.testFiles.exclude('test/db.json');
   this.testFiles.exclude('test/db.sample.json');
