@@ -30,6 +30,10 @@ var tests = {
     byTor = ByTor.create({numberProp: '2112'});
     assert.ok(byTor.isValid());
 
+    // Zero, valid
+    byTor = ByTor.create({numberProp: 0});
+    assert.ok(byTor.isValid());
+
     // Non-numeric string, error
     byTor = ByTor.create({numberProp: 'Snow Dog'});
     assert.notStrictEqual(byTor.errors.numberProp, undefined);

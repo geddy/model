@@ -4,6 +4,7 @@ var Person = function () {
   this.property('familyName', 'string');
   this.property('givenName', 'string');
   this.property('title', 'string');
+  this.property('description', 'text');
 
   this.hasMany('Events', {through: 'Participations'});
 };

@@ -9,11 +9,16 @@ module.exports = {
       , doIt = function () {
           var relation = relations.shift()
             , items = []
-            , letter;
+            , titleLetters
+            , descrLetters;
           if (relation) {
-            letters = 'abcdefghijklmnopqrst'.split('');
-            letters.forEach(function (letter) {
-              items.push(model[relation].create({title: letter}));
+            titleLetters = 'abcdefghijklmnopqrst'.split('');
+            descrLetters = titleLetters.slice();
+            titleLetters.forEach(function (letter) {
+              items.push(model[relation].create({
+                title: letter
+              , description: descrLetters.pop()
+              }));
             });
             model[relation].save(items);
             doIt();
@@ -65,5 +70,22 @@ module.exports = {
         };
     doIt();
   }
+
+, foundOutOfOrderItemAscending: function (item, index) {
+    var nextItem = this[index + 1];
+    if (nextItem && (item.title.charCodeAt(0) >
+        nextItem.title.charCodeAt(0))) {
+      return true;
+    }
+  }
+
+, foundOutOfOrderItemDescending: function (item, index) {
+    var nextItem = this[index + 1];
+    if (nextItem && (item.title.charCodeAt(0) <
+        nextItem.title.charCodeAt(0))) {
+      return true;
+    }
+  }
+
 };
 

@@ -193,17 +193,12 @@ var eagerAssnTests = {
           model.Event.all({id: [evA.id, evB.id]},
               {includes: ['photos'], sort: {'title': 'desc',
               'photo.title': 'asc'}}, function (err, data) {
-            var foundOutOfOrderItem = function (item, index) {
-                  var nextItem = this[index + 1];
-                  if (nextItem && (item.title.charCodeAt(0) >
-                      nextItem.title.charCodeAt(0))) {
-                    return true;
-                  }
-                };
             assert.equal('b', data[0].title);
             assert.equal('a', data[1].title);
-            assert.ok(!(data[0].photos.some(foundOutOfOrderItem, data[0].photos)));
-            assert.ok(!(data[1].photos.some(foundOutOfOrderItem, data[1].photos)));
+            assert.ok(!(data[0].photos.some(helpers.foundOutOfOrderItemAscending,
+                data[0].photos)));
+            assert.ok(!(data[1].photos.some(helpers.foundOutOfOrderItemAscending,
+                data[1].photos)));
             next();
           });
         });
