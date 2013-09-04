@@ -1,5 +1,6 @@
 var utils = require('utilities')
   , assert = require('assert')
+  , config = require('../../config')
   , model = require('../../../lib')
   , helpers = require('./helpers')
   , currentId
@@ -24,14 +25,16 @@ helpers.fixtures.forEach(function (f) {
 tests = {
 
   'beforeEach': function (next) {
-    var timeout = model.currentTestAdapter == 'riak' ? 2000 : 0;
+    var timeout = model.currentTestAdapter == 'riak' ?
+        config.riak.testInterval : 0;
     helpers.createFixtures(function () {
       setTimeout(next, timeout);
     });
   }
 
 , 'afterEach': function (next) {
-    var timeout = model.currentTestAdapter == 'riak' ? 2000 : 0;
+    var timeout = model.currentTestAdapter == 'riak' ?
+        config.riak.testInterval : 0;
     helpers.deleteFixtures(function () {
       setTimeout(next, timeout);
     });
@@ -486,8 +489,6 @@ tests = {
     });
   }
 
-/*
-
 , 'test remove collection': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
@@ -504,6 +505,8 @@ tests = {
       });
     });
   }
+
+/*
 
 , 'test reification of invalid model': function (next) {
     var u = User.create({
