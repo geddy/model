@@ -24,11 +24,17 @@ helpers.fixtures.forEach(function (f) {
 tests = {
 
   'beforeEach': function (next) {
-    helpers.createFixtures(next);
+    var timeout = model.currentTestAdapter == 'riak' ? 500 : 0;
+    helpers.createFixtures(function () {
+      setTimeout(next, timeout);
+    });
   }
 
 , 'afterEach': function (next) {
-    helpers.deleteFixtures(next);
+    var timeout = model.currentTestAdapter == 'riak' ? 500 : 0;
+    helpers.deleteFixtures(function () {
+      setTimeout(next, timeout);
+    });
   }
 
 , 'test first via string id': function (next) {
@@ -134,28 +140,20 @@ tests = {
   }
 
 , 'test save collection': function (next) {
-
-    // Why the fuck does Riak not persist some of the fixtures?
-    if (this.name.indexOf('Riak') > -1) {
-      console.log('    Not supported in Riak ...');
-      next();
-    }
-    else {
-      var P = model.Person
-        , items = [];
-      items.push(P.create({}));
-      items.push(P.create({}));
-      items.push(P.create({}));
-      items.push(P.create({}));
-      P.save(items, function (err, data) {
+    var P = model.Person
+      , items = [];
+    items.push(P.create({}));
+    items.push(P.create({}));
+    items.push(P.create({}));
+    items.push(P.create({}));
+    P.save(items, function (err, data) {
+      if (err) { throw err; }
+      P.all(function (err, data) {
         if (err) { throw err; }
-        P.all(function (err, data) {
-          if (err) { throw err; }
-          assert.equal(24, data.length);
-          next();
-        });
+        assert.equal(24, data.length);
+        next();
       });
-    }
+    });
   }
 
 , 'single-quote in string property': function (next) {
@@ -488,6 +486,8 @@ tests = {
     });
   }
 
+/*
+
 , 'test remove collection': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
@@ -504,8 +504,6 @@ tests = {
       });
     });
   }
-
-/*
 
 , 'test reification of invalid model': function (next) {
     var u = User.create({
