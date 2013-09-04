@@ -24,14 +24,14 @@ helpers.fixtures.forEach(function (f) {
 tests = {
 
   'beforeEach': function (next) {
-    var timeout = model.currentTestAdapter == 'riak' ? 500 : 0;
+    var timeout = model.currentTestAdapter == 'riak' ? 2000 : 0;
     helpers.createFixtures(function () {
       setTimeout(next, timeout);
     });
   }
 
 , 'afterEach': function (next) {
-    var timeout = model.currentTestAdapter == 'riak' ? 500 : 0;
+    var timeout = model.currentTestAdapter == 'riak' ? 2000 : 0;
     helpers.deleteFixtures(function () {
       setTimeout(next, timeout);
     });
