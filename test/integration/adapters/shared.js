@@ -506,110 +506,66 @@ tests = {
     });
   }
 
-/*
-
 , 'test reification of invalid model': function (next) {
-    var u = User.create({
-      login: 'asdf'
-      // Invalid model as confirmPassword should fail
+    var ev = model.Event.create({
+      // Invalid model as it has no title
+      description: 'zerb'
     });
-    u.save({force: true}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
+    assert.equal('Argle-bargle', ev.errors.title);
+    ev.save({force: true}, function (err, data) {
+      if (err) { throw err; }
+      var id = data.id;
 
       // Fetch the invalid model
-      User.first(currentId, {}, function (err, data) {
+      model.Event.first(id, function (err, data) {
+        if (err) { throw err; }
         // Ensure that reification worked
         assert.ok(typeof data.toJSON === 'function');
 
-        // Since confirmPassword should only trigger on 'create', ensure that there were no errors
-        assert.ok(!err);
-
-        // Cleanup
-        User.remove(data.id, next);
+        // Since confirmPassword should only trigger on
+        // 'create', ensure that there were no errors
+        assert.ok(!data.errors);
+        next();
       });
     });
   }
 
 , 'test validations on reification': function (next) {
-    var u = User.create({
-      login: 'as' // Too short, will cause validation error on reify
-      // Invalid model as confirmPassword should fail
+    var ev = model.Event.create({
+      // Invalid model as it has no title or description
     });
-    u.save({force: true}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = data.id;
+    assert.equal('Argle-bargle', ev.errors.title);
+    assert.ok(ev.errors.description);
+    ev.save({force: true}, function (err, data) {
+      if (err) { throw err; }
+      var id = data.id;
 
       // Fetch the invalid model
-      User.first(currentId, {}, function (err, data) {
+      model.Event.first(id, function (err, data) {
+        if (err) { throw err; }
         // Ensure that reification worked
         assert.ok(typeof data.toJSON === 'function');
 
-        // Ensure that we get an error
-        assert.ok(typeof data.errors.login !== 'undefined');
-        assert.ok(typeof data.errors.password !== 'undefined');
-
-        // Cleanup
-        User.remove(data.id, next);
+        assert.ok(!data.errors.titls);
+        assert.ok(data.errors.description);
+        next();
       });
     });
   }
 
-, 'test validations on fetch with scenario': function (next) {
-    var u = User.create({
-      login: 'as' // Too short, will cause validation error on reify
-      // Invalid model as confirmPassword should fail
-    });
-    u.save({force: true}, function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = data.id;
-
-      // Fetch the invalid model
-      User.first(currentId, {scenario: 'update'}, function (err, data) {
-        // Ensure that reification worked
-        assert.ok(typeof data.toJSON === 'function');
-
-        // Ensure that we get errors about the password, but not the login
-        assert.ok(!data.errors.login);
-        assert.ok(typeof data.errors.password !== 'undefined');
-
-        // Cleanup
-        User.remove(data.id, next);
-      });
-    });
-  }
-
-, 'test hasOne association': function (next) {
-    var u = User.create({
-      login: 'asdf'
-    , password: 'zerb1'
-    , confirmPassword: 'zerb1'
-    });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = data.id;
-      User.first(currentId, {}, function (err, data) {
-        var user = data
-          , profile;
-        if (err) {
-          throw err;
-        }
-        profile = Profile.create({});
-        user.setProfile(profile);
-        user.save(function (err, data) {
-          assert.ok(!err, err);
-
-          user.getProfile(function (err, data) {
-            assert.ok(!err, err);
-            assert.equal(profile.id, data.id);
+, 'test named hasOne association, owned object already saved': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var person = data[0];
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var ev = data[0];
+        ev.setOwner(person);
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          ev.getOwner(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(person.id, data.id);
             next();
           });
         });
@@ -617,34 +573,46 @@ tests = {
     });
   }
 
-, 'test belongsTo association': function (next) {
-    var u = User.create({
-      login: 'asdf'
-    , password: 'zerb2'
-    , confirmPassword: 'zerb2'
+, 'test named hasOne association, owned object not yet saved': function (next) {
+    var person = model.Person.create({
+      title: 'zerb'
     });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
-      User.first(currentId, {}, function (err, data) {
-        var user = data
-          , profile;
-        if (err) {
-          throw err;
-        }
-        profile = Profile.create({});
-        profile.setUser(user);
-        profile.save(function (err, data) {
-          if (err) {
-            throw err;
-          }
-          profile.getUser(function (err, data) {
-            assert.equal('asdf', data.login);
-            if (err) {
-              throw err;
-            }
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      ev.setOwner(person);
+      ev.save(function (err, data) {
+        if (err) { throw err; }
+        ev.getOwner(function (err, data) {
+          if (err) { throw err; }
+          assert.equal('zerb', data.title);
+          next();
+        });
+      });
+    });
+  }
+
+, 'test named hasMany association, owned objects already saved': function (next) {
+    model.Person.all(function (err, people) {
+      if (err) { throw err; }
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var ev = data[0];
+        ev.addAdmin(people[0]);
+        ev.addAdmin(people[1]);
+        ev.addAdmin(people[2]);
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          ev.getAdmins(function (err, data) {
+            if (err) { throw err; }
+            var ids = {};
+            assert.equal(3, data.length);
+            data.forEach(function (item) {
+              ids[item.id] = true;
+            });
+            [0, 1, 2].forEach(function (index) {
+              assert.ok(ids[people[index].id]);
+            });
             next();
           });
         });
@@ -652,124 +620,60 @@ tests = {
     });
   }
 
-, 'test hasMany association': function (next) {
-    var u = User.create({
-      login: 'asdf'
-    , password: 'zerb3'
-    , confirmPassword: 'zerb3'
-    });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
-      User.first(currentId, {}, function (err, data) {
-        var user = data
-          , account;
-        if (err) {
-          throw err;
-        }
-        user.addAccount(Account.create({}));
-        user.addAccount(Account.create({}));
-        user.save(function (err, data) {
-          if (err) {
-            throw err;
-          }
-          user.getAccounts(function (err, data) {
-            assert.equal(2, data.length);
-            if (err) {
-              throw err;
-            }
-            next();
+, 'test named hasMany association, owned objects not yet saved': function (next) {
+    var people = [];
+    people.push(model.Person.create({title: 'zzz'}));
+    people.push(model.Person.create({title: 'yyy'}));
+    people.push(model.Person.create({title: 'xxx'}));
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      ev.addAdmin(people[0]);
+      ev.addAdmin(people[1]);
+      ev.addAdmin(people[2]);
+      ev.save(function (err, data) {
+        if (err) { throw err; }
+        ev.getAdmins(function (err, data) {
+          if (err) { throw err; }
+          var ids = {};
+          assert.equal(3, data.length);
+          data.forEach(function (item) {
+            ids[item.title] = true;
           });
+          [0, 1, 2].forEach(function (index) {
+            assert.ok(ids[people[index].title]);
+          });
+          next();
         });
       });
     });
   }
 
-, 'test named hasMany': function (next) {
-    var u = User.create({
-      login: 'asdf'
-    , password: 'zerb4'
-    , confirmPassword: 'zerb4'
-    });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
-      User.first(currentId, {}, function (err, data) {
-        var user = data
-          , account;
-        if (err) {
-          throw err;
-        }
-        user.addKid(User.create({
-          login: 'qwer'
-        , password: 'zerb1'
-        , confirmPassword: 'zerb1'
-        }));
-        user.addKid(User.create({
-          login: 'zxcv'
-        , password: 'zerb2'
-        , confirmPassword: 'zerb2'
-        }));
-        user.save(function (err, data) {
-          if (err) {
-            throw err;
-          }
-          user.getKids(function (err, data) {
-            assert.equal(2, data.length);
-            if (err) {
-              throw err;
-            }
-            next();
-          });
-        });
-      });
-    });
-  }
-
-, 'test named hasMany with hasOne of same model': function (next) {
-    var u = User.create({
-      login: 'zzzz'
-    , password: 'zerb5'
-    , confirmPassword: 'zerb5'
-    });
-    u.save(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      currentId = u.id;
-      User.first(currentId, {}, function (err, data) {
-        var user = data
-          , account;
-        if (err) {
-          throw err;
-        }
-        user.setProfile(Profile.create({
-          nickname: 'frang'
-        }));
-        user.addAvatarProfile(Profile.create({
-          nickname: 'fffuuu'
-        }));
-        user.addAvatarProfile(Profile.create({
-          nickname: 'derrrr'
-        }));
-        user.save(function (err, data) {
-          if (err) {
-            throw err;
-          }
-          user.getAvatarProfiles(function (err, data) {
-            if (err) {
-              throw err;
-            }
-            assert.equal(2, data.length);
-            user.getProfile(function (err, data) {
-              if (err) {
-                throw err;
-              }
-              assert.equal('frang', data.nickname);
+, 'test mix of named hasMany/hasOne with same model, owned objects all already saved':
+    function (next) {
+    model.Person.all(function (err, people) {
+      if (err) { throw err; }
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var ev = data[0];
+        ev.setOwner(people[0]);
+        ev.addAdmin(people[0]);
+        ev.addAdmin(people[1]);
+        ev.addAdmin(people[2]);
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          ev.getAdmins(function (err, data) {
+            if (err) { throw err; }
+            var ids = {};
+            assert.equal(3, data.length);
+            data.forEach(function (item) {
+              ids[item.id] = true;
+            });
+            [0, 1, 2].forEach(function (index) {
+              assert.ok(ids[people[index].id]);
+            });
+            ev.getOwner(function (err, data) {
+              assert.equal(people[0].id, data.id);
               next();
             });
           });
@@ -777,6 +681,29 @@ tests = {
       });
     });
   }
+
+, 'test adding from belongsTo side (named assns not supported)': function (next) {
+    model.Schedule.all(function (err, data) {
+      if (err) { throw err; }
+      var schedule = data[0];
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var ev = data[0];
+        schedule.setEvent(ev);
+        schedule.save(function (err, data) {
+          if (err) { throw err; }
+          ev.getSchedule(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(schedule.id, data.id);
+            next();
+          });
+        });
+      });
+    });
+  }
+
+/*
+
 
 , 'test Static methods on model': function (next) {
     User.findByLogin('asdf', function (err, data) {

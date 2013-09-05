@@ -17,8 +17,6 @@ var utils = require('utilities')
   , Team = require('../../../fixtures/team').Team
   , Membership = require('../../../fixtures/membership').Membership;
 
-
-
 tests = {
   'before': function (next) {
     var relations = [

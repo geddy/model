@@ -4,6 +4,11 @@ var Event = function () {
   this.property('title', 'string');
   this.property('description', 'text');
 
+  this.validatesPresent('title', {message: 'Argle-bargle'});
+  this.validatesPresent('description', {on: ['create', 'reify']});
+
+  this.hasOne('Schedule');
+  this.hasOne('Owner', {model: 'People'});
   this.hasMany('Admins', {model: 'People'});
   this.hasMany('Participants', {model: 'People', through: 'Participations'});
   this.hasMany('Photos');
