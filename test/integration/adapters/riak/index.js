@@ -38,9 +38,6 @@ tests = {
 
     model.registerDefinitions(models);
 
-    // Hack, testing Riak sucks balls
-    model.currentTestAdapter = 'riak';
-
     adapter.dropTable(['Zooby', 'User'], next);
   }
 

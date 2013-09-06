@@ -25,7 +25,7 @@ helpers.fixtures.forEach(function (f) {
 tests = {
 
   'beforeEach': function (next) {
-    var timeout = model.currentTestAdapter == 'riak' ?
+    var timeout = model.Event.adapter.name == 'riak' ?
         config.riak.testInterval : 0;
     helpers.createFixtures(function () {
       setTimeout(next, timeout);
@@ -33,7 +33,7 @@ tests = {
   }
 
 , 'afterEach': function (next) {
-    var timeout = model.currentTestAdapter == 'riak' ?
+    var timeout = model.Event.adapter.name == 'riak' ?
         config.riak.testInterval : 0;
     helpers.deleteFixtures(function () {
       setTimeout(next, timeout);
