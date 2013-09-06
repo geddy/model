@@ -702,62 +702,40 @@ tests = {
     });
   }
 
-/*
 
-
+// FIXME: This isn't really an integration test
 , 'test Static methods on model': function (next) {
-    User.findByLogin('asdf', function (err, data) {
-      assert.equal(data.length, 4);
-      if (err) {
-        throw err;
-      }
+    model.Event.findByTitle('a', function (err, data) {
+      assert.equal(1, data.length);
+      if (err) { throw err; }
       next();
     });
   }
 
 , 'test save new with custom string id': function (next) {
-    var z = Zooby.create({
-      id: 'customid'
-    , foo: 'ZOO'
-    , zong: new Date()
-    , mar: 1
+    var customId = 'zerb';
+    var p = model.Person.create({
+      id: customId
     });
-    if(z.isValid()) {
-      z.save(function (err, data) {
-        if (err) {
-          throw err;
-        }
-        assert.equal(data.id, 'customid');
-        next();
-      });
-    }
-    else {
-      throw new Error('model is not valid');
-    }
+    p.save(function (err, data) {
+      if (err) { throw err; }
+      assert.equal(data.id, customId);
+      next();
+    });
   }
 
 , 'test save new with custom int id': function (next) {
-    var z = Zooby.create({
-      id: 42
-    ,  foo: 'ZOO'
-    , zong: new Date()
-    , mar: 1
+    var customId = 2112;
+    var p = model.Person.create({
+      id: customId
     });
-    if (z.isValid()) {
-      z.save(function (err, data) {
-        if (err) {
-          throw err;
-        }
-        assert.equal(data.id, 42);
-        next();
-      });
-    }
-    else {
-      throw new Error('model is not valid');
-    }
+    p.save(function (err, data) {
+      if (err) { throw err; }
+      assert.equal(data.id, customId);
+      next();
+    });
   }
 
-*/
 };
 
 module.exports = tests;
