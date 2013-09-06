@@ -19,15 +19,7 @@ var utils = require('utilities')
 
 tests = {
   'before': function (next) {
-    var relations = [
-          'Zooby'
-        , 'User'
-        , 'Profile'
-        , 'Account'
-        , 'Membership'
-        , 'Team'
-        ]
-        relations = relations.concat(helpers.fixtures)
+    var relations = [].concat(helpers.fixtures)
       , models = [];
 
     adapter = new Adapter(config.postgres);
@@ -92,13 +84,24 @@ for (var p in shared) {
 var eagerAssnTests = {
 
   'test includes eager-fetch of hasMany association': function (next) {
-    User.all({}, {includes: ['kids', 'avatarProfiles']}, function (err, data) {
-      data.forEach(function (u) {
-        if (u.id == currentId) {
-          assert.equal(2, u.avatarProfiles.length);
-        }
+    model.Photo.all(function (err, data) {
+      if (err) { throw err; }
+      var photos = data;
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var ev = data[0];
+        photos.forEach(function (p) {
+          ev.addPhoto(p);
+        });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          model.Event.first({id: ev.id}, {includes: 'photos'}, function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.photos.length);
+            next();
+          });
+        });
       });
-      next();
     });
   }
 
@@ -107,6 +110,7 @@ var eagerAssnTests = {
       if (err) { throw err; }
       var ev = data[0];
       model.Person.all(function (err, data) {
+        if (err) { throw err; }
         var people = data;
         people.forEach(function (person) {
           ev.addParticipant(person);
