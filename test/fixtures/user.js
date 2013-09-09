@@ -11,12 +11,6 @@ var User = function () {
   this.validatesLength('login', {min: 3, on: ['create', 'reify']});
   this.validatesConfirmed('password', 'confirmPassword', {on: 'create', message: 'Parallax!'});
 
-  this.hasOne('Profile');
-  this.hasMany('Accounts');
-  this.hasMany('Kids', {model: 'Users'});
-  this.hasMany('AvatarProfiles', {model: 'Profiles'});
-  this.hasMany('Memberships');
-  this.hasMany('Teams', {through: 'Memberships'});
 
 };
 

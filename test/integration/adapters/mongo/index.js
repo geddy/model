@@ -6,24 +6,12 @@ var utils = require('utilities')
   , generator = require('../../../../lib/generators/sql')
   , adapter
   , tests
-  , Zooby = require('../../../fixtures/zooby').Zooby
-  , User = require('../../../fixtures/user').User
-  , Profile = require('../../../fixtures/profile').Profile
-  , Account = require('../../../fixtures/account').Account
   , config = require('../../../config')
   , shared = require('../shared');
 
 tests = {
   'before': function (next) {
-    var relations = [
-          'Zooby'
-        , 'User'
-        , 'Profile'
-        , 'Account'
-        , 'Membership'
-        , 'Team'
-        ]
-        relations = relations.concat(helpers.fixtures)
+    var relations = helpers.fixtures.slice()
       , models = [];
     adapter = new Adapter(config.mongo);
 

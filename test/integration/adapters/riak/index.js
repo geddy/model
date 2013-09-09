@@ -5,26 +5,12 @@ var utils = require('utilities')
   , Adapter = require('../../../../lib/adapters/riak').Adapter
   , adapter
   , tests
-  , Zooby = require('../../../fixtures/zooby').Zooby
-  , User = require('../../../fixtures/user').User
-  , Profile = require('../../../fixtures/profile').Profile
-  , Account = require('../../../fixtures/account').Account
-  , Team = require('../../../fixtures/team').Team
-  , Membership = require('../../../fixtures/membership').Membership
   , config = require('../../../config')
   , shared = require('../shared');
 
 tests = {
   'before': function (next) {
-    var relations = [
-          'Zooby'
-        , 'User'
-        , 'Profile'
-        , 'Account'
-        , 'Membership'
-        , 'Team'
-        ]
-        relations = relations.concat(helpers.fixtures)
+    var relations = helpers.fixtures.slice()
       , models = [];
     adapter = new Adapter(config.mongo);
 

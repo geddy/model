@@ -8,18 +8,11 @@ var utils = require('utilities')
   , currentId
   , tests
   , config = require('../../../config')
-  , shared = require('../shared')
-  // Fixtures
-  , Zooby = require('../../../fixtures/zooby').Zooby
-  , User = require('../../../fixtures/user').User
-  , Profile = require('../../../fixtures/profile').Profile
-  , Account = require('../../../fixtures/account').Account
-  , Team = require('../../../fixtures/team').Team
-  , Membership = require('../../../fixtures/membership').Membership;
+  , shared = require('../shared');
 
 tests = {
   'before': function (next) {
-    var relations = [].concat(helpers.fixtures)
+    var relations = helpers.fixtures.slice()
       , models = [];
 
     adapter = new Adapter(config.postgres);

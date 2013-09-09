@@ -4,11 +4,6 @@ var assert = require('assert')
   , pg = require('pg')
   , model = require('../../../lib')
   , Zooby = require('../../fixtures/zooby').Zooby
-  , User = require('../../fixtures/user').User
-  , Profile = require('../../fixtures/profile').Profile
-  , Account = require('../../fixtures/account').Account
-  , Membership = require('../../fixtures/membership').Membership
-  , Team = require('../../fixtures/team').Team
   , generator = require('../../../lib/generators/sql')
   , config = require('../../config')
   , tests

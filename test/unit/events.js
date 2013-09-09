@@ -3,10 +3,6 @@ var assert = require('assert')
   , EventEmitter = require('events').EventEmitter
   , model = require('../../lib')
   , User = require('../fixtures/user').User
-  , Profile = require('../fixtures/profile').Profile
-  , Account = require('../fixtures/account').Account
-  , Membership = require('../fixtures/membership').Membership
-  , Team = require('../fixtures/team').Team
   , BaseAdapter = require('../../lib/adapters/base_adapter').BaseAdapter
   , _params
   , tests;
