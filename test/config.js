@@ -18,7 +18,7 @@
         protocol: 'http'
       , host: process.env.RIAK_HOST || 'localhost'
       , port: process.env.RIAK_PORT || 8098
-      , testInterval: 2000
+      , testInterval: 3000
       }
     };
   
