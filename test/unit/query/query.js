@@ -5,6 +5,7 @@ var utils = require('utilities')
   , operation = require('../../../lib/query/operation')
   , comparison = require('../../../lib/query/comparison')
   , Zooby = require('../../fixtures/zooby').Zooby
+  , Wooby = require('../../fixtures/wooby').Wooby
   , tests;
 
 var tests = {
@@ -110,8 +111,10 @@ var tests = {
     assert.ok(!query.conditions.operands[0].opts.nocase);
     assert.ok(query.conditions.operands[1].opts.nocase);
   }
-
-
+, 'test object\'s properties with Model': function () {
+    var query = new Query(Zooby, { 'wooby.foo': { like: 'foo' } });
+    assert.ok(query.conditions.isValid());
+  }
 };
 
 module.exports = tests;
