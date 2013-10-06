@@ -21,8 +21,10 @@ module.exports = {
               , description: descrLetters.pop()
               }));
             });
-            model[relation].save(items);
-            doIt();
+            model[relation].save(items, function (err, data) {
+              if (err) { throw err; }
+              doIt();
+            });
           }
           else {
             cb();
