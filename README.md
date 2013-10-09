@@ -14,6 +14,7 @@ Model currently implements adapters for:
 * Postgres
 * Riak
 * MongoDB
+* LevelDB
 
 ### License
 
@@ -36,7 +37,8 @@ npm install model
 Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
 
 The integration tests require mongo and postgres. To run the tests on a specific
-adapter, use `jake test[mongo]`, `jake test[postgres]`, or `jake test[memory]`.
+adapter, use `jake test[mongo]`, `jake test[postgres]`, `jake test[level]`,
+or `jake test[memory]`.
 
 Configure adapter options by creating a `test/db.json` file. See
 `test/db.sample.json` for available options.

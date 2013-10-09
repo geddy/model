@@ -20,8 +20,11 @@
       , port: process.env.RIAK_PORT || 8098
       , testInterval: 3000
       }
+    , level: {
+        db: process.env.LEVEL_DATABASE || '/tmp/foo'
+      }
     };
-  
+
   try {
     userOpts = require(userOptsFile);
     utils.object.merge(config, userOpts);
