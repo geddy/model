@@ -25,10 +25,7 @@
     "url": "git://github.com/mde/model.git"
   },
   "dependencies": {
-    "utilities": "0.0.x",
-    "mongodb-wrapper": "0.4.x",
-    "pg": "0.9.x",
-    "level": "0.17.x"
+    "utilities": "0.0.x"
   },
   "devDependencies": {
     "jake": "0.7.x"
