@@ -515,6 +515,33 @@ Here are some more examples of queries:
 {foo: {lt: 2112}, bar: 'BAZ'}
 ```
 
+### Counting items in a collection
+
+Use the `count` method to figure out how many items a query will return, without
+actually returning all the items. This method takes the same type of query
+object as the `all` method.
+
+NOTE: In non-realational adpaters, this method still builds a normal set of
+items, but then just returns the count. This means that the `count` method is
+potentially very slow.
+
+Here's an example of using `count`:
+
+```javascript
+
+// Get the count of all the users whose name starts with 's'
+User.count({familyName: {like: 's%'}, {nocase: true}, function (err, data) {
+  if (err) {
+    throw err;
+  }
+  console.log(data + ' users have a name starting with "s"');
+});
+```
+
+Some query options are incompatible with a `count` call. Notably, eager-fetch of
+associations with 'include', or 'limit'. Don't use these options if you're
+getting a count.
+
 ### Comparison operators
 
 Here is the list of comparison operators currently supported:
