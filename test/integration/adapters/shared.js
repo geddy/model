@@ -728,6 +728,22 @@ tests = {
     });
   }
 
+, 'test count all': function (next) {
+    model.Person.count({}, function (err, data) {
+      if (err) { throw err; }
+      assert.equal(20, data);
+      next();
+    });
+  }
+
+, 'test count query': function (next) {
+    model.Person.count({title: 'a'}, function (err, data) {
+      if (err) { throw err; }
+      assert.equal(1, data);
+      next();
+    });
+  }
+
 };
 
 module.exports = tests;
