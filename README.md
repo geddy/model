@@ -521,7 +521,7 @@ Use the `count` method to figure out how many items a query will return, without
 actually returning all the items. This method takes the same type of query
 object as the `all` method.
 
-NOTE: In non-realational adpaters, this method still builds a normal set of
+NOTE: In non-relational adapters, this method still builds a normal set of
 items, but then just returns the count. This means that the `count` method is
 potentially very slow.
 
