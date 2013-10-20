@@ -16,6 +16,8 @@ Model currently implements adapters for:
 * MongoDB
 * LevelDB
 * SQLite
+* Filesystem
+* In-memory
 
 ### License
 
