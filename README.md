@@ -15,6 +15,7 @@ Model currently implements adapters for:
 * Riak
 * MongoDB
 * LevelDB
+* SQLite
 
 ### License
 
