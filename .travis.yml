@@ -22,5 +22,6 @@ before_script:
   - sudo cp ./pg_hba.conf /etc/postgresql/9.2/main
   - sudo /etc/init.d/postgresql start
   - psql -c 'create database model_test;' -U postgres
+  - sudo apt-get install sqlite3 libsqlite3-dev
 
 script: jake test
