@@ -63,25 +63,16 @@ tests = {
     });
   }
 
-, 'beforeEach': function (next) {
-    var timeout = model.Event.adapter.name == 'riak' ?
-        config.riak.testInterval : 0;
-    helpers.createFixtures(function () {
-      setTimeout(next, timeout);
-    });
-  }
-
-, 'afterEach': function (next) {
-    var timeout = model.Event.adapter.name == 'riak' ?
-        config.riak.testInterval : 0;
-    helpers.deleteFixtures(function () {
-      setTimeout(next, timeout);
-    });
-  }
-
-
-
 };
+
+for (var p in shared) {
+  if (p == 'beforeEach' || p == 'afterEach') {
+    tests[p] = shared[p];
+  }
+  else {
+    tests[p + ' (SQLite)'] = shared[p];
+  }
+}
 
 module.exports = tests;
 
