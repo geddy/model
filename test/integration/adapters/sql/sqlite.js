@@ -76,7 +76,7 @@ for (var p in shared) {
 }
 
 for (var p in eagerAssnTests) {
-  tests[p + ' (Postgres)'] = eagerAssnTests[p];
+  tests[p + ' (SQLite)'] = eagerAssnTests[p];
 }
 
 module.exports = tests;
