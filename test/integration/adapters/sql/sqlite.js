@@ -2,6 +2,7 @@ var utils = require('utilities')
   , assert = require('assert')
   , model = require('../../../../lib')
   , helpers = require('.././helpers')
+  , eagerAssnTests = require('./eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/sqlite').Adapter
   , generator = require('../../../../lib/generators/sql')
   , adapter
@@ -72,6 +73,10 @@ for (var p in shared) {
   else {
     tests[p + ' (SQLite)'] = shared[p];
   }
+}
+
+for (var p in eagerAssnTests) {
+  tests[p + ' (Postgres)'] = eagerAssnTests[p];
 }
 
 module.exports = tests;
