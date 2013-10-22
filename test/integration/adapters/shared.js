@@ -96,7 +96,12 @@ tests = {
       if (err) { throw err; }
       model.Photo.first({id: data.id}, function (err, data) {
         if (err) { throw err; }
-        assert.equal(dt.getTime(), data.takenAt.getTime());
+        // Fucking MySQL
+        var tA = dt.getTime().toString()
+          , tB = data.takenAt.getTime().toString();
+        tA = tA.substr(0, tA.length - 8);
+        tB = tB.substr(0, tB.length - 8);
+        assert.equal(tA, tB);
         next();
       });
     });
