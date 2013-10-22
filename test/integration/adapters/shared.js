@@ -91,16 +91,15 @@ tests = {
     var dt = new Date()
       , photo;
 
+    // Fucking MySQL, throws away milliseconds
     dt.setMilliseconds(1000);
+
     photo = model.Photo.create({
       takenAt: dt
-    , title: 'asdf'
     });
     photo.save(function (err, data) {
       if (err) { throw err; }
       model.Photo.first({id: data.id}, function (err, data) {
-        console.log(dt.toString());
-        console.log(data.takenAt.toString());
         if (err) { throw err; }
         assert.equal(dt.getTime(), data.takenAt.getTime());
         next();
@@ -460,8 +459,13 @@ tests = {
     setTimeout(function () {
       p = model.Photo.create({title: 'z'});
       p.save(function (err, data) {
+
+        // Fucking MySQL, throws away milliseconds
+        var lt = new Date(data.createdAt.getTime());
+        lt.setMilliseconds(2000);
+
         if (err) { throw err; }
-        model.Person.all({createdAt: {lt: data.createdAt}},
+        model.Person.all({createdAt: {lt: lt}},
             function (err, data) {
           if (err) { throw err; }
           assert.equal(20, data.length);
