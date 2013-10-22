@@ -29,7 +29,7 @@
   "dependencies": {
     "utilities": "0.0.x",
     "mongodb-wrapper": "0.4.x",
-    "pg": "0.9.x",
+    "pg": "2.5.x",
     "level": "0.17.x",
     "sqlite3": "2.1.x"
   },
