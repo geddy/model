@@ -96,7 +96,7 @@ tests = {
   }
 
 , 'test includes eager-fetch of hasMany with association sort': function (next) {
-    model.Event.all(function (err, data) {
+    model.Event.all({}, {sort: 'title'}, function (err, data) {
       if (err) { throw err; }
       var evA = data[0]
         , evB = data[1];
@@ -104,7 +104,7 @@ tests = {
         var incr = 0;
         if (err) { throw err; }
         data.forEach(function (p) {
-          // Half to A, half to B
+          // Half of associated events to A, half to B
           if (!!(incr % 2)) {
             p.setEvent(evA);
           }

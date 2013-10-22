@@ -87,11 +87,9 @@ for (var p in shared) {
   }
 }
 
-/*
 for (var p in eagerAssnTests) {
   tests[p + ' (MySQL)'] = eagerAssnTests[p];
 }
-*/
 
 module.exports = tests;
 
