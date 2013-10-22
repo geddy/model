@@ -23,11 +23,9 @@ tests = {
     adapter.once('connect', function () {
       var sql = '';
 
-      sql += 'SET GLOBAL time_zone = "+0:00";'
-      sql += 'SET time_zone = "+0:00";'
-      sql += 'DROP DATABASE IF EXISTS dev_test;';
-      sql += 'CREATE DATABASE dev_test COLLATE latin1_general_cs;';
-      sql += 'USE dev_test;';
+      sql += 'DROP DATABASE IF EXISTS model_test;';
+      sql += 'CREATE DATABASE model_test COLLATE latin1_general_cs;';
+      sql += 'USE model_test;';
       sql += generator.dropTable(relations);
       sql += generator.createTable(relations);
 
@@ -52,7 +50,7 @@ tests = {
   }
 
 , 'after': function (next) {
-      var sql = 'DROP DATABASE IF EXISTS dev_test;';
+      var sql = 'DROP DATABASE IF EXISTS model_test;';
       adapter.exec(sql, function (err, data) {
         if (err) {
           throw err;
