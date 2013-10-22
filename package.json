@@ -10,6 +10,7 @@
     "validation",
     "postgresql",
     "postgres",
+    "mysql",
     "riak",
     "mongo",
     "mongodb",
@@ -31,6 +32,7 @@
     "mongodb-wrapper": "0.4.x",
     "pg": "2.5.x",
     "level": "0.17.x",
+    "mysql": "2.0.x",
     "sqlite3": "2.1.x"
   },
   "devDependencies": {

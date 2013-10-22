@@ -12,6 +12,7 @@ NodeJS.
 Model currently implements adapters for:
 
 * Postgres
+* MySQL
 * Riak
 * MongoDB
 * LevelDB
