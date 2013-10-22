@@ -19,13 +19,11 @@ tests = {
     adapter = new Adapter({
       user: 'root'
     , multipleStatements: true
+    , database: 'model_test'
     });
     adapter.once('connect', function () {
       var sql = '';
 
-      sql += 'DROP DATABASE IF EXISTS model_test;';
-      sql += 'CREATE DATABASE model_test COLLATE latin1_general_cs;';
-      sql += 'USE model_test;';
       sql += generator.dropTable(relations);
       sql += generator.createTable(relations);
 
@@ -50,16 +48,10 @@ tests = {
   }
 
 , 'after': function (next) {
-      var sql = 'DROP DATABASE IF EXISTS model_test;';
-      adapter.exec(sql, function (err, data) {
-        if (err) {
-          throw err;
-        }
-        adapter.once('disconnect', function () {
-          next();
-        });
-        adapter.disconnect();
-      });
+    adapter.once('disconnect', function () {
+      next();
+    });
+    adapter.disconnect();
   }
 
 , 'test create adapter': function () {
