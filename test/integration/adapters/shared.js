@@ -89,19 +89,20 @@ tests = {
 
 , 'test datetime round-trip': function (next) {
     var dt = new Date()
-      , photo = model.Photo.create({
-          takenAt: dt
-        });
+      , photo;
+
+    dt.setMilliseconds(1000);
+    photo = model.Photo.create({
+      takenAt: dt
+    , title: 'asdf'
+    });
     photo.save(function (err, data) {
       if (err) { throw err; }
       model.Photo.first({id: data.id}, function (err, data) {
+        console.log(dt.toString());
+        console.log(data.takenAt.toString());
         if (err) { throw err; }
-        // Fucking MySQL
-        var tA = dt.getTime().toString()
-          , tB = data.takenAt.getTime().toString();
-        tA = tA.substr(0, tA.length - 8);
-        tB = tB.substr(0, tB.length - 8);
-        assert.equal(tA, tB);
+        assert.equal(dt.getTime(), data.takenAt.getTime());
         next();
       });
     });

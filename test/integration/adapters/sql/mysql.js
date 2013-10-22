@@ -23,6 +23,8 @@ tests = {
     adapter.once('connect', function () {
       var sql = '';
 
+      sql += 'SET GLOBAL time_zone = "+0:00";'
+      sql += 'SET time_zone = "+0:00";'
       sql += 'DROP DATABASE IF EXISTS dev_test;';
       sql += 'CREATE DATABASE dev_test COLLATE latin1_general_cs;';
       sql += 'USE dev_test;';
