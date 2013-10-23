@@ -7,6 +7,7 @@ services:
   - mongodb
   - postgresql
   - riak
+  - mysql
 
 before_script:
   - sudo /etc/init.d/postgresql stop
@@ -26,4 +27,4 @@ before_script:
   - mysql -u root -e "CREATE DATABASE model_test COLLATE latin1_general_cs;"
   - sudo apt-get install sqlite3 libsqlite3-dev
 
-script: jake test
+script: jake test --trace
