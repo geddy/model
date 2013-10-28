@@ -15,6 +15,11 @@ tests = {
       , models = [];
     adapter = new Adapter(config.mongo);
 
+    adapter.once('connect', function () {
+      adapter.dropTable(['Zooby', 'User'], next);
+    });
+    adapter.connect();
+
     model.adapters = {};
     relations.forEach(function (r) {
       model[r].adapter = adapter;
@@ -25,11 +30,15 @@ tests = {
 
     model.registerDefinitions(models);
 
-    adapter.dropTable(['Zooby', 'User'], next);
   }
 
 , 'after': function (next) {
-    adapter.dropTable(['Zooby', 'User'], next);
+    adapter.dropTable(['Zooby', 'User'], function () {
+      adapter.disconnect(function (err) {
+        if (err) { throw err; }
+        next();
+      });
+    });
   }
 
 , 'test create adapter': function () {
