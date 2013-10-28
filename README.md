@@ -272,6 +272,31 @@ Model-item instances emit these events:
  * beforeUpdate
  * update
 
+Model-item instances have the following event hooks:
+
+ * afterCreate
+ * beforeValidate
+ * afterValidate
+ * beforeUpdateProperties
+ * afterUpdateProperties
+ * beforeSave
+ * afterSave
+ * beforeUpdate
+ * afterUpdate
+
+To use an event hook, just define a function with the hook's name:
+```
+var User = function () {
+  this.property('name', 'string', {required: false});
+
+  // Lowercase the name before validating
+  this.beforeValidate = function () {
+    // `this` will refer to the model instance
+    this.name = this.name.toLowerCase();
+  };
+};
+```
+
 ## Associations
 
 Model has support for associations: including hasMany/belongsTo and
