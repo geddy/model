@@ -40,6 +40,7 @@ tests = {
 , 'emit static create': function (next) {
     User.once('create', function (u) {
       assert.ok(u instanceof User);
+      assert.equal('afterCreate', u.lastName);
       next();
     });
     var user = User.create(_params);
@@ -58,6 +59,7 @@ tests = {
     User.once('validate', function (u) {
       assert.ok(u instanceof User);
       assert.equal('zzz', u.login);
+      assert.equal('afterValidate', u.lastName);
       next();
     });
     var user = User.create(_params);
@@ -99,6 +101,7 @@ tests = {
     var user = User.create(_params);
     user.once('updateProperties', function () {
       assert.equal('yyz', user.login);
+      assert.equal('afterUpdateProperties', this.lastName);
       next();
     });
     user.save(function () {
@@ -135,6 +138,7 @@ tests = {
 , 'emit instance save': function (next) {
     var user = User.create(_params);
     user.once('save', function (u) {
+      assert.equal('afterSave', this.lastName);
       next();
     });
     user.save(function () {});
@@ -175,6 +179,7 @@ tests = {
 , 'emit instance update': function (next) {
     var user = User.create(_params);
     user.once('update', function (res) {
+      assert.equal('afterUpdate', this.lastName);
       next();
     });
     user.save(function () {
