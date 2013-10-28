@@ -272,7 +272,7 @@ Model-item instances emit these events:
  * beforeUpdate
  * update
 
-Model-item instances have the following event hooks:
+Model-item instances also have the following lifecycle methods:
 
  * afterCreate
  * beforeValidate
@@ -284,7 +284,7 @@ Model-item instances have the following event hooks:
  * beforeUpdate
  * afterUpdate
 
-To use an event hook, just define a function with the hook's name:
+If these methods are defined, they will be called at the appropriate time:
 ```
 var User = function () {
   this.property('name', 'string', {required: false});
