@@ -9,7 +9,8 @@ var utils = require('utilities')
   , currentId
   , tests
   , config = require('../../../config')
-  , shared = require('../shared');
+  , shared = require('../shared')
+  , unique = require('../unique_id');
 
 tests = {
   'before': function (next) {
@@ -81,6 +82,10 @@ for (var p in shared) {
 
 for (var p in eagerAssnTests) {
   tests[p + ' (MySQL)'] = eagerAssnTests[p];
+}
+
+for (var p in unique) {
+  tests[p + ' (MySQL)'] = unique[p];
 }
 
 module.exports = tests;

@@ -7,7 +7,8 @@ var utils = require('utilities')
   , adapter
   , tests
   , config = require('../../../config')
-  , shared = require('../shared');
+  , shared = require('../shared')
+  , unique = require('../unique_id');
 
 tests = {
   'before': function (next) {
@@ -53,6 +54,10 @@ for (var p in shared) {
   else {
     tests[p + ' (Mongo)'] = shared[p];
   }
+}
+
+for (var p in unique) {
+  tests[p + ' (Mongo)'] = unique[p];
 }
 
 module.exports = tests;
