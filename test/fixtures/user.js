@@ -11,7 +11,21 @@ var User = function () {
   this.validatesLength('login', {min: 3, on: ['create', 'reify']});
   this.validatesConfirmed('password', 'confirmPassword', {on: 'create', message: 'Parallax!'});
 
-
+  this.afterCreate = function () {
+    this.lastName = 'afterCreate';
+  }
+  this.afterValidate = function () {
+    this.lastName = 'afterValidate';
+  }
+  this.afterSave = function () {
+    this.lastName = 'afterSave';
+  }
+  this.afterUpdate = function () {
+    this.lastName = 'afterUpdate';
+  }
+  this.afterUpdateProperties = function () {
+    this.lastName = 'afterUpdateProperties';
+  }
 };
 
 User.prototype.someMethod = function () {

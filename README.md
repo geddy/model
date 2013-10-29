@@ -278,6 +278,31 @@ Model-item instances emit these events:
  * beforeUpdate
  * update
 
+Model-item instances also have the following lifecycle methods:
+
+ * afterCreate
+ * beforeValidate
+ * afterValidate
+ * beforeUpdateProperties
+ * afterUpdateProperties
+ * beforeSave
+ * afterSave
+ * beforeUpdate
+ * afterUpdate
+
+If these methods are defined, they will be called at the appropriate time:
+```
+var User = function () {
+  this.property('name', 'string', {required: false});
+
+  // Lowercase the name before validating
+  this.beforeValidate = function () {
+    // `this` will refer to the model instance
+    this.name = this.name.toLowerCase();
+  };
+};
+```
+
 ## Associations
 
 Model has support for associations: including hasMany/belongsTo and
