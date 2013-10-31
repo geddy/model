@@ -9,6 +9,7 @@ var t = new jake.TestTask('Model', function () {
   this.testFiles.exclude('test/fixtures/*.js');
   this.testFiles.exclude('test/integration/adapters/shared.js');
   this.testFiles.exclude('test/integration/adapters/unique_id.js');
+  this.testFiles.exclude('test/integration/adapters/streaming.js');
   this.testFiles.exclude('test/integration/adapters/helpers.js');
   this.testFiles.exclude('test/integration/adapters/sql/eager_assn.js');
   this.testFiles.exclude('test/config.js');

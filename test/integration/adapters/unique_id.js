@@ -21,9 +21,7 @@ tests = {
       });
       // Should throw when trying to save with an already-existing id
       p.save(function (err, data) {
-        assert.throws(function () {
-          if (err) { throw err; }
-        }, Error);
+        assert.ok(err);
         next();
       });
     });

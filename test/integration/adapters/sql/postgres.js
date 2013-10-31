@@ -10,7 +10,8 @@ var utils = require('utilities')
   , tests
   , config = require('../../../config')
   , shared = require('../shared')
-  , unique = require('../unique_id');
+  , unique = require('../unique_id')
+  , streaming = require('../streaming');
 
 tests = {
   'before': function (next) {
@@ -82,6 +83,10 @@ for (var p in eagerAssnTests) {
 
 for (var p in unique) {
   tests[p + ' (Postgres)'] = unique[p];
+}
+
+for (var p in streaming) {
+  tests[p + ' (Postgres)'] = streaming[p];
 }
 
 module.exports = tests;
