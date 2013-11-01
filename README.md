@@ -12,13 +12,8 @@ NodeJS.
 Model currently implements adapters for:
 
 * Postgres
-* MySQL
 * Riak
 * MongoDB
-* LevelDB
-* SQLite
-* Filesystem
-* In-memory
 
 ### License
 
@@ -41,8 +36,7 @@ npm install model
 Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
 
 The integration tests require mongo and postgres. To run the tests on a specific
-adapter, use `jake test[mongo]`, `jake test[postgres]`, `jake test[level]`,
-or `jake test[memory]`.
+adapter, use `jake test[mongo]`, `jake test[postgres]`, or `jake test[memory]`.
 
 Configure adapter options by creating a `test/db.json` file. See
 `test/db.sample.json` for available options.
@@ -272,11 +266,11 @@ The 'constructor' for a model emits the following events:
 Model-item instances emit these events:
 
  * beforeUpdateProperties
- * afterUpdateProperties
+ * updateProperties
  * beforeSave
- * afterSave
+ * save
  * beforeUpdate
- * afterUpdate
+ * update
 
 Model-item instances also have the following lifecycle methods:
 
@@ -544,7 +538,11 @@ User.all({createdAt: {gt: dt}, function (err, data) {
 #### Streaming results with events (SQL adapters only)
 
 The `all` method returns an EventedQueryProcessor which emits the normal 'data',
-'end', and 'error' events. Each 'data' event will return a single model-item:
+'end', and 'error' events. Each 'data' event will return a single model-item.
+
+NOTE: Do not pass a callback to the `all` method if you're streaming -- passing
+a callback will cause the results to be buffered internally. If you need
+something to happen when the stream ends, use the 'end' event.
 
 ```javascript
 var users
@@ -581,33 +579,6 @@ Here are a few more examples of queries:
 // Where foo is less than 2112, and bar is 'BAZ'
 {foo: {lt: 2112}, bar: 'BAZ'}
 ```
-
-### Counting items in a collection
-
-Use the `count` method to figure out how many items a query will return, without
-actually returning all the items. This method takes the same type of query
-object as the `all` method.
-
-NOTE: In non-relational adapters, this method still builds a normal set of
-items, but then just returns the count. This means that the `count` method is
-potentially very slow.
-
-Here's an example of using `count`:
-
-```javascript
-
-// Get the count of all the users whose name starts with 's'
-User.count({familyName: {like: 's%'}, {nocase: true}, function (err, data) {
-  if (err) {
-    throw err;
-  }
-  console.log(data + ' users have a name starting with "s"');
-});
-```
-
-Some query options are incompatible with a `count` call. Notably, eager-fetch of
-associations with 'include', or 'limit'. Don't use these options if you're
-getting a count.
 
 ### Comparison operators
 
