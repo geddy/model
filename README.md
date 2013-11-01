@@ -569,7 +569,7 @@ processor.on('end', function () {
 
 #### Examples of queries
 
-Here are a few more examples of queries:
+Here are a few more examples of queries you can pass to the `all` method:
 
 ```javascript
 // Where "foo" is 'BAR' and "bar" is not null
