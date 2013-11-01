@@ -272,11 +272,11 @@ The 'constructor' for a model emits the following events:
 Model-item instances emit these events:
 
  * beforeUpdateProperties
- * updateProperties
+ * afterUpdateProperties
  * beforeSave
- * save
+ * afterSave
  * beforeUpdate
- * update
+ * afterUpdate
 
 Model-item instances also have the following lifecycle methods:
 
