@@ -515,6 +515,14 @@ value is either a simple value for comparison (equal to), or another
 object-literal where the key is the comparison-operator, and the value is the
 value to use for the comparison.
 
+In SQL adapters, you can pass a callback to the `all` method if you want the
+results buffered and returned all at once, or steam the results using events.
+
+#### Using a callback
+
+Pass your callback function as a final argument. Callbacks use the normal `(err,
+data)` pattern. Here's an example:
+
 ```javascript
 var users
   , dt;
@@ -533,7 +541,37 @@ User.all({createdAt: {gt: dt}, function (err, data) {
 });
 ```
 
-Here are some more examples of queries:
+#### Streaming results with events (SQL adapters only)
+
+The `all` method returns an EventedQueryProcessor which emits the normal 'data',
+'end', and 'error' events. Each 'data' event will return a single model-item:
+
+```javascript
+var users
+  , dt
+  , processor;
+
+dt = new Date();
+dt.setHours(dt.getHours() - 24);
+
+// Find all the users created since yesterday
+processor = User.all({createdAt: {gt: dt});
+processor.on('data', function (user) {
+  console.log('Found user');
+  console.dir(user);
+});
+processor.on('error', function (err) {
+  console.log('whoops');
+  throw err;
+});
+processor.on('end', function () {
+  console.log('No more users');
+});
+```
+
+#### Examples of queries
+
+Here are a few more examples of queries:
 
 ```javascript
 // Where "foo" is 'BAR' and "bar" is not null
