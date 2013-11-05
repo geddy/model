@@ -704,6 +704,49 @@ tests = {
     });
   }
 
+, 'test hasMany/through association': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var person = data[0];
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var events = data;
+        events.forEach(function (ev) {
+          person.addEvent(ev);
+        });
+        person.save(function (err, data) {
+          if (err) { throw err; }
+          person.getEvents(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test named hasMany/through association': function (next) {
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      model.Person.all(function (err, data) {
+        if (err) { throw err; }
+        var people = data;
+        people.forEach(function (person) {
+          ev.addParticipant(person);
+        });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          ev.getParticipants(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.length);
+            next();
+          });
+        });
+      });
+    });
+  }
 
 // FIXME: This isn't really an integration test
 , 'test Static methods on model': function (next) {
