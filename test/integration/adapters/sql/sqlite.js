@@ -86,7 +86,7 @@ for (var p in unique) {
 }
 
 for (var p in streaming) {
-  tests[p + ' (Postgres)'] = streaming[p];
+  tests[p + ' (SQLite)'] = streaming[p];
 }
 
 module.exports = tests;
