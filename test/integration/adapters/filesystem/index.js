@@ -30,7 +30,7 @@ tests = {
   }
 
 , 'after': function (next) {
-    model.adapters.filesystem.disconnect(next);
+    model.adapters.filesystem.destroy(next);
   }
 
 , 'test create adapter': function () {

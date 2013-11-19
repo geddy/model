@@ -4,7 +4,8 @@ var assert = require('assert')
   , pg = require('pg')
   , model = require('../../../lib')
   , Zooby = require('../../fixtures/zooby').Zooby
-  , generator = require('../../../lib/generators/sql')
+  , Generator = require('../../../lib/generators/sql').Generator
+  , generator = new Generator()
   , config = require('../../config')
   , tests
   , arrIncl;

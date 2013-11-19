@@ -4,7 +4,8 @@ var utils = require('utilities')
   , helpers = require('../helpers')
   , eagerAssnTests = require('./eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/sqlite').Adapter
-  , generator = require('../../../../lib/generators/sql')
+  , Generator = require('../../../../lib/generators/sql').Generator
+  , generator = new Generator()
   , adapter
   , currentId
   , tests

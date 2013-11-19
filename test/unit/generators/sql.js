@@ -3,7 +3,8 @@ var assert = require('assert')
   , utils = require('utilities')
   , model = require('../../../lib')
   , Zooby = require('../../fixtures/zooby').Zooby
-  , generator = require('../../../lib/generators/sql')
+  , Generator = require('../../../lib/generators/sql').Generator
+  , generator = new Generator()
   , tests
   , strIncl;
 
@@ -20,7 +21,7 @@ tests = {
       name: 'barBazQux'
     , datatype: 'string'
     });
-    assert.ok(strIncl(sql, 'ADD COLUMN bar_baz_qux varchar(256)'));
+    assert.ok(strIncl(sql, 'ADD COLUMN "bar_baz_qux" varchar(256)'));
   }
 
 , 'createTableStatement': function () {
@@ -33,9 +34,9 @@ tests = {
     assert.ok(strIncl(sql,
         'create table zerbs ('));
     assert.ok(strIncl(sql,
-        'id varchar(256) primary key'));
+        '"id" varchar(256) primary key'));
     assert.ok(strIncl(sql,
-        'foo varchar(256)'));
+        '"foo" varchar(256)'));
   }
 
 , 'alterTableStatement single alteration': function () {
@@ -49,7 +50,7 @@ tests = {
     assert.ok(strIncl(sql,
         'alter table zerbs'));
     assert.ok(strIncl(sql,
-        'add column foo varchar(256)'));
+        'add column "foo" varchar(256)'));
   }
 
 , 'alterTableStatement array of alterations': function () {
@@ -77,11 +78,11 @@ tests = {
     assert.ok(strIncl(sql,
         'alter table zerbs'));
     assert.ok(strIncl(sql,
-        'alter column foo type integer'));
+        'alter column "foo" type integer'));
     assert.ok(strIncl(sql,
-        'drop column bar'));
+        'drop column "bar"'));
     assert.ok(strIncl(sql,
-        'rename column bar to baz_bar'));
+        'rename column "bar" to "baz_bar"'));
   }
 
 , 'createTable with single model object': function () {
@@ -89,17 +90,17 @@ tests = {
     assert.ok(strIncl(sql,
         'create table zoobies ('));
     assert.ok(strIncl(sql,
-        'foo varchar(256)'));
+        '"foo" varchar(256)'));
     assert.ok(strIncl(sql,
-        'bar real'));
+        '"bar" real'));
     assert.ok(strIncl(sql,
-        'woot boolean'));
+        '"woot" boolean'));
     assert.ok(strIncl(sql,
-        'freen date'));
+        '"freen" date'));
     assert.ok(strIncl(sql,
-        'zong timestamp'));
+        '"zong" timestamp'));
     assert.ok(strIncl(sql,
-        'blarg time'));
+        '"blarg" time'));
   }
 
 };

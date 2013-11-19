@@ -4,7 +4,8 @@ var utils = require('utilities')
   , helpers = require('.././helpers')
   , eagerAssnTests = require('./eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/mysql').Adapter
-  , generator = require('../../../../lib/generators/sql')
+  , Generator = require('../../../../lib/generators/sql').Generator
+  , generator = new Generator()
   , adapter
   , currentId
   , tests
@@ -23,6 +24,10 @@ tests = {
     , multipleStatements: true
     , database: 'model_test'
     });
+
+
+    generator.COLUMN_NAME_DELIMITER = adapter.COLUMN_NAME_DELIMITER;
+
     adapter.once('connect', function () {
       var sql = '';
 

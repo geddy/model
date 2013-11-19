@@ -3,7 +3,6 @@ var utils = require('utilities')
   , model = require('../../../../lib')
   , helpers = require('.././helpers')
   , Adapter = require('../../../../lib/adapters/mongo').Adapter
-  , generator = require('../../../../lib/generators/sql')
   , adapter
   , tests
   , config = require('../../../config')

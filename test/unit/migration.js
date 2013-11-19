@@ -9,7 +9,8 @@ var assert = require('assert')
   , strIncl;
 
 fakeAdapter = {
-  exec: function (sql, cb) {
+  COLUMN_NAME_DELIMITER: '"'
+, exec: function (sql, cb) {
     cb(null, sql);
   }
 };
@@ -40,13 +41,13 @@ tests = {
       assert.ok(strIncl(sql,
           'create table zerbs ('));
       assert.ok(strIncl(sql,
-          'id varchar(256) primary key'));
+          '"id" varchar(256) primary key'));
       assert.ok(strIncl(sql,
-          'foo_bar_baz varchar(256)'));
+          '"foo_bar_baz" varchar(256)'));
       assert.ok(strIncl(sql,
-          'baz_bar_qux integer'));
+          '"baz_bar_qux" integer'));
       assert.ok(strIncl(sql,
-          'qux_baz_bar boolean'));
+          '"qux_baz_bar" boolean'));
       next();
     });
   }
@@ -56,7 +57,7 @@ tests = {
     m.addColumn('zerbs', 'fooBarBaz', 'int', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
-      assert.ok(strIncl(sql, 'add column foo_bar_baz integer'));
+      assert.ok(strIncl(sql, 'add column "foo_bar_baz" integer'));
       next();
     });
   }
@@ -66,7 +67,7 @@ tests = {
     m.removeColumn('zerbs', 'fooBarBaz', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
-      assert.ok(strIncl(sql, 'drop column foo_bar_baz'));
+      assert.ok(strIncl(sql, 'drop column "foo_bar_baz"'));
       next();
     });
   }
@@ -76,7 +77,7 @@ tests = {
     m.changeColumn('zerbs', 'fooBarBaz', 'string', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
-      assert.ok(strIncl(sql, 'alter column foo_bar_baz type varchar(256)'));
+      assert.ok(strIncl(sql, 'alter column "foo_bar_baz" type varchar(256)'));
       next();
     });
   }
@@ -86,7 +87,7 @@ tests = {
     m.renameColumn('zerbs', 'fooBarBaz', 'bazBarQux', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
-      assert.ok(strIncl(sql, 'rename column foo_bar_baz to baz_bar_qux'));
+      assert.ok(strIncl(sql, 'rename column "foo_bar_baz" to "baz_bar_qux"'));
       next();
     });
   }
