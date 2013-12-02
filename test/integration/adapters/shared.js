@@ -748,6 +748,25 @@ tests = {
     });
   }
 
+, 'test named hasMany/through with same model': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var friends = data.slice()
+        , person = friends.shift();
+      friends.forEach(function (f) {
+        person.addFriend(f);
+      });
+      person.save(function (err, data) {
+        if (err) { throw err; }
+        person.getFriends(function (err, data) {
+          if (err) { throw err; }
+          assert.equal(19, data.length);
+          next();
+        });
+      });
+    });
+  }
+
 // FIXME: This isn't really an integration test
 , 'test Static methods on model': function (next) {
     model.Event.findByTitle('a', function (err, data) {
