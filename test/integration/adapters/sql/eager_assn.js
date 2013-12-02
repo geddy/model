@@ -54,6 +54,7 @@ tests = {
       if (err) { throw err; }
       var ev = data[0];
       model.Person.all(function (err, data) {
+        if (err) { throw err; }
         var people = data;
         people.forEach(function (person) {
           ev.addParticipant(person);
