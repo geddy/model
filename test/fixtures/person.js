@@ -7,6 +7,8 @@ var Person = function () {
   this.property('description', 'text');
 
   this.hasMany('Events', {through: 'Participations'});
+  this.hasMany('Frienders', {through: 'Friendships', model: 'People'});
+  this.hasMany('Friends', {through: 'Friendships', model: 'People'});
 };
 
 Person.prototype.someMethod = function () {
