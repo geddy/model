@@ -41,9 +41,9 @@ tests = {
       assert.ok(strIncl(sql,
           'create table zerbs ('));
       assert.ok(strIncl(sql,
-          '"id" varchar(256) primary key'));
+          '"id" varchar(255) primary key'));
       assert.ok(strIncl(sql,
-          '"foo_bar_baz" varchar(256)'));
+          '"foo_bar_baz" varchar(255)'));
       assert.ok(strIncl(sql,
           '"baz_bar_qux" integer'));
       assert.ok(strIncl(sql,
@@ -77,7 +77,7 @@ tests = {
     m.changeColumn('zerbs', 'fooBarBaz', 'string', function (err, data) {
       var sql = data;
       assert.ok(strIncl(sql, 'alter table zerbs'));
-      assert.ok(strIncl(sql, 'alter column "foo_bar_baz" type varchar(256)'));
+      assert.ok(strIncl(sql, 'alter column "foo_bar_baz" type varchar(255)'));
       next();
     });
   }
