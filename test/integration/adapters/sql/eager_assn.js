@@ -49,7 +49,7 @@ tests = {
     });
   }
 
-, 'test includes eager-fetch of multiple hasMany associations': function (next) {
+, 'test `first`, includes eager-fetch of multiple hasMany associations': function (next) {
     model.Event.all(function (err, data) {
       if (err) { throw err; }
       var ev = data[0];
@@ -70,6 +70,56 @@ tests = {
           });
         });
       });
+    });
+  }
+
+, 'test `all`, includes eager-fetch of multiple hasMany associations': function (next) {
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var events = data
+        , incr = 0
+        , people
+        , ids = []
+        , associate = function () {
+            var ev;
+            // Add a participant and admin to every event
+            if ((ev = events.shift())) {
+              ev.addParticipant(people[incr]);
+              ev.addAdmin(people[incr]);
+              incr++;
+              ev.save(function (err, data) {
+                if (err) { throw err; }
+                associate();
+              });
+            }
+            else {
+              var q = model.Event.all({}, {includes: ['participant',
+                  'admin', 'photo']}, function (err, data) {
+                if (err) { throw err; }
+                var events = data;
+                assert.equal(20, events[0].photos.length);
+                events.forEach(function (ev) {
+                  assert.equal(1, ev.participants.length);
+                  assert.equal(1, ev.admins.length);
+                });
+                next();
+              });
+            }
+          };
+      model.Photo.all(function (err, data) {
+        if (err) { throw err; }
+        var photos = data;
+        // Add a bunch of photos to the first event
+        photos.forEach(function (photo) {
+          events[0].addPhoto(photo);
+        });
+        model.Person.all(function (err, data) {
+          if (err) { throw err; }
+          people = data;
+          associate();
+        });
+      });
+
     });
   }
 
