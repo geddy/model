@@ -21,7 +21,7 @@ tests = {
       name: 'barBazQux'
     , datatype: 'string'
     });
-    assert.ok(strIncl(sql, 'ADD COLUMN "bar_baz_qux" varchar(256)'));
+    assert.ok(strIncl(sql, 'ADD COLUMN "bar_baz_qux" varchar(255)'));
   }
 
 , 'createTableStatement': function () {
@@ -34,9 +34,9 @@ tests = {
     assert.ok(strIncl(sql,
         'create table zerbs ('));
     assert.ok(strIncl(sql,
-        '"id" varchar(256) primary key'));
+        '"id" varchar(255) primary key'));
     assert.ok(strIncl(sql,
-        '"foo" varchar(256)'));
+        '"foo" varchar(255)'));
   }
 
 , 'alterTableStatement single alteration': function () {
@@ -50,7 +50,7 @@ tests = {
     assert.ok(strIncl(sql,
         'alter table zerbs'));
     assert.ok(strIncl(sql,
-        'add column "foo" varchar(256)'));
+        'add column "foo" varchar(255)'));
   }
 
 , 'alterTableStatement array of alterations': function () {
@@ -90,7 +90,7 @@ tests = {
     assert.ok(strIncl(sql,
         'create table zoobies ('));
     assert.ok(strIncl(sql,
-        '"foo" varchar(256)'));
+        '"foo" varchar(255)'));
     assert.ok(strIncl(sql,
         '"bar" real'));
     assert.ok(strIncl(sql,
