@@ -124,21 +124,43 @@ tests = {
   }
 
 , 'test includes eager-fetch of belongsTo association': function (next) {
-    model.Event.all(function (err, data) {
+    model.Schedule.all(function (err, schedules) {
       if (err) { throw err; }
-      var ev = data[0];
-      model.Photo.all(function (err, data) {
+      model.Event.all(function (err, events) {
         if (err) { throw err; }
-        data.forEach(function (p) {
-          p.setEvent(ev);
-        });
-        helpers.updateItems(data, function () {
-          model.Photo.all({}, {includes: ['event']}, function (err, data) {
+        for (var i = 0, ii = events.length; i < ii; i++) {
+          schedules[i].setEvent(events[i]);
+        }
+        helpers.updateItems(schedules, function (err) {
+          if (err) { throw err; }
+          model.Schedule.all({}, {includes: ['event']}, function (err, data) {
             if (err) { throw err; }
-            var every = data.every(function (p) {
-              return !!p.event;
-            });
-            assert.ok(every);
+            for (var i = 0, ii = events.length; i < ii; i++) {
+              assert.equal(events[i].id, data[i].event.id);
+            }
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test includes eager-fetch of named belongsTo association': function (next) {
+    model.Schedule.all(function (err, schedules) {
+      if (err) { throw err; }
+      model.Person.all({}, {sort: {id: 'desc'}}, function (err, people) {
+        if (err) { throw err; }
+        for (var i = 0, ii = people.length; i < ii; i++) {
+          schedules[i].setEditor(people[i]);
+        }
+        helpers.updateItems(schedules, function (err) {
+          if (err) { throw err; }
+          model.Schedule.all({}, {includes: ['editors'],
+              sort: {'editor.id': 'desc'}}, function (err, data) {
+            if (err) { throw err; }
+            for (var i = 0, ii = people.length; i < ii; i++) {
+              assert.equal(people[i].id, data[i].editor.id);
+            }
             next();
           });
         });

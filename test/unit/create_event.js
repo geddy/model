@@ -2,6 +2,7 @@ var utils = require('utilities')
   , assert = require('assert')
   , model = require('../../lib')
   , Event = require('../fixtures/event').Event
+  , Schedule = require('../fixtures/schedule').Schedule
   , tests;
 
 tests = {
@@ -71,14 +72,15 @@ tests = {
   }
 
 , 'test serialize includes hasOne association props': function () {
-    var c = Event.create({
+    var s = Schedule.create({
           title: 'zerb'
         , description: 'asdf'
         })
-      , schedule = {};
-    c.schedule = schedule;
-    c = c.toJSON();
-    assert.strictEqual(schedule, c.schedule);
+      , event = {};
+    s.event = event;
+    s = s.toJSON();
+    console.dir(s);
+    assert.strictEqual(event, s.event);
   }
 
 };
