@@ -7,7 +7,6 @@ var Event = function () {
   this.validatesPresent('title', {message: 'Argle-bargle'});
   this.validatesPresent('description', {on: ['create', 'reify']});
 
-  this.hasOne('Schedule');
   this.hasOne('Owner', {model: 'People'});
   this.hasMany('Admins', {model: 'People'});
   this.hasMany('Participants', {model: 'People', through: 'Participations'});

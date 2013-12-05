@@ -684,7 +684,7 @@ tests = {
     });
   }
 
-, 'test adding from belongsTo side (named assns not supported)': function (next) {
+, 'test belongsTo': function (next) {
     model.Schedule.all(function (err, data) {
       if (err) { throw err; }
       var schedule = data[0];
@@ -694,9 +694,29 @@ tests = {
         schedule.setEvent(ev);
         schedule.save(function (err, data) {
           if (err) { throw err; }
-          ev.getSchedule(function (err, data) {
+          schedule.getEvent(function (err, data) {
             if (err) { throw err; }
-            assert.equal(schedule.id, data.id);
+            assert.equal(ev.id, data.id);
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test named belongsTo': function (next) {
+    model.Schedule.all(function (err, data) {
+      if (err) { throw err; }
+      var schedule = data[0];
+      model.Person.all(function (err, data) {
+        if (err) { throw err; }
+        var person = data[0];
+        schedule.setEditor(person);
+        schedule.save(function (err, data) {
+          if (err) { throw err; }
+          schedule.getEditor(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(person.id, data.id);
             next();
           });
         });
