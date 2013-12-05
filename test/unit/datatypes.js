@@ -71,6 +71,10 @@ var tests = {
     // string, should fail
     byTor = ByTor.create({objectProp: 'As gray traces of dawn ...'});
     assert.notStrictEqual(byTor.errors.objectProp, undefined);
+    
+    // JSON string, valid
+    byTor = ByTor.create({objectProp: JSON.stringify({foo:'bar',fooList:['bar','bar','bar']})});
+    assert.ok(byTor.isValid());
   }
 
 , 'test date': function () {
