@@ -3,8 +3,8 @@ var assert = require('assert')
   , utils = require('utilities')
   , model = require('../../../lib')
   , Zooby = require('../../fixtures/zooby').Zooby
-  , Generator = require('../../../lib/generators/sql').Generator
-  , generator = new Generator()
+  , StandardGenerator = require('../../../lib/generators/sql').StandardGenerator
+  , generator = new StandardGenerator()
   , tests
   , strIncl;
 

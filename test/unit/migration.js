@@ -1,6 +1,7 @@
 
 var assert = require('assert')
   , Migration = require('../../lib/migration').Migration
+  , StandardGenerator = require('../../lib/generators/sql').StandardGenerator
   , utils = require('utilities')
   , tests
   , fakeAdapter
@@ -13,6 +14,7 @@ fakeAdapter = {
 , exec: function (sql, cb) {
     cb(null, sql);
   }
+, generator: new StandardGenerator()
 };
 createCallback = function (next) {
   return function (err, data) {
