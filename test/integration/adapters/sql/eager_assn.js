@@ -123,6 +123,37 @@ tests = {
     });
   }
 
+, 'test named hasMany/through with same model (reflexive association)': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var friends = data.slice()
+        , person = friends.shift();
+      // The first guy is friends with all other 19 guys
+      // (He's their friender, they're his friends)
+      friends.forEach(function (f) {
+        person.addFriend(f);
+      });
+      person.save(function (err, data) {
+        if (err) { throw err; }
+        // Check both sides of the association
+        model.Person.all({id: person.id}, {includes: ['friend']},
+            function (err, data) {
+          if (err) { throw err; }
+          // Does he have all 19 friends?
+          assert.equal(19, data[0].friends.length);
+          model.Person.all({id: {ne: person.id}},
+              {includes: ['friender']}, function (err, data) {
+            // Do all 19 of them has him as a friender?
+            data.forEach(function (p) {
+              assert.equal(person.id, p.frienders[0].id);
+            });
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test includes eager-fetch of belongsTo association': function (next) {
     model.Schedule.all(function (err, schedules) {
       if (err) { throw err; }

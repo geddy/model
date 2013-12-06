@@ -768,7 +768,7 @@ tests = {
     });
   }
 
-, 'test named hasMany/through with same model': function (next) {
+, 'test named hasMany/through with same model (reflexive association)': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
       var friends = data.slice()
