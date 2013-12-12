@@ -476,11 +476,42 @@ tests = {
     }, 10);
   }
 
-, 'test remove': function (next) {
+, 'test remove by id': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
       var id = data[0].id;
-      model.Person.remove({id: id}, function (err, data) {
+      model.Person.remove(id, function (err, data) {
+        if (err) { throw err; }
+        model.Person.first(id, function (err, data) {
+          if (err) { throw err; }
+          assert.ok(!data);
+          next();
+        });
+      });
+    });
+  }
+
+, 'test remove with query': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var title = data[0].title
+        , id = data[0].id
+        , query = {
+            or: [
+              {
+                title: {
+                  like: title
+                }
+              }
+            , {
+                description: {
+                  like: 'bogus'
+                }
+              }
+            ]
+          };
+
+      model.Person.remove(query, function (err, data) {
         if (err) { throw err; }
         model.Person.first(id, function (err, data) {
           if (err) { throw err; }
