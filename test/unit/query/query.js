@@ -118,7 +118,10 @@ var tests = {
   }
 
 , 'test isValid, valid gte and lte referencing same date field': function () {
-    var query = new Query(Zooby, {zong: {gte: new Date(), lte: new Date()}}, {});
+    var query = new Query(Zooby, {and: [
+          {zong: {gte: new Date()}}
+        , {zong: {lte: new Date()}}
+        ]}, {});
     assert.ok(query.conditions.isValid());
   }
 
