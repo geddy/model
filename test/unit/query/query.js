@@ -111,10 +111,17 @@ var tests = {
     assert.ok(!query.conditions.operands[0].opts.nocase);
     assert.ok(query.conditions.operands[1].opts.nocase);
   }
+
 , 'test object\'s properties with Model': function () {
     var query = new Query(Zooby, { 'wooby.foo': { like: 'foo' } });
     assert.ok(query.conditions.isValid());
   }
+
+, 'test isValid, valid gte and lte referencing same date field': function () {
+    var query = new Query(Zooby, {zong: {gte: new Date(), lte: new Date()}}, {});
+    assert.ok(query.conditions.isValid());
+  }
+
 };
 
 module.exports = tests;
