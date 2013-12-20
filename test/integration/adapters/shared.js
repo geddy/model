@@ -462,27 +462,39 @@ tests = {
     });
   }
 
-
 , 'test all, using less-than createdAt': function (next) {
-    var dt, p;
-    setTimeout(function () {
-      p = model.Photo.create({title: 'z'});
-      p.save(function (err, data) {
+    var dt
+      , p = model.Photo.create({title: 'z'});
 
-        // Fucking MySQL, throws away milliseconds
-        var lt = new Date(data.createdAt.getTime());
-        lt.setMilliseconds(2000);
+    p.save(function (err, data) {
+      var lt = new Date(data.createdAt.getTime() + 5000);
 
+      if (err) { throw err; }
+      model.Person.all({createdAt: {lt: lt}},
+          function (err, data) {
         if (err) { throw err; }
-        model.Person.all({createdAt: {lt: lt}},
-            function (err, data) {
-          if (err) { throw err; }
-          assert.equal(20, data.length);
-          next();
-        });
+        assert.equal(20, data.length);
+        next();
       });
+    });
+  }
 
-    }, 10);
+, 'test all, using less-than and greater-than with createdAt': function (next) {
+    var dt
+      , p = model.Photo.create({title: 'z'});
+
+    p.save(function (err, data) {
+      var lt = new Date(data.createdAt.getTime() + 5000)
+        , gt = new Date(data.createdAt.getTime() - 5000);
+
+      if (err) { throw err; }
+      model.Person.all({createdAt: {lt: lt, gt: gt}},
+          function (err, data) {
+        if (err) { throw err; }
+        assert.equal(20, data.length);
+        next();
+      });
+    });
   }
 
 , 'test remove by id': function (next) {
