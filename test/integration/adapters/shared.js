@@ -440,6 +440,15 @@ tests = {
     });
   }
 
+, 'test all, or with simple equality and like comparison': function (next) {
+    model.Person.all({title: {eql: 'a', ne: 'b'}},
+        function (err, data) {
+      if (err) { throw err; }
+      assert.equal(1, data.length);
+      next();
+    });
+  }
+
 , 'test all, or with simple equality and like comparison, and not': function (next) {
     var p = model.Person.create({title: 'aaa'});
     p.save(function (err, data) {

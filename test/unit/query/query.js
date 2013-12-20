@@ -55,12 +55,6 @@ var tests = {
     assert.ok(operands[1] instanceof comparison.EqualToComparison);
   }
 
-, 'test nested conditions': function () {
-    var conditions = {foo: 'bar', baz: 'qux', or: {foo: 'baz', baz: 'zoobie'}}
-      , query = new Query(Zooby, conditions, {})
-      , operands;
-  }
-
 , 'test "not"': function () {
     var conditions = {foo: 'bar', not: {bar: 'baz', baz: 'zoobie'}}
       , query = new Query(Zooby, conditions, {})
@@ -117,12 +111,23 @@ var tests = {
     assert.ok(query.conditions.isValid());
   }
 
-, 'test isValid, valid gte and lte referencing same date field': function () {
+, 'test "and" with multiple comparisions on same field, verbose': function () {
     var query = new Query(Zooby, {and: [
           {zong: {gte: new Date()}}
         , {zong: {lte: new Date()}}
-        ]}, {});
+        ]}, {})
+      , operands = query.conditions.operands;
     assert.ok(query.conditions.isValid());
+    assert.ok(operands[0] instanceof comparison.GreaterThanOrEqualComparison);
+    assert.ok(operands[1] instanceof comparison.LessThanOrEqualComparison);
+  }
+
+, 'test "and" with mutliple comparisions on same field, shorthand': function () {
+    var query = new Query(Zooby, {zong: {gte: new Date(), lte: new Date()}}, {})
+      , operands = query.conditions.operands;
+    assert.ok(query.conditions.isValid());
+    assert.ok(operands[0] instanceof comparison.GreaterThanOrEqualComparison);
+    assert.ok(operands[1] instanceof comparison.LessThanOrEqualComparison);
   }
 
 };
