@@ -61,9 +61,11 @@ tests = {
 , 'test first with multiple props in query object': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
-      var id = data[0].id
-        , title = data[0].title;
-      model.Person.first({id: id, title: title}, function (err, data) {
+      var item = data[0]
+        , id = item.id
+        , title = item.title
+        , createdAt = item.createdAt;
+      model.Person.first({id: id, createdAt: createdAt}, function (err, data) {
         if (err) { throw err; }
         assert.equal(title, data.title);
         next();
