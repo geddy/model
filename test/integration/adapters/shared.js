@@ -854,6 +854,117 @@ tests = {
     });
   }
 
+, 'test remove hasMany item': function (next) {
+    model.Event.first({title: 'a'}, function (err, data) {
+      var ev = data;
+      if (err) { throw err; }
+      model.Photo.all(function (err, data) {
+        if (err) { throw err; }
+        data.forEach(function (photo) {
+          ev.addPhoto(photo);
+        });
+        ev.save(function (err) {
+          ev.getPhotos(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.length);
+            ev.removePhoto(data[0]);
+            ev.save(function (err) {
+              if (err) { throw err; }
+              ev.getPhotos(function (err, data) {
+                if (err) { throw err; }
+                assert.equal(19, data.length);
+                next();
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+, 'test remove named hasMany item': function (next) {
+    model.Event.first({title: 'a'}, function (err, data) {
+      var ev = data;
+      if (err) { throw err; }
+      model.Message.all(function (err, data) {
+        if (err) { throw err; }
+        data.forEach(function (message) {
+          ev.addComment(message);
+        });
+        ev.save(function (err) {
+          ev.getComments(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.length);
+            ev.removeComment(data[0]);
+            ev.save(function (err) {
+              if (err) { throw err; }
+              ev.getComments(function (err, data) {
+                if (err) { throw err; }
+                assert.equal(19, data.length);
+                next();
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+, 'test remove named hasMany through item': function (next) {
+    model.Event.first({title: 'a'}, function (err, data) {
+      var ev = data;
+      if (err) { throw err; }
+      model.Person.all(function (err, data) {
+        if (err) { throw err; }
+        data.forEach(function (person) {
+          ev.addParticipant(person);
+        });
+        ev.save(function (err) {
+          ev.getParticipants(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.length);
+            ev.removeParticipant(data[0]);
+            ev.save(function (err) {
+              if (err) { throw err; }
+              ev.getParticipants(function (err, data) {
+                if (err) { throw err; }
+                assert.equal(19, data.length);
+                next();
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+, 'test remove named hasMany/through with same model (reflexive association)': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var friends = data.slice()
+        , person = friends.shift();
+      friends.forEach(function (f) {
+        person.addFriend(f);
+      });
+      person.save(function (err, data) {
+        if (err) { throw err; }
+        person.getFriends(function (err, data) {
+          if (err) { throw err; }
+          assert.equal(19, data.length);
+          person.removeFriend(data[0]);
+          person.save(function (err) {
+            if (err) { throw err; }
+            person.getFriends(function (err, data) {
+              if (err) { throw err; }
+              assert.equal(18, data.length);
+              next();
+            });
+          });
+        });
+      });
+    });
+  }
+
 // FIXME: This isn't really an integration test
 , 'test Static methods on model': function (next) {
     model.Event.findByTitle('a', function (err, data) {
