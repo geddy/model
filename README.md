@@ -335,37 +335,12 @@ var Book = function () {
 };
 ```
 
+### Creating associations
+
 Add the `hasOne` relationship by calling 'set' plus the name of the owned
 model in singular (in this case `setProfile`). Retrieve the associated item by
 using 'get' plus the name of the owned model in singular (in this case
 `getProfile`). Here's an example:
-
-```javascript
-var user = User.create({
-  login: 'asdf'
-, password: 'zerb'
-, confirmPassword: 'zerb'
-});
-user.save(function (err, data) {
-  var profile;
-  if (err) {
-    throw err;
-  }
-  profile = Profile.create({});
-  user.setProfile(profile);
-  user.save(function (err, data) {
-    if (err) {
-      throw err;
-    }
-    user.getProfile(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      console.log(profile.id ' is the same as ' + data.id);
-    });
-  });
-});
-```
 
 Set up the `hasMany` relationship by calling 'add' plus the name of the
 owned model in singular (in this case `addAccount`). Retrieve the associated
@@ -393,6 +368,33 @@ user.save(function (err, data) {
         throw err;
       }
       console.log('This number should be 2: ' + data.length);
+    });
+  });
+});
+```
+
+```javascript
+var user = User.create({
+  login: 'asdf'
+, password: 'zerb'
+, confirmPassword: 'zerb'
+});
+user.save(function (err, data) {
+  var profile;
+  if (err) {
+    throw err;
+  }
+  profile = Profile.create({});
+  user.setProfile(profile);
+  user.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    user.getProfile(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log(profile.id ' is the same as ' + data.id);
     });
   });
 });
@@ -429,6 +431,47 @@ book.save(function (err, data) {
   });
 });
 ```
+
+### Removing associations
+
+A similar API is used for removing associations, with the word 'remove' plus the
+name of the owned model:
+
+```javascript
+User.first({login: 'asdf'}, function (err, user) {
+  if (err) {
+    throw err;
+  }
+  // Fetch accounts
+  user.getAccounts(function (err, accounts) {
+    var originalCount;
+    if (err) {
+      throw err;
+    }
+    originalCount = accounts.length;
+
+    // Remove the first account
+    user.removeAccount(accounts[0]);
+    // Save the user
+    user.save(function (err) {
+      if (err) {
+        throw err;
+      }
+      // Fetch accounts again
+      user.getAccounts(function (err, accounts) {
+        if (err) {
+          throw err;
+        }
+        Console.log(accounts.length + ' should be one less than ' +
+            originalCount);
+      });
+    });
+  });
+});
+```
+
+Note that this does not remove the associated item itself -- only the
+association linking it to the owner object.
 
 ### 'Through' associations
 
