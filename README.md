@@ -51,6 +51,39 @@ test[postgres]`, or `jake test[memory]`.
 Configure adapter options by creating a `test/db.json` file. See
 `test/db.sample.json` for available options.
 
+## Bootstrapping Model
+
+Model serves as the model component inside the Geddy Web framework
+(http://geddyjs.org/). But it can easily be used as an ORM on its own. Here's a
+minimal example which uses the LevelDB adapter for the defined model:
+
+```javascript
+var model = require('model')
+  , Zerb;
+
+Zerb = function () {
+  this.property('title', 'string');
+  this.setAdapter('level', {
+    db: './data'
+  });
+};
+
+model.registerDefinitions([{
+  ctorName: 'Zerb'
+, ctor: Zerb
+}]);
+
+var z = model.Zerb.create({title: 'asdf'});
+
+z.save(function (err, data) {
+  if (err) { throw err; }
+  console.log('Zerb ' + z.title + ' saved.');
+});
+```
+
+Pass the string name of the desired adapter (e.g., 'level', 'postgres') followed
+any config options to the `setAdapter` method when defining your model.
+
 ## Defining models
 
 Model uses a pretty simple syntax for defining a model. (It should look familiar
