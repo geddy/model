@@ -9,6 +9,7 @@ var Event = function () {
 
   this.hasOne('Owner', {model: 'People'});
   this.hasMany('Admins', {model: 'People'});
+  this.hasMany('Participations');
   this.hasMany('Participants', {model: 'People', through: 'Participations'});
   this.hasMany('Photos');
   this.hasMany('Comments', {model: 'Messages'});

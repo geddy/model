@@ -49,6 +49,29 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of named hasMany/through association, join-model in results': function (next) {
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      var ev = data[0];
+      model.Person.all(function (err, data) {
+        if (err) { throw err; }
+        var people = data;
+        people.forEach(function (person) {
+          ev.addParticipant(person);
+        });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          model.Event.first({id: ev.id}, {includes: ['participation', 'participant']}, function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.participations.length);
+            assert.equal(20, data.participants.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test `first`, includes eager-fetch of multiple hasMany associations': function (next) {
     model.Event.all(function (err, data) {
       if (err) { throw err; }

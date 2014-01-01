@@ -6,6 +6,7 @@ var Person = function () {
   this.property('title', 'string');
   this.property('description', 'text');
 
+  this.hasMany('Participations');
   this.hasMany('Events', {through: 'Participations'});
   this.hasMany('Frienders', {through: 'Friendships', model: 'People'});
   this.hasMany('Friends', {through: 'Friendships', model: 'People'});
