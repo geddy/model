@@ -835,6 +835,17 @@ tests = {
     });
   }
 
+, 'test named hasMany/through association, no associated objects': function (next) {
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      data[0].getParticipants(function (err, data) {
+        if (err) { throw err; }
+        assert.equal(0, data.length);
+        next();
+      });
+    });
+  }
+
 , 'test named hasMany/through with same model (reflexive association)': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
