@@ -827,6 +827,28 @@ tests = {
     });
   }
 
+, 'test hasMany/through association lookup with query': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var person = data[0];
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var events = data;
+        events.forEach(function (ev) {
+          person.addEvent(ev);
+        });
+        person.save(function (err, data) {
+          if (err) { throw err; }
+          person.getEvents({title: 'a'}, function (err, data) {
+            if (err) { throw err; }
+            assert.equal(1, data.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test named hasMany/through association': function (next) {
     model.Event.all(function (err, data) {
       if (err) { throw err; }
