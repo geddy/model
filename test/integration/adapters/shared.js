@@ -324,6 +324,20 @@ tests = {
     });
   }
 
+, 'test all, array of ids (shortcut for IN), with one other property': function (next) {
+    model.Person.all(function (err, data) {
+      var ids = [];
+      if (err) { throw err; }
+      data.forEach(function (p) {
+        ids.push(p.id);
+      });
+      model.Person.all({id: ids, title: 'a'}, function (err, data) {
+        assert.equal(1, data.length);
+        next();
+      });
+    });
+  }
+
 , 'test all, by IN': function (next) {
     model.Person.all({title: {'in': ['a', 'b']}}, function (err, data) {
       if (err) { throw err; }
@@ -718,6 +732,30 @@ tests = {
     });
   }
 
+, 'test named hasMany, id array (shortcut for IN) and title array (shortcut for IN)': function (next) {
+    model.Person.all({}, {sort: 'title'}, function (err, people) {
+      if (err) { throw err; }
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var ev = data[0]
+          , ids = [];
+        ev.addAdmin(people[0]);
+        ev.addAdmin(people[1]);
+        ev.addAdmin(people[2]);
+        people.forEach(function (p) {
+          ids.push(p.id);
+        });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          ev.getAdmins({id: ids, title: ['a', 'b']}, function (err, data) {
+            assert.equal(2, data.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test mix of named hasMany/hasOne with same model, owned objects all already saved':
     function (next) {
     model.Person.all(function (err, people) {
@@ -813,6 +851,28 @@ tests = {
     });
   }
 
+, 'test hasMany/through association lookup with query': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var person = data[0];
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var events = data;
+        events.forEach(function (ev) {
+          person.addEvent(ev);
+        });
+        person.save(function (err, data) {
+          if (err) { throw err; }
+          person.getEvents({title: 'a'}, function (err, data) {
+            if (err) { throw err; }
+            assert.equal(1, data.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test named hasMany/through association': function (next) {
     model.Event.all(function (err, data) {
       if (err) { throw err; }
@@ -835,6 +895,17 @@ tests = {
     });
   }
 
+, 'test named hasMany/through association, no associated objects': function (next) {
+    model.Event.all(function (err, data) {
+      if (err) { throw err; }
+      data[0].getParticipants(function (err, data) {
+        if (err) { throw err; }
+        assert.equal(0, data.length);
+        next();
+      });
+    });
+  }
+
 , 'test named hasMany/through with same model (reflexive association)': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
@@ -849,6 +920,117 @@ tests = {
           if (err) { throw err; }
           assert.equal(19, data.length);
           next();
+        });
+      });
+    });
+  }
+
+, 'test remove hasMany item': function (next) {
+    model.Event.first({title: 'a'}, function (err, data) {
+      var ev = data;
+      if (err) { throw err; }
+      model.Photo.all(function (err, data) {
+        if (err) { throw err; }
+        data.forEach(function (photo) {
+          ev.addPhoto(photo);
+        });
+        ev.save(function (err) {
+          ev.getPhotos(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.length);
+            ev.removePhoto(data[0]);
+            ev.save(function (err) {
+              if (err) { throw err; }
+              ev.getPhotos(function (err, data) {
+                if (err) { throw err; }
+                assert.equal(19, data.length);
+                next();
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+, 'test remove named hasMany item': function (next) {
+    model.Event.first({title: 'a'}, function (err, data) {
+      var ev = data;
+      if (err) { throw err; }
+      model.Message.all(function (err, data) {
+        if (err) { throw err; }
+        data.forEach(function (message) {
+          ev.addComment(message);
+        });
+        ev.save(function (err) {
+          ev.getComments(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.length);
+            ev.removeComment(data[0]);
+            ev.save(function (err) {
+              if (err) { throw err; }
+              ev.getComments(function (err, data) {
+                if (err) { throw err; }
+                assert.equal(19, data.length);
+                next();
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+, 'test remove named hasMany through item': function (next) {
+    model.Event.first({title: 'a'}, function (err, data) {
+      var ev = data;
+      if (err) { throw err; }
+      model.Person.all(function (err, data) {
+        if (err) { throw err; }
+        data.forEach(function (person) {
+          ev.addParticipant(person);
+        });
+        ev.save(function (err) {
+          ev.getParticipants(function (err, data) {
+            if (err) { throw err; }
+            assert.equal(20, data.length);
+            ev.removeParticipant(data[0]);
+            ev.save(function (err) {
+              if (err) { throw err; }
+              ev.getParticipants(function (err, data) {
+                if (err) { throw err; }
+                assert.equal(19, data.length);
+                next();
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+
+, 'test remove named hasMany/through with same model (reflexive association)': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var friends = data.slice()
+        , person = friends.shift();
+      friends.forEach(function (f) {
+        person.addFriend(f);
+      });
+      person.save(function (err, data) {
+        if (err) { throw err; }
+        person.getFriends(function (err, data) {
+          if (err) { throw err; }
+          assert.equal(19, data.length);
+          person.removeFriend(data[0]);
+          person.save(function (err) {
+            if (err) { throw err; }
+            person.getFriends(function (err, data) {
+              if (err) { throw err; }
+              assert.equal(18, data.length);
+              next();
+            });
+          });
         });
       });
     });
