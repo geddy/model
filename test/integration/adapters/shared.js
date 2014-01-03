@@ -324,6 +324,20 @@ tests = {
     });
   }
 
+, 'test all, array of ids (shortcut for IN), with one other property': function (next) {
+    model.Person.all(function (err, data) {
+      var ids = [];
+      if (err) { throw err; }
+      data.forEach(function (p) {
+        ids.push(p.id);
+      });
+      model.Person.all({id: ids, title: 'a'}, function (err, data) {
+        assert.equal(1, data.length);
+        next();
+      });
+    });
+  }
+
 , 'test all, by IN': function (next) {
     model.Person.all({title: {'in': ['a', 'b']}}, function (err, data) {
       if (err) { throw err; }
