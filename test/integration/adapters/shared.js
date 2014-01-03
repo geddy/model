@@ -732,6 +732,30 @@ tests = {
     });
   }
 
+, 'test named hasMany, id array (shortcut for IN) and title array (shortcut for IN)': function (next) {
+    model.Person.all({}, {sort: 'title'}, function (err, people) {
+      if (err) { throw err; }
+      model.Event.all(function (err, data) {
+        if (err) { throw err; }
+        var ev = data[0]
+          , ids = [];
+        ev.addAdmin(people[0]);
+        ev.addAdmin(people[1]);
+        ev.addAdmin(people[2]);
+        people.forEach(function (p) {
+          ids.push(p.id);
+        });
+        ev.save(function (err, data) {
+          if (err) { throw err; }
+          ev.getAdmins({id: ids, title: ['a', 'b']}, function (err, data) {
+            assert.equal(2, data.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test mix of named hasMany/hasOne with same model, owned objects all already saved':
     function (next) {
     model.Person.all(function (err, people) {
