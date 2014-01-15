@@ -4,7 +4,7 @@ var assert = require('assert')
   , tests;
 
 tests = {
-
+/*
   'test includes eager-fetch of hasMany association': function (next) {
     model.Photo.all(function (err, data) {
       if (err) { throw err; }
@@ -146,31 +146,60 @@ tests = {
     });
   }
 
-, 'test named hasMany/through with same model (reflexive association)': function (next) {
-    model.Person.all(function (err, data) {
+*/
+
+ 'test named, reflexive, hasMany/through with properties on the join-model': function (next) {
+    model.Person.all({}, {sort: 'title'}, function (err, data) {
       if (err) { throw err; }
       var friends = data.slice()
         , person = friends.shift();
       // The first guy is friends with all other 19 guys
       // (He's their friender, they're his friends)
+      // First guy's title is 'a', friends are 'b' through 't'
       friends.forEach(function (f) {
         person.addFriend(f);
       });
       person.save(function (err, data) {
+        var query
+          , opts;
         if (err) { throw err; }
-        // Check both sides of the association
-        model.Person.all({id: person.id}, {includes: ['friend']},
-            function (err, data) {
+        query = {
+          frienderPersonId: person.id
+        };
+        opts = {
+          includes: ['friends']
+        };
+        model.Friendship.all(query, opts, function (err, data) {
           if (err) { throw err; }
-          // Does he have all 19 friends?
-          assert.equal(19, data[0].friends.length);
-          model.Person.all({id: {ne: person.id}},
-              {includes: ['friender']}, function (err, data) {
-            // Do all 19 of them has him as a friender?
-            data.forEach(function (p) {
-              assert.equal(person.id, p.frienders[0].id);
+          var approvals = []
+            , friendTitles = {
+                b: true
+              , c: true
+              , d: true
+              };
+          data.forEach(function (f) {
+            if (friendTitles[f.friend.title]) {
+              f.approved = true;
+              approvals.push(f);
+            }
+          });
+          helpers.updateItems(approvals, function () {
+            var query
+              , opts;
+            query = {
+              frienderPersonId: person.id
+            , approved: true
+            };
+            opts = {
+              includes: ['friends']
+            };
+            model.Friendship.all(query, opts, function (err, data) {
+              assert.equal(3, data.length);
+              data.forEach(function (f) {
+                assert.ok(friendTitles[f.friend.title]);
+              });
+              next();
             });
-            next();
           });
         });
       });
