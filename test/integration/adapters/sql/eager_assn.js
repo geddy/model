@@ -299,25 +299,6 @@ tests = {
     });
   }
 
-, 'test hasMany/through with auto-save for owned-object side': function (next) {
-    model.Event.all(function (err, data) {
-      if (err) { throw err; }
-      var ev = data[0];
-      ev.addPhoto(model.Photo.create({
-        title: 'u'
-      }));
-      ev.save(function (err, data) {
-        if (err) { throw err; }
-        model.Event.first({id: ev.id}, {includes: 'photos'},
-            function (err, data) {
-          assert.equal(1, data.photos.length);
-          assert.equal('u', data.photos[0].title);
-          next();
-        });
-      });
-    });
-  }
-
 };
 
 module.exports = tests;
