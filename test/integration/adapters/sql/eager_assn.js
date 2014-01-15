@@ -4,7 +4,7 @@ var assert = require('assert')
   , tests;
 
 tests = {
-/*
+
   'test includes eager-fetch of hasMany association': function (next) {
     model.Photo.all(function (err, data) {
       if (err) { throw err; }
@@ -146,9 +146,7 @@ tests = {
     });
   }
 
-*/
-
- 'test named, reflexive, hasMany/through with properties on the join-model': function (next) {
+, 'test named, reflexive, hasMany/through with properties on the join-model': function (next) {
     model.Person.all({}, {sort: 'title'}, function (err, data) {
       if (err) { throw err; }
       var friends = data.slice()
