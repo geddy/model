@@ -79,7 +79,6 @@ tests = {
       , event = {};
     s.event = event;
     s = s.toJSON();
-    console.dir(s);
     assert.strictEqual(event, s.event);
   }
 
