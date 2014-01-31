@@ -136,6 +136,23 @@ var User = function () {
 }
 ```
 
+### Adapters
+
+You can specify a different adapter for each model or apply the same adapter to all models.
+
+```javascript
+var adapter = model.createAdapter('postgres', {
+  host: 'localhost',
+  username: 'user',
+  password: 'password',
+  dbname: 'mydb'
+});
+
+model.User.adapter = adapter;
+model.Zerb.adapter = adapter;
+```
+
+
 ### Datatypes
 
 Model supports the following datatypes:
