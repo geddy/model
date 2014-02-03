@@ -45,6 +45,14 @@ tests = {
     });
   }
 
+, 'test first via nonexistant string id': function (next) {
+    model.Person.first('bogus-id', function (err, data) {
+      if (err) { throw err; }
+      assert.strictEqual(data, undefined);
+      next();
+    });
+  }
+
 , 'test first via id in query object': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
@@ -83,6 +91,15 @@ tests = {
         assert.equal(title, data[0].title);
         next();
       });
+    });
+  }
+
+, 'test all via nonexistant string id': function (next) {
+    model.Person.all({id: 'bogus-id'}, function (err, data) {
+      if (err) { throw err; }
+      assert.equal(typeof data, 'object');
+      assert.equal(data.length, 0);
+      next();
     });
   }
 
