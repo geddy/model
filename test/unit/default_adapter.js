@@ -22,6 +22,7 @@ tests = {
     model.Zooby.adapter = mongoAdapter;
 
     assert.equal(model.getAdapterForModel('User'), memoryAdapter);
+    assert.equal(model.getAdapterForModel('Wooby'), memoryAdapter);
     assert.equal(model.getAdapterForModel('Zooby'), mongoAdapter);
   }
 };
