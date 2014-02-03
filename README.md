@@ -136,6 +136,40 @@ var User = function () {
 }
 ```
 
+### Adapters
+
+You can specify a different adapter for each model or apply the same adapter to all models.
+
+```javascript
+var adapter = model.createAdapter('postgres', {
+  host: 'localhost',
+  username: 'user',
+  password: 'password',
+  dbname: 'mydb'
+});
+
+model.User.adapter = adapter;
+model.Zerb.adapter = adapter;
+```
+
+You can also define a defaultAdapter which will be used by default.
+Then you can override it on individual models.
+
+```javascript
+model.defaultAdapter = model.createAdapter('memory');
+
+var postgresAdapter = model.createAdapter('postgres', {
+  host: 'localhost',
+  username: 'user',
+  password: 'password',
+  dbname: 'mydb'
+});
+
+// User model gets the defaultAdapter
+model.Zerb.adapter = postgresAdapter;
+```
+
+
 ### Datatypes
 
 Model supports the following datatypes:
