@@ -25,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/mde/model.git"
+    "url": "git://github.com/geddy/model.git"
   },
   "dependencies": {
     "utilities": "0.0.x"
