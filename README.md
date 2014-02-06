@@ -1,7 +1,7 @@
 Model
 ==============
 
-[![Build Status](https://travis-ci.org/mde/model.png?branch=master)](https://travis-ci.org/mde/model)
+[![Build Status](https://travis-ci.org/geddy/model.png?branch=master)](https://travis-ci.org/mde/model)
 
 Model is a datastore-agnostic ORM in JavaScript. It serves as the
 model-component for the [Geddy MVC Web framework](http://geddyjs.org/) for
