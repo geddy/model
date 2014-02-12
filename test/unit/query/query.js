@@ -130,6 +130,14 @@ var tests = {
     assert.ok(operands[1] instanceof comparison.LessThanOrEqualComparison);
   }
 
+, 'test options with non-existent property name throws the proper error': function () {
+    assert.throws(
+      function () {
+        new Query(Zooby, {this_doesnt_exist_on_the_model: 'non-existent'}, {});
+      },
+      /is\snot\sa\svalid\sproperty/
+    );
+  }
 };
 
 module.exports = tests;
