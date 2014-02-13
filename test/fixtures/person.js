@@ -10,6 +10,7 @@ var Person = function () {
   this.hasMany('Events', {through: 'Participations'});
   this.hasMany('Frienders', {through: 'Friendships', model: 'People'});
   this.hasMany('Friends', {through: 'Friendships', model: 'People'});
+  this.hasMany('Children', {model: 'People'});
 };
 
 Person.prototype.someMethod = function () {
