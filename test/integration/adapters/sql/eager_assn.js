@@ -146,6 +146,17 @@ tests = {
     });
   }
 
+, 'test includes, using an invalid association name throws the proper error': function () {
+    assert.throws(
+      function () {
+        model.Person.all({}, { includes: 'this_doesnt_exist' }, function (err, data) {
+
+        });
+      },
+      /Could\snot\sfind\sthe\sassociated\smodel/
+    );
+  }
+
 , 'test named, reflexive, hasMany/through with properties on the join-model': function (next) {
     model.Person.all({}, {sort: 'title'}, function (err, data) {
       if (err) { throw err; }
