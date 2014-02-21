@@ -1053,6 +1053,26 @@ tests = {
     });
   }
 
+, 'test remove with empty query': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+
+      var initial_count = data.length;
+
+      model.Person.remove({id: []}, function (err, data) {
+        if (err) { throw err; }
+
+        model.Person.all(function (err, data) {
+          if (err) { throw err; }
+
+          assert.equal(data.length, initial_count, 'Nothing should have been deleted');
+
+          next();
+        });
+      });
+    });
+  }
+
 // FIXME: This isn't really an integration test
 , 'test Static methods on model': function (next) {
     model.Event.findByTitle('a', function (err, data) {
