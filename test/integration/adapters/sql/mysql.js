@@ -60,6 +60,35 @@ tests = {
     assert.ok(adapter instanceof Adapter);
   }
 
+, 'test reconnect logic': function (next) {
+    // Get a reference to the original client func
+    var origGetClient = adapter._getClient;
+    // Punch out the client func with one that returns a client
+    // whose `connect` method always produces an error
+    adapter._getClient = function () {
+      var client = origGetClient.call(adapter);
+      // Always error
+      client.connect = function (cb) {
+        cb({}, null);
+      };
+      return client;
+    };
+    // Disconnect, and try to reconnect -- this will fail
+    adapter.disconnect(function (err, data) {
+      // Until the _getClient function is replaced, this will continue
+      // retrying, once we put it back, reconnect will succeed and
+      // tests will resume
+      adapter.connect(function (err, data) {
+        next();
+      });
+      // Wait three seconds, restore the _getClient func to return
+      // a good client
+      setTimeout(function () {
+        adapter._getClient = origGetClient;
+      }, 3000);
+    });
+  }
+
 , 'test exec': function (next) {
     adapter.exec('CREATE TABLE foo (bar varchar(256) ); DROP TABLE foo;',
         function (err, data) {
