@@ -923,6 +923,25 @@ tests = {
     });
   }
 
+, 'test named hasMany with same model (reflexive association)': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var children = data.slice()
+        , person = children.shift();
+      children.forEach(function (c) {
+        person.addChild(c);
+      });
+      person.save(function (err, data) {
+        if (err) { throw err; }
+        person.getChildren(function (err, data) {
+          if (err) { throw err; }
+          assert.equal(19, data.length);
+          next();
+        });
+      });
+    });
+  }
+
 , 'test named hasMany/through with same model (reflexive association)': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }

@@ -27,6 +27,25 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of reflexive hasMany association': function (next) {
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      var children = data.slice()
+        , person = children.shift();
+      children.forEach(function (c) {
+        person.addChild(c);
+      });
+      person.save(function (err, data) {
+        if (err) { throw err; }
+        model.Person.first({id: person.id}, {includes: 'children'}, function (err, data) {
+          if (err) { throw err; }
+          assert.equal(19, data.children.length);
+          next();
+        });
+      });
+    });
+  }
+
 , 'test includes eager-fetch of named hasMany/through association': function (next) {
     model.Event.all(function (err, data) {
       if (err) { throw err; }
