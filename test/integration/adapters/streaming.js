@@ -46,20 +46,24 @@ tests = {
 
 , 'test all, error event': function (next) {
     var processor
-      , adapter = model.Person.adapter;
+      , adapter = model.Person.adapter
+      , origExec
+      , methodName = adapter.name == 'sqlite' ?
+          'all' : 'exec';
 
     // Temporarily punch out the exec method to run a
     // query with bad SQL, produce an error
-    origExec = adapter.exec;
-    adapter.exec = function (sql) {
-      return origExec.call(adapter, 'asdf' + sql);
+    origExec = adapter[methodName];
+    adapter[methodName] = function () {
+      arguments[0] = 'asdf' + arguments[0];
+      return origExec.apply(adapter, arguments);
     };
 
     processor = model.Person.all();
     processor.on('error', function (err) {
 
       // Important: Put the exec method back where it was
-      adapter.exec = origExec;
+      adapter[methodName] = origExec;
 
       assert.ok(err);
       next();
