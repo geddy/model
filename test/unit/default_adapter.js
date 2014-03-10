@@ -12,18 +12,18 @@ tests = {
     for(var modelName in model.descriptionRegistry) {
       model[modelName].adapter = null;
     }
-  },
+  }
 
-  'test default adapter': function() {
+, 'test default with multiple adapters': function() {
     var memoryAdapter = model.createAdapter('memory');
-    var mongoAdapter = model.createAdapter('mongo', config.mongo);
+    var filesystemAdapter = model.createAdapter('filesystem', config.filesystem);
 
     model.defaultAdapter = memoryAdapter;
-    model.Zooby.adapter = mongoAdapter;
+    model.Zooby.adapter = filesystemAdapter;
 
     assert.equal(model.getAdapterForModel('User'), memoryAdapter);
     assert.equal(model.getAdapterForModel('Wooby'), memoryAdapter);
-    assert.equal(model.getAdapterForModel('Zooby'), mongoAdapter);
+    assert.equal(model.getAdapterForModel('Zooby'), filesystemAdapter);
   }
 };
 
