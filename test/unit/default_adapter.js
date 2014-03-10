@@ -8,9 +8,11 @@ var assert = require('assert')
 
 tests = {
   'beforeEach': function() {
-    // tear down the already attached adapters
+    // tear down already attached adapters, if any exist
     for(var modelName in model.descriptionRegistry) {
-      model[modelName].adapter = null;
+      if (model[modelName].adapter) {
+        model[modelName].adapter = null;
+      }
     }
   }
 
