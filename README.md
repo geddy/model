@@ -145,7 +145,7 @@ var adapter = model.createAdapter('postgres', {
   host: 'localhost',
   username: 'user',
   password: 'password',
-  dbname: 'mydb'
+  database: 'mydb'
 });
 
 model.User.adapter = adapter;
@@ -162,7 +162,7 @@ var postgresAdapter = model.createAdapter('postgres', {
   host: 'localhost',
   username: 'user',
   password: 'password',
-  dbname: 'mydb'
+  database: 'mydb'
 });
 
 // User model gets the defaultAdapter
