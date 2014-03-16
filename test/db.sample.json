@@ -1,6 +1,6 @@
 {
   "mongo": {
-    "database": "model_test"
+    "dbname": "model_test"
   }
 , "postgres": {
     "user": "mde"

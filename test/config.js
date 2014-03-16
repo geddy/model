@@ -7,7 +7,7 @@
   , existsSync
   , config = {
       mongo: {
-        database:   process.env.MONGO_DATABASE    || 'model_test'
+        dbname:   process.env.MONGO_DATABASE    || 'model_test'
       }
     , postgres: {
         user:     process.env.POSTGRES_USER     || 'postgres'
