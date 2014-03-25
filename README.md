@@ -7,6 +7,39 @@ Model is a datastore-agnostic ORM in JavaScript. It serves as the
 model-component for the [Geddy MVC Web framework](http://geddyjs.org/) for
 NodeJS.
 
+## TOC
+
+- [Overview](#overview)
+- [Bootstrapping Model](#bootstrapping-model)
+- [Defining Models](#defining-models)
+  - [Abbreviated syntax](#abbreviated-syntax)
+  - [Adapters](#adapters)
+  - [Datatypes](#datatypes)
+- [Creating instances](#creating-instances)
+- [Validations](#validations)
+  - [Common options](#common-options)
+  - [Validation errors](#validation-errors)
+- [Saving items](#saving-items)
+- [Updating items](#updating-items)
+- [Lifecycle events](#lifecycle-events)
+- [Associations](#associations)
+  - [Creating associations](#creating-associations)
+  - [Removing associations](#removing-associations)
+  - ['Through' associations](#through-associations)
+  - [Named associations](#named-associations)
+- [Querying](#querying)
+  - [Finding a single item](#finding-a-single-item)
+  - [Collections of items](#collections-of-items)
+  - [Comparison operators](#comparison-operators)
+- [More complex queries](#more-complex-queries)
+- [Options: sort, skip, limit](#options-sort-skip-limit)
+	- [Sorting](#sorting)
+	- [Simplified syntax for sorting](#simplified-syntax-for-sorting)
+	- [Skip and limit](#skip-and-limit)
+- [Eager loading of associations (SQL adpaters only)](#eager-loading-of-associations-sql-adpaters-only)
+  - [Sorting results](#sorting-results)
+  - [Checking for loaded associations](#checking-for-loaded-associations)
+
 ## Overview
 
 Model currently implements adapters for:
