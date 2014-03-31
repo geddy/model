@@ -21,6 +21,7 @@ NodeJS.
   - [Validation errors](#validation-errors)
 - [Saving items](#saving-items)
 - [Updating items](#updating-items)
+- [Removing items](#removing-items)
 - [Lifecycle events](#lifecycle-events)
 - [Associations](#associations)
   - [Creating associations](#creating-associations)
@@ -350,6 +351,21 @@ if (user.isValid()) {
   });
 }
 ```
+
+## Removing items
+
+Use the `remove` method to remove one ore multiple instances.
+
+```javascript
+model.User.remove(user.id, function(err) {
+  if (err) {
+    throw err;
+  }
+  console.log('Item removed!');
+});
+```
+
+You can also pass a query to the `remove` method instead of an id.
 
 ## Lifecycle events
 
