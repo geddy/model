@@ -345,6 +345,27 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of two-word assocation name': function (next) {
+    model.Schedule.all(function (err, data) {
+      if (err) { throw err; }
+      var sc = data[0];
+      model.FunActivity.all(function (err, data) {
+        var activities = data;
+        activities.forEach(function (ac) {
+          sc.addFunActivity(ac);
+        });
+        sc.save(function (err, data) {
+          if (err) { throw err; }
+          model.Schedule.first({id: sc.id}, {includes: 'funActivities'},
+              function (err, data) {
+            assert.equal(20, data.funActivities.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 };
 
 module.exports = tests;

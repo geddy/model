@@ -1,6 +1,6 @@
 var model = require('../../../lib')
   , fixtures = ['Event', 'Person', 'Participation', 'Message',
-      'Photo', 'Schedule', 'Friendship'];
+      'Photo', 'Schedule', 'Friendship', 'FunActivity'];
 
 module.exports = {
   fixtures: fixtures

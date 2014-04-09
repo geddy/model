@@ -5,6 +5,7 @@ var Schedule = function () {
   this.property('description', 'text');
   this.belongsTo('Event');
   this.belongsTo('Editor', {model: 'Person'});
+  this.hasMany('FunActivities');
 };
 
 Schedule.prototype.someMethod = function () {
