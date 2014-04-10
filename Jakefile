@@ -1,7 +1,8 @@
 
 var t = new jake.TestTask('Model', function () {
-  // FIXME: Events fail if run after integration tests
-  // This line forces them to run first so the tests pass
+  // FIXME: These tests fail if run too late
+  // This forces them to run first so the tests pass
+  this.testFiles.include('test/unit/default_adapter.js');
   this.testFiles.include('test/unit/events.js');
 
   this.testFiles.include('test/*.js');
