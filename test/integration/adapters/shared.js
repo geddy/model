@@ -10,7 +10,8 @@ var utils = require('utilities')
 
 // Import the model description for each fixture
 helpers.fixtures.forEach(function (f) {
-  model[f] = require('../../fixtures/' + f.toLowerCase())[f];
+  var keyName = utils.string.getInflection(f, 'filename', 'singular');
+  model[f] = require('../../fixtures/' + keyName)[f];
 });
 
 

@@ -5,7 +5,6 @@ var t = new jake.TestTask('Model', function () {
   this.testFiles.include('test/unit/default_adapter.js');
   this.testFiles.include('test/unit/events.js');
 
-  this.testFiles.include('test/*.js');
   this.testFiles.include('test/**/*.js');
   this.testFiles.exclude('test/fixtures/*.js');
   this.testFiles.exclude('test/integration/adapters/shared.js');
