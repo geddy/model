@@ -269,14 +269,14 @@ tests = {
 , 'test includes eager-fetch of belongsTo association': function (next) {
     model.Schedule.all(function (err, schedules) {
       if (err) { throw err; }
-      model.Event.all(function (err, events) {
+      model.Event.all({}, {sort: {id: 'desc'}}, function (err, events) {
         if (err) { throw err; }
         for (var i = 0, ii = events.length; i < ii; i++) {
           schedules[i].setEvent(events[i]);
         }
         helpers.updateItems(schedules, function (err) {
           if (err) { throw err; }
-          model.Schedule.all({}, {includes: ['event']}, function (err, data) {
+          model.Schedule.all({}, {includes: ['event'], sort: {'event.id': 'desc'}}, function (err, data) {
             if (err) { throw err; }
             for (var i = 0, ii = events.length; i < ii; i++) {
               assert.equal(events[i].id, data[i].event.id);
