@@ -3,10 +3,7 @@ var utils = require('utilities')
   , config = require('../../config')
   , model = require('../../../lib')
   , helpers = require('./helpers')
-  , currentId
-  , currentDateProp
-  , tests
-  , testItems;
+  , tests;
 
 // Import the model description for each fixture
 helpers.fixtures.forEach(function (f) {
