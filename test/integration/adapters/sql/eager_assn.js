@@ -115,33 +115,6 @@ tests = {
     });
   }
 
-, 'test `first`, includes eager-fetch of nested hasMany/through > hasMany relationship': function (next) {
-    model.Event.first({}, function (err, data) {
-      if (err) { throw err; }
-      var ev = data;
-      model.Person.first({}, function (err, data) {
-        if (err) { throw err; }
-        var person = data;
-        model.Photo.first({}, function (err, data) {
-          if (err) { throw err; }
-          var photo = data;
-          ev.addPhoto(photo);
-          ev.addParticipant(person);
-          ev.save(function (err) {
-            if (err) { throw err; }
-            // At this point we have a person > participation > event > photo relationship set up
-            model.Person.all({id: person.id}, {includes: {events: 'photos'}}, function (err, data) {
-              if(err) { throw err; }
-              assert.ok(data);
-              assert.equal(data.length, 1);
-              next();
-            });
-          });
-        });
-      });
-    });
-  }
-
 , 'test `all`, includes eager-fetch of multiple hasMany associations': function (next) {
     model.Event.all(function (err, data) {
       if (err) { throw err; }
@@ -403,6 +376,38 @@ tests = {
               function (err, data) {
             assert.equal(20, data.funActivities.length);
             next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test `first`, includes eager-fetch of nested hasMany/through > hasMany relationship': function (next) {
+    model.Event.first({}, function (err, data) {
+      if (err) { throw err; }
+      var ev = data;
+      model.Person.first({}, function (err, data) {
+        if (err) { throw err; }
+        var person = data;
+        model.Photo.first({}, function (err, data) {
+          if (err) { throw err; }
+          var photo = data;
+          ev.addPhoto(photo);
+          ev.addParticipant(person);
+          ev.save(function (err) {
+            if (err) { throw err; }
+            // At this point we have a person > participation > event > photo relationship set up
+            model.Person.all({id: person.id}, {includes: {events: 'photos'}}, function (err, data) {
+              if(err) { throw err; }
+              assert.ok(data);
+              assert.equal(data.length, 1);
+              assert.equal(data[0].id, person.id);
+              assert.equal(data[0].events.length, 1);
+              assert.equal(data[0].events[0].id, ev.id);
+              assert.equal(data[0].events[0].photos.length, 1);
+              assert.equal(data[0].events[0].photos[0].id, photo.id);
+              next();
+            });
           });
         });
       });
