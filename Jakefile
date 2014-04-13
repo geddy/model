@@ -16,10 +16,6 @@ var t = new jake.TestTask('Model', function () {
   this.testFiles.exclude('test/config.js');
   this.testFiles.exclude('test/db.json');
   this.testFiles.exclude('test/db.sample.json');
-
-  // Force riak to run last so that bad runs in other adapters fails faster
-  this.testFiles.exclude('test/integration/adapters/riak/index.js');
-  this.testFiles.include('test/integration/adapters/riak/index.js');
 });
 
 var p = new jake.NpmPublishTask('model', [
