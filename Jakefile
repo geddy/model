@@ -12,6 +12,7 @@ var t = new jake.TestTask('Model', function () {
   this.testFiles.exclude('test/integration/adapters/streaming.js');
   this.testFiles.exclude('test/integration/adapters/helpers.js');
   this.testFiles.exclude('test/integration/adapters/sql/eager_assn.js');
+  this.testFiles.exclude('test/integration/adapters/sql/nested_eager_assn.js');
   this.testFiles.exclude('test/config.js');
   this.testFiles.exclude('test/db.json');
   this.testFiles.exclude('test/db.sample.json');
