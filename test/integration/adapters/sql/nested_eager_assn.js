@@ -4,7 +4,7 @@ var assert = require('assert')
   , tests;
 
 tests = {
-  'test `first`, includes eager-fetch of nested hasMany/through > hasMany relationship': function (next) {
+  'test includes eager-fetch of nested hasMany/through > hasMany relationship': function (next) {
     model.Event.first({}, function (err, data) {
       if (err) { throw err; }
       var ev = data;
@@ -36,7 +36,7 @@ tests = {
     });
   }
 
-, 'test `first`, includes eager-fetch of nested hasMany/through > hasMany/through relationship': function (next) {
+, 'test includes eager-fetch of nested hasMany/through > hasMany/through relationship': function (next) {
     model.Person.all({}, {sort: 'title'}, function (err, data) {
       if(err) { throw err; }
 
