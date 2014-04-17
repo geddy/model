@@ -111,6 +111,31 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of hasMany -> belongsTo relationship': function (next) {
+    model.Schedule.all(function (err, schedules) {
+      if (err) { throw err; }
+      model.FunActivity.all({}, {sort: {id: 'desc'}}, function (err, activities) {
+        if (err) { throw err; }
+        for (var i = 0, ii = activities.length; i < ii; i++) {
+          schedules[i].addFunActivity(activities[i]);
+        }
+        helpers.updateItems(schedules, function (err) {
+          if (err) { throw err; }
+          model.Schedule.all({}
+            , {includes: {'FunActivities': 'Schedule'}
+            , sort: {'FunActivities.id': 'desc'}}
+            , function (err, data) {
+            if (err) { throw err; }
+            for (var i = 0, ii = activities.length; i < ii; i++) {
+              assert.equal(activities[i].id, data[i].funActivities[0].id);
+            }
+            next();
+          });
+        });
+      });
+    });
+  }
+
 };
 
 module.exports = tests;
