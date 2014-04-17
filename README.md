@@ -141,16 +141,19 @@ var User = function () {
   });
   this.validatesWithFunction('password', function (value, model) {
       // returing false it will use standard message
-      if (typeof value != typeof "")
+      if (typeof value != typeof "") {
       	 return false;
+      }
 
       // if return string it will be used as message error
-      if  (value.length <= 3)
+      if  (value.length <= 3) {
       	 return "Your password must be at least 4 characters long ";
+      }
 
       // This will check if the string has repeats more than twice
-      if (value == "1234") 
+      if (value == "1234")  {
       	 return "Your password is too weak";
+      }
       
       return true;
       	
