@@ -28,6 +28,7 @@ NodeJS.
   - [Removing associations](#removing-associations)
   - ['Through' associations](#through-associations)
   - [Named associations](#named-associations)
+  - [Named Through associations](#named-through-associations)
 - [Querying](#querying)
   - [Finding a single item](#finding-a-single-item)
   - [Collections of items](#collections-of-items)
@@ -641,6 +642,29 @@ var User = function () {
 The API for this is the same as with normal associations, using the `set`/`add`
 and `get`, with the appropriate association name (not the model name). For
 example, in the case of `Kids`, you'd use `addKid` and `getKids`.
+
+### Named 'through' associations
+
+If one of your named associations of a model is 'through' another model, such as a join table, it is necessary that the association's name is the same for the model declaring the through association as it is for the model who the association is through.
+
+For example, a team may have many players, but may also have many coaches.
+
+```javascript
+var Team = function(){
+  this.hasMany('Players');
+  this.hasMany('Coaches', {through: 'TeamCoaches', model: 'Players'});
+};
+var TeamCoaches = function(){
+  this.belongsTo('CoachedTeam', {model: 'Team'});
+  this.belongsTo('Coach', {model: 'Player'});
+}
+var Player = function(){
+  this.hasMany('Teams');
+  this.hasMany('CoachedTeams', {through: 'TeamCoaches', model: 'Team'});
+}
+```
+
+Here a `Team` has many `Players`, but also has many `Coaches`, and we have an inverse relationship set up as well so that a `Player` has many `Teams` but also has many `CoachedTeams`.
 
 ## Querying
 
