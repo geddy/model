@@ -118,8 +118,9 @@ tests = {
   }
 
 , 'Validating with function returning message error': function () {
-    var msg = validators.withFunction('foo', 'zerp', null, {reference: function (v) { return "I'm a custom error"; }});
-    assert.ok(msg == "I'm a custom error");
+    var customError = "I'm a custom error";
+    var msg = validators.withFunction('foo', 'zerp', null, {reference: function (v) { return customError; }});
+    assert.ok(msg === customError);
   }
 
 , 'Validating format': function () {
