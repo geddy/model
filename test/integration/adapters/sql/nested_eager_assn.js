@@ -111,6 +111,35 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of nested hasMany/through > hasOne relationship': function (next) {
+    model.Event.first({}, function (err, data) {
+      if (err) { throw err; }
+      var ev = data;
+      model.Person.all({}, {sort: {id: 'desc'}}, function (err, data) {
+        if (err) { throw err; }
+        var person = data[0]
+          , owner = data[1];
+
+        ev.addParticipant(person);
+        ev.setOwner(owner);
+
+        ev.save(function (err) {
+          if (err) { throw err; }
+          // At this point we have a person > participation > event > person relationship set up
+          model.Person.all({id: person.id}, {includes: {events: 'owner'}}, function (err, data) {
+            if(err) { throw err; }
+            assert.ok(data);
+            assert.equal(data.length, 1);
+            assert.equal(data[0].id, person.id);
+            assert.equal(data[0].events.length, 1);
+            assert.equal(data[0].events[0].owner.id, owner.id);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test includes eager-fetch of hasMany -> belongsTo relationship': function (next) {
     model.Schedule.all(function (err, schedules) {
       if (err) { throw err; }
