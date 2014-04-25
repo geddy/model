@@ -136,6 +136,34 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of belongsTo -> hasMany association': function (next) {
+    model.Schedule.all(function (err, schedules) {
+      if (err) { throw err; }
+      model.Photo.all({}, {sort: {id: 'desc'}}, function (err, photos) {
+        if (err) { throw err; }
+        model.Event.all({}, {sort: {id: 'desc'}}, function (err, events) {
+          if (err) { throw err; }
+          for (var i = 0, ii = events.length; i < ii; i++) {
+            events[i].addPhoto(photos[i])
+            schedules[i].setEvent(events[i]);
+          }
+          helpers.updateItems(schedules.concat.apply(schedules, events), function (err) {
+            if (err) { throw err; }
+            model.Schedule.all({}, {includes: {event: 'photos'}, sort: {'event.id': 'desc'}}, function (err, data) {
+              if (err) { throw err; }
+              for (var i = 0, ii = events.length; i < ii; i++) {
+                assert.equal(events[i].id, data[i].event.id);
+                assert.equal(data[i].event.photos.length, 1);
+                assert.equal(data[i].event.photos[0].id, photos[i].id);
+              }
+              next();
+            });
+          });
+        });
+      });
+    });
+  }
+
 };
 
 module.exports = tests;
