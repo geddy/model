@@ -193,6 +193,30 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of belongsTo -> through association': function (next) {
+    model.Schedule.all({}, {sort: {id: 'desc'}}, function (err, schedules) {
+      if (err) { throw err; }
+      model.Person.all({}, {sort: {id: 'desc'}}, function (err, people) {
+        if (err) { throw err; }
+        for (var i = 0, ii = (people.length-1); i < ii; i++) {
+          schedules[i].setEditor(people[i]);
+          people[i].addFriend(people[i+1])
+        }
+        helpers.updateItems(schedules.concat(people), function (err) {
+          if (err) { throw err; }
+          model.Schedule.all({}, {includes: {editor: 'friends'}, sort: {'id': 'desc'}}, function (err, data) {
+            if (err) { throw err; }
+            for (var i = 0, ii = (people.length-1); i < ii; i++) {
+              assert.equal(data[i].editor.id, people[i].id);
+              assert.equal(data[i].editor.friends[0].id, people[i+1].id);
+            }
+            next();
+          });
+        });
+      });
+    });
+  }
+
 };
 
 module.exports = tests;
