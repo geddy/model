@@ -122,43 +122,30 @@ var User = function () {
   this.validatesLength('login', {min: 3});
   this.validatesConfirmed('password', 'confirmPassword');
   this.validatesWithFunction('password', function (s) {
-      // Something that returns true or false
-      return s.length > 0;
-  });
-  this.validatesWithFunction('password', function (value, model) {
-      // if the function returns false it will use a standard message
-      if (typeof value != typeof "") {
-      	 return false;
+      if (password.indexOf('login')) {
+          // Returning a string indicates that the validation has failed.
+          // The string will be used as the message.
+          return "Password must not contain your username";
       }
-
-      // if it returns a string the string will be used as an error message
-      if  (value.length <= 3) {
-      	 return "Your password must be at least 4 characters long ";
-      }
-      
-      // return true if the validation passed
       return true;
   });
 
-  // methods for instances can be defined in the constructor like this
   this.someMethod = function () {
     // Do some stuff
   };
-};
-
-// methods for instances can also be defined on the prototype
-User.prototype.someOtherMethod = function () {
-  // Do some other stuff
 };
 
 // prepares the model and adds it as a property on `model`
 User = model.register('User', User);
 ```
 
-### Abbreviated syntax
+### Defining properties
+
+Properties can be defined using the `property` method, which takes a name, a type,
+and some options.
 
 Alternatively, you can use the `defineProperties` method to lay out your model's
-properties in one go:
+properties with a single method call:
 
 ```javascript
 var User = function () {
@@ -169,6 +156,63 @@ var User = function () {
   , firstName: {type: 'string'}
   });
 }
+```
+
+### Datatypes
+
+Model supports the following datatypes:
+
+* `string`
+* `text`
+* `number`
+* `int`
+* `boolean`
+* `date`
+* `datetime`
+* `time`
+* `object`
+
+The `object` data type can take a JSON string or an object that will serialize
+to JSON.
+
+There is no currency or decimal datatype. For currencies it is recommended to use an
+int representing the smallest domination (such as cents), like the 
+[Stripe](http://stripe.com/) API does.
+
+### Custom Methods
+
+Custom instance methods can be attached to the prototype of a model. Be careful
+not to use a name that conflicts with a property, and avoid overriding a method
+supplied by *model* like `save` (instead use a [[lifecycle event](#lifecycle-events)).
+
+Class methods can be attached to the constructor of a model. As with instance
+methods, take care not to override existing class methods, such as `all`,
+`first`, and `count`.
+
+Here is an example of declaring class and instance methods:
+
+```javascript
+var User = function() {
+    this.property('email', 'string');
+    this.property('sendUpdates', 'boolean');
+
+    // setting a property on `this` in the constructor creates an instance method
+    this.sendConfirmation = function(callback) {
+        // send confirmation message
+    }
+}
+
+// setting a property on the prototype creates an instance method
+User.prototype.sendNewsletter = function(callback) {
+    // send newsletter
+}
+
+// setting a property on the constructor creates a class method
+User.sendNewsletters = function(callback) {
+    // send newsletter to users that opted into updates
+}
+
+User = model.register('User', User);
 ```
 
 ### Adapters
@@ -210,23 +254,6 @@ var mongoAdapter = model.createAdapter('mongodb', {
 
 model.Message.adapter = mongoAdapter;
 ```
-
-### Datatypes
-
-Model supports the following datatypes:
-
-* `string`
-* `text`
-* `number`
-* `int`
-* `boolean`
-* `date`
-* `datetime`
-* `time`
-* `object`
-
-The `object` data type can take a JSON string or an object that will serialize
-to JSON.
 
 ## Creating instances
 
@@ -504,9 +531,9 @@ var Account = function() {
 
 // Names in association methods must match the names that models are registered with.
 // The name given to hasMany is pluralized.
-model.register('User', User);
-model.register('Profile', Profile);
-model.register('Account', Account);
+User = model.register('User', User);
+Profile = model.register('Profile', Profile);
+Account = model.register('Account', Account);
 ```
 
 ### Creating associations
