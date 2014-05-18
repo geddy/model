@@ -192,23 +192,23 @@ methods, take care not to override existing class methods, such as `all`,
 Here is an example of declaring class and instance methods:
 
 ```javascript
-var User = function() {
+var User = function () {
     this.property('email', 'string');
     this.property('sendUpdates', 'boolean');
 
     // setting a property on `this` in the constructor creates an instance method
-    this.sendConfirmation = function(callback) {
+    this.sendConfirmation = function (callback) {
         // send confirmation message
     }
 }
 
 // setting a property on the prototype creates an instance method
-User.prototype.sendNewsletter = function(callback) {
+User.prototype.sendNewsletter = function (callback) {
     // send newsletter
 }
 
 // setting a property on the constructor creates a class method
-User.sendNewsletters = function(callback) {
+User.sendNewsletters = function (callback) {
     // send newsletter to users that opted into updates
 }
 
@@ -223,10 +223,10 @@ Use `model.createAdapter(name, config)` to create an adapter.
 
 ```javascript
 var adapter = model.createAdapter('postgres', {
-  host: 'localhost',
-  username: 'user',
-  password: 'password',
-  database: 'mydb'
+, host: 'localhost'
+, username: 'user'
+, password: 'password'
+, database: 'mydb'
 });
 ```
 
@@ -246,10 +246,10 @@ The default adapter will be used in all models that don't have `adapter` set on 
 
 ``` javascript
 var mongoAdapter = model.createAdapter('mongodb', {
-  host: 'localhost',
-  username: 'user',
-  password: 'password',
-  database: 'mymongo'
+  host: 'localhost'
+, username: 'user'
+, password: 'password'
+, database: 'mymongo'
 });
 
 model.Message.adapter = mongoAdapter;
