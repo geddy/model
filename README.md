@@ -71,21 +71,6 @@ build-tool.
 npm install model
 ```
 
-### Hacking on Model: running tests
-
-Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
-
-The integration tests require the appropriate database and supporting library.
-(For example, running the Postgres tests require a running Postgres server, and
-the 'pg' module NPM-installed in your model project directory.) To install the
-needed modules, just run `npm install` in the root model directory.
-
-To run the tests on a specific adapter, use `jake test[mongo]`, `jake
-test[postgres]`, or `jake test[memory]`.
-
-Configure adapter options by creating a `test/db.json` file. See
-`test/db.sample.json` for available options.
-
 ## Bootstrapping Model
 
 Model serves as the model component inside the Geddy Web framework
@@ -230,15 +215,15 @@ model.Message.adapter = mongoAdapter;
 
 Model supports the following datatypes:
 
-* string
-* text
-* number
-* int
-* boolean
-* date
-* datetime
-* time
-* object
+* `string`
+* `text`
+* `number`
+* `int`
+* `boolean`
+* `date`
+* `datetime`
+* `time`
+* `object`
 
 The `object` data type can take a JSON string or an object that will serialize
 to JSON.
@@ -876,6 +861,7 @@ Zooby.all({foo: {'like': 'b'}}, {nocase: true}, ...
 // The "bar" comparison will be case-sensitive, and the "foo" will not
 Zooby.all({or: [{foo: {'like': 'b'}}, {bar: 'baz'}]}, {nocase: ['foo']},
 ```
+
 ## More complex queries
 
 Model supports combining queries with OR and negating queries with NOT.
@@ -1024,8 +1010,23 @@ if (!someTeam.players) {
 }
 ```
 
+## Contributing
+
+### Hacking on Model: running tests
+
+Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
+
+The integration tests require the appropriate database and supporting library.
+(For example, running the Postgres tests require a running Postgres server, and
+the 'pg' module NPM-installed in your model project directory.) To install the
+needed modules, just run `npm install` in the root model directory.
+
+To run the tests on a specific adapter, use `jake test[mongo]`, `jake
+test[postgres]`, or `jake test[memory]`.
+
+Configure adapter options by creating a `test/db.json` file. See
+`test/db.sample.json` for available options.
+
 - - -
 Model JavaScript ORM copyright 2112 mde@fleegix.org.
-
-
 
