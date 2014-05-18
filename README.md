@@ -35,9 +35,9 @@ NodeJS.
   - [Comparison operators](#comparison-operators)
 - [More complex queries](#more-complex-queries)
 - [Options: sort, skip, limit](#options-sort-skip-limit)
-	- [Sorting](#sorting)
-	- [Simplified syntax for sorting](#simplified-syntax-for-sorting)
-	- [Skip and limit](#skip-and-limit)
+  - [Sorting](#sorting)
+  - [Simplified syntax for sorting](#simplified-syntax-for-sorting)
+  - [Skip and limit](#skip-and-limit)
 - [Eager loading of associations (SQL adpaters only)](#eager-loading-of-associations-sql-adpaters-only)
   - [Sorting results](#sorting-results)
   - [Checking for loaded associations](#checking-for-loaded-associations)
@@ -141,36 +141,32 @@ var User = function () {
       return s.length > 0;
   });
   this.validatesWithFunction('password', function (value, model) {
-      // returing false it will use standard message
+      // if the function returns false it will use a standard message
       if (typeof value != typeof "") {
       	 return false;
       }
 
-      // if return string it will be used as message error
+      // if it returns a string the string will be used as an error message
       if  (value.length <= 3) {
       	 return "Your password must be at least 4 characters long ";
       }
-
-      // This will check if the string has repeats more than twice
-      if (value == "1234")  {
-      	 return "Your password is too weak";
-      }
       
+      // return true if the validation passed
       return true;
-      	
   });
 
-  // Can define methods for instances like this
+  // methods for instances can be defined in the constructor like this
   this.someMethod = function () {
     // Do some stuff
   };
 };
 
-// Can also define them on the prototype
+// methods for instances can also be defined on the prototype
 User.prototype.someOtherMethod = function () {
   // Do some other stuff
 };
 
+// prepares the model and adds it as a property on `model`
 User = model.register('User', User);
 ```
 
@@ -192,7 +188,9 @@ var User = function () {
 
 ### Adapters
 
-You can specify a different adapter for each model or apply the same adapter to all models.
+An adapter allows a model to communicate with the database.
+
+Use `model.createAdapter(name, config)` to create an adapter.
 
 ```javascript
 var adapter = model.createAdapter('postgres', {
@@ -201,28 +199,32 @@ var adapter = model.createAdapter('postgres', {
   password: 'password',
   database: 'mydb'
 });
-
-model.User.adapter = adapter;
-model.Zerb.adapter = adapter;
 ```
 
-You can also define a defaultAdapter which will be used by default.
-Then you can override it on individual models.
+Use the `defaultAdapter` property on `model` to set a default adapter.
 
 ```javascript
-model.defaultAdapter = model.createAdapter('memory');
-
-var postgresAdapter = model.createAdapter('postgres', {
+model.defaultAdapter = model.createAdapter('postgres', {
   host: 'localhost',
   username: 'user',
   password: 'password',
   database: 'mydb'
 });
-
-// User model gets the defaultAdapter
-model.Zerb.adapter = postgresAdapter;
 ```
 
+Use the `adapter` property to set an adapter on individual models.
+The default adapter will be used in all models that don't have `adapter` set on them.
+
+``` javascript
+var mongoAdapter = model.createAdapter('mongodb', {
+  host: 'localhost',
+  username: 'user',
+  password: 'password',
+  database: 'mymongo'
+});
+
+model.Message.adapter = mongoAdapter;
+```
 
 ### Datatypes
 
@@ -237,6 +239,9 @@ Model supports the following datatypes:
 * datetime
 * time
 * object
+
+The `object` data type can take a JSON string or an object that will serialize
+to JSON.
 
 ## Creating instances
 
@@ -255,20 +260,60 @@ var user = User.create(params);
 ## Validations
 
 Validations provide a nice API for making sure your data items are in a good
-state. When an item is "valid," it means that its data meet all the criteria
-you've set for it. You can specify that certain fields have to be present, have
-to be certain length, or meet any other specific criteria you want to set.
+state, and creates friendly error messages to provide feedback to the user. When
+an item is "valid" it means that its data meet all the criteria you've set for
+it. You can specify that certain fields have to be present, have to be certain
+length, or meet any other specific criteria you want to set.
 
 Here's a list of supported validation methods:
 
- * validatesPresent -- ensures the property exists
- * validatesAbsent -- ensures the property does not exist
- * validatesLength -- ensures the minimum, maximum, or exact length
- * validatesFormat -- validates using a passed-in regex
- * validatesConfirmed -- validates a match against another named parameter
- * validatesWithFunction -- uses an arbitrary function to validate
+ * `validatesPresent` – ensures the property exists
+ * `validatesLength` – ensures the minimum, maximum, or exact length
+ * `validatesFormat` – validates using a passed-in regex
+ * `validatesConfirmed` – validates a match against another named parameter (useful for passwords)
+ * `validatesAbsent` – ensures the property does not exist
+ * `validatesWithFunction` – uses an arbitrary function to validate
 
-#### Common options
+Here are some simple examples of each validation method:
+
+```javascript
+var User = function () {
+  this.property('login', 'string', {required: true});
+  this.property('password', 'string', {required: true});
+  this.property('lastName', 'string');
+  this.property('firstName', 'string');
+
+  this.validatesPresent('login');
+  this.validatesFormat('login', /[a-z]+/, {message: 'Subdivisions!'});
+  this.validatesLength('login', {min: 3});
+  this.validatesConfirmed('password', 'confirmPassword');
+  this.validatesWithFunction('password', function (s) {
+      // Something that returns true or false
+      return s.length > 0;
+  });
+  this.validatesAbsent('unconfirmed');
+  this.validatesWithFunction('password', function (value, model) {
+      // if the function returns false it will use a standard message
+      if (typeof value != typeof "") {
+      	 return false;
+      }
+
+      // if it returns a string the string will be used as an error message
+      if  (value.length <= 3) {
+      	 return "Your password must be at least 4 characters long ";
+      }
+      
+      // return true if the validation passed
+      return true;
+  });
+
+  // methods for instances can be defined in the constructor like this
+  this.someMethod = function () {
+    // Do some stuff
+  };
+};
+
+#### Common validation options
 
 You can specify a custom error message for when a validation fails using the
 'message' option:
@@ -299,13 +344,13 @@ myUser = User.create({name: 'aaa'});
 
 The default behavior is for validation on both 'create' and 'update':
 
- * `create` - validates on <MyModelDefinition>`.create`
- * `update` - validates on <myModelInstance>`.updateProperties`
+ * `create` – validates on MyModelDefinition.`create`
+ * `update` – validates on myModelInstance.`updateProperties`
 
 You can also define custom validation scenarios other than create and update.
-(There is a builtin custom 'reify' scenario which is uses when instantiating
-items out of your datastore. This happens on the `first` and `all` query
-methods.)
+(There is a builtin custom 'reify' scenario which it uses when instantiating
+items out of your datastore. This happens when the `first` and `all` query
+methods are called.)
 
 ```javascript
 // Force validation with the `reify` scenario, ignore the too-short name property
@@ -389,49 +434,50 @@ You can also pass a query to the `remove` method instead of an id.
 
 ## Lifecycle events
 
-Both the base model 'constructors,' and model instances are EventEmitters. They
+Both the base model *constructors* and model instances are EventEmitters. They
 emit events during the create/update/remove lifecycle of model instances. In all
 cases, the plain-named event is fired after the event in question, the
 'before'-prefixed event, of course happens before.
 
-The 'constructor' for a model emits the following events:
+The *constructor* for a model emits the following events:
 
- * beforeCreate
- * create
- * beforeValidate
- * validate
- * beforeUpdateProperties
- * updateProperties
- * beforeSave (new instances, single and bulk)
- * save (new instances, single and bulk)
- * beforeUpdate (existing single instances, bulk updates)
- * update (existing single instances, bulk updates)
- * beforeRemove
- * remove
+ * `beforeCreate`
+ * `create`
+ * `beforeValidate`
+ * `validate`
+ * `beforeUpdateProperties`
+ * `updateProperties`
+ * `beforeSave (new instances, single and bulk)`
+ * `save (new instances, single and bulk)`
+ * `beforeUpdate (existing single instances, bulk updates)`
+ * `update (existing single instances, bulk updates)`
+ * `beforeRemove`
+ * `remove`
 
 Model-item instances emit these events:
 
- * beforeUpdateProperties
- * updateProperties
- * beforeSave
- * save
- * beforeUpdate
- * update
+ * `beforeUpdateProperties`
+ * `updateProperties`
+ * `beforeSave`
+ * `save`
+ * `beforeUpdate`
+ * `update`
 
 Model-item instances also have the following lifecycle methods:
 
- * afterCreate
- * beforeValidate
- * afterValidate
- * beforeUpdateProperties
- * afterUpdateProperties
- * beforeSave
- * afterSave
- * beforeUpdate
- * afterUpdate
+ * `afterCreate`
+ * `beforeValidate`
+ * `afterValidate`
+ * `beforeUpdateProperties`
+ * `afterUpdateProperties`
+ * `beforeSave`
+ * `afterSave`
+ * `beforeUpdate`
+ * `afterUpdate`
 
 If these methods are defined, they will be called at the appropriate time:
-```
+
+``` javascript
 var User = function () {
   this.property('name', 'string', {required: false});
 
@@ -445,8 +491,8 @@ var User = function () {
 
 ## Associations
 
-Model has support for associations: including hasMany/belongsTo and
-hasOne/belongsTo. For example, if you had a `User` model with a single
+Model has support for paired associations including `hasMany`/`belongsTo`
+and hasOne/belongsTo. For example, if you had a `User` model with a single
 `Profile`, and potentially many `Accounts`:
 
 ```javascript
@@ -458,17 +504,24 @@ var User = function () {
   this.hasOne('Profile');
   this.hasMany('Accounts');
 };
-```
 
-A `Book` model that belongs to an `Author` would look like this:
+var Profile = function() {
+  // properties
 
-```javascript
-var Book = function () {
-  this.property('title', 'string');
-  this.property('description', 'text');
-
-  this.belongsTo('Author');
+  this.belongsTo('Account');
 };
+
+var Account = function() {
+  // properties
+
+  this.belongsTo('User');
+};
+
+// Names in association methods must match the names that models are registered with.
+// The name given to hasMany is pluralized.
+model.register('User', User);
+model.register('Profile', Profile);
+model.register('Account', Account);
 ```
 
 ### Creating associations
@@ -477,6 +530,33 @@ Add the `hasOne` relationship by calling 'set' plus the name of the owned
 model in singular (in this case `setProfile`). Retrieve the associated item by
 using 'get' plus the name of the owned model in singular (in this case
 `getProfile`). Here's an example:
+
+```javascript
+var user = User.create({
+  login: 'asdf'
+, password: 'zerb'
+, confirmPassword: 'zerb'
+});
+user.save(function (err, data) {
+  var profile;
+  if (err) {
+    throw err;
+  }
+  profile = Profile.create({});
+  user.setProfile(profile);
+  user.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    user.getProfile(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log(profile.id ' is the same as ' + data.id);
+    });
+  });
+});
+```
 
 Set up the `hasMany` relationship by calling 'add' plus the name of the
 owned model in singular (in this case `addAccount`). Retrieve the associated
@@ -504,33 +584,6 @@ user.save(function (err, data) {
         throw err;
       }
       console.log('This number should be 2: ' + data.length);
-    });
-  });
-});
-```
-
-```javascript
-var user = User.create({
-  login: 'asdf'
-, password: 'zerb'
-, confirmPassword: 'zerb'
-});
-user.save(function (err, data) {
-  var profile;
-  if (err) {
-    throw err;
-  }
-  profile = Profile.create({});
-  user.setProfile(profile);
-  user.save(function (err, data) {
-    if (err) {
-      throw err;
-    }
-    user.getProfile(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      console.log(profile.id ' is the same as ' + data.id);
     });
   });
 });
@@ -664,7 +717,10 @@ example, in the case of `Kids`, you'd use `addKid` and `getKids`.
 
 ### Named 'through' associations
 
-If one of your named associations of a model is 'through' another model, such as a join table, it is necessary that the association's name is the same for the model declaring the through association as it is for the model who the association is through.
+If one of your named associations of a model is 'through' another model, such as
+a join table, it is necessary that the association's name is the same for the
+model declaring the through association as it is for the model who the
+association is through.
 
 For example, a team may have many players, but may also have many coaches.
 
@@ -683,7 +739,9 @@ var Player = function(){
 }
 ```
 
-Here a `Team` has many `Players`, but also has many `Coaches`, and we have an inverse relationship set up as well so that a `Player` has many `Teams` but also has many `CoachedTeams`.
+Here a `Team` has many `Players`, but also has many `Coaches`, and we have an
+inverse relationship set up as well so that a `Player` has many `Teams` but also
+has many `CoachedTeams`.
 
 ## Querying
 
@@ -713,7 +771,7 @@ User.first({login: 'alerxst'}, function (err, data) {
 });
 ```
 
-### Collections of items
+### Finding a collection of items
 
 Use the `all` method to find lots of items. Pass it a set of query parameters in
 the form of an object-literal, where each key is a field to compare, and the
@@ -902,7 +960,6 @@ end up with a random subset instead of the items you want.
 ```javascript
 // Returns items 501-600
 {skip: 500, limit: 100}
-
 ```
 
 ## Eager loading of associations (SQL adpaters only)
