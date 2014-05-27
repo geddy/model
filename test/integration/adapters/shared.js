@@ -95,6 +95,14 @@ tests = {
     });
   }
 
+, 'test all with empty id inclusion in query object': function (next) {
+    model.Person.all({id: []}, function (err, data) {
+      if (err) { throw err; }
+      assert.strictEqual(data.length, 0)
+      next();
+    });
+  }
+
 , 'test all via nonexistant string id': function (next) {
     model.Person.all({id: 'bogus-id'}, function (err, data) {
       if (err) { throw err; }
