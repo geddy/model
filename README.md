@@ -324,6 +324,7 @@ var User = function () {
     // Do some stuff
   };
 };
+```
 
 #### Common validation options
 
