@@ -3,6 +3,7 @@
   , fs = require('fs')
   , utils = require('utilities')
   , path = require('path')
+  , rest = require('rest-js')
   , userOptsFile = path.join(__dirname, 'db')
   , existsSync
   , config = {
@@ -22,6 +23,12 @@
       }
     , level: {
         db: process.env.LEVEL_DATABASE || '/tmp/foo'
+      }
+    , rest: {
+        host: 'http://localhost:3000/',
+        filters: {
+          param: [rest.RestFilters.PARAM_FILTER_PARAMS]
+        }
       }
     };
 

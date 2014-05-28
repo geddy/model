@@ -224,6 +224,11 @@ tests = {
     model.Person.all({title: 'a'}, {}, function (err, data) {
       if (err) { throw err; }
       assert.equal(1, data.length);
+
+      if (Array.isArray(data)) {
+        data = data[0];
+      }
+
       model.Person.all({id: data.id, title: 'b'}, function (err, data) {
         if (err) { throw err; }
         // `all` call, no items in the collection
