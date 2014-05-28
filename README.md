@@ -172,8 +172,10 @@ Model supports the following datatypes:
 * `time`
 * `object`
 
-The `object` data type can take a JSON string or an object that will serialize
+The `object` datatype can take a JSON string or an object that will serialize
 to JSON.
+
+The `int` datatype can take floats whereas `number` cannot.
 
 There is no currency or decimal datatype. For currencies it is recommended to use an
 int representing the smallest domination (such as cents), like the 
