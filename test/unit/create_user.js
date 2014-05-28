@@ -77,12 +77,20 @@ tests = {
   }
 
 , 'test no password confirmation': function () {
-    _params.confirmPassword = 'fdsa';
-    var user = User.create(_params);
+    var p = utils.mixin({}, _params),
+        user;
+    p.confirmPassword = 'fdsa';
+    var user = User.create(p);
     // Error message should be customized
     assert.ok(typeof user.errors.password != 'undefined');
+  }
 
-    _params.confirmPassword = 'asdf'; // Restore to something valid
+, 'setting default values': function () {
+    var p = utils.mixin({}, _params),
+        user;
+    delete p.firstName;
+    user = User.create(p);
+    assert.equal('Zerp', user.firstName);
   }
 
 };

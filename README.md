@@ -488,16 +488,17 @@ Model-item instances also have the following lifecycle methods:
  * `beforeUpdate`
  * `afterUpdate`
 
-If these methods are defined, they will be called at the appropriate time:
+If these methods are defined, they will be called at the
+appropriate time. You can hook into this lifecycle to do things
+like set default values for your items:
 
-``` javascript
+```javascript
 var User = function () {
   this.property('name', 'string', {required: false});
 
-  // Lowercase the name before validating
-  this.beforeValidate = function () {
-    // `this` will refer to the model instance
-    this.name = this.name.toLowerCase();
+  // Make sure there's a name in the params before validating
+  this.beforeValidate = function (params) {
+    params.name = params.name || 'Zerp Derp';
   };
 };
 ```

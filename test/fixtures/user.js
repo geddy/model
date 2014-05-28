@@ -14,6 +14,9 @@ var User = function () {
   this.afterCreate = function () {
     this.lastName = 'afterCreate';
   }
+  this.beforeValidate = function (params) {
+    params.firstName = params.firstName || 'Zerp'
+  }
   this.afterValidate = function () {
     this.lastName = 'afterValidate';
   }
