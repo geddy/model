@@ -46,12 +46,17 @@ tests = {
     });
   }
 
-, 'test first via nonexistant string id': function (next) {
-    model.Person.first('bogus-id', function (err, data) {
-      if (err) { throw err; }
-      assert.strictEqual(data, undefined);
+, 'test first via non-existent string id': function (next) {
+    if (!model.autoIncrementId) {
+      model.Person.first('bogus-id', function (err, data) {
+        if (err) { throw err; }
+        assert.strictEqual(data, undefined);
+        next();
+      });
+    }
+    else {
       next();
-    });
+    }
   }
 
 , 'test first via id in query object': function (next) {
@@ -103,13 +108,18 @@ tests = {
     });
   }
 
-, 'test all via nonexistant string id': function (next) {
-    model.Person.all({id: 'bogus-id'}, function (err, data) {
-      if (err) { throw err; }
-      assert.equal(typeof data, 'object');
-      assert.equal(data.length, 0);
+, 'test all via non-existent string id': function (next) {
+    if (!model.autoIncrementId) {
+      model.Person.all({id: 'bogus-id'}, function (err, data) {
+        if (err) { throw err; }
+        assert.equal(typeof data, 'object');
+        assert.equal(data.length, 0);
+        next();
+      });
+    }
+    else {
       next();
-    });
+    }
   }
 
 , 'test all via list of ids in query object': function (next) {
@@ -1111,27 +1121,37 @@ tests = {
   }
 
 , 'test save new with custom string id': function (next) {
-    var customId = 'zerb';
-    var p = model.Person.create({
-      id: customId
-    });
-    p.save(function (err, data) {
-      if (err) { throw err; }
-      assert.equal(data.id, customId);
+    if (!model.autoIncrementId) {
+      var customId = 'zerb';
+      var p = model.Person.create({
+        id: customId
+      });
+      p.save(function (err, data) {
+        if (err) { throw err; }
+        assert.equal(data.id, customId);
+        next();
+      });
+    }
+    else {
       next();
-    });
+    }
   }
 
 , 'test save new with custom int id': function (next) {
-    var customId = 2112;
-    var p = model.Person.create({
-      id: customId
-    });
-    p.save(function (err, data) {
-      if (err) { throw err; }
-      assert.equal(data.id, customId);
+    if (!model.autoIncrementId) {
+      var customId = 2112;
+      var p = model.Person.create({
+        id: customId
+      });
+      p.save(function (err, data) {
+        if (err) { throw err; }
+        assert.equal(data.id, customId);
+        next();
+      });
+    }
+    else {
       next();
-    });
+    }
   }
 
 , 'test count all': function (next) {

@@ -13,19 +13,25 @@ helpers.fixtures.forEach(function (f) {
 
 tests = {
   'test id is actually unique': function (next) {
-    model.Person.all(function (err, people) {
-      var customId;
-      if (err) { throw err; }
-      duplicateId = people[0].id;
-      var p = model.Person.create({
-        id: duplicateId
+    // Unnecessary with autoIncrementId
+    if (!model.autoIncrementId) {
+      model.Person.all(function (err, people) {
+        var customId;
+        if (err) { throw err; }
+        duplicateId = people[0].id;
+        var p = model.Person.create({
+          id: duplicateId
+        });
+        // Should throw when trying to save with an already-existing id
+        p.save(function (err, data) {
+          assert.ok(err);
+          next();
+        });
       });
-      // Should throw when trying to save with an already-existing id
-      p.save(function (err, data) {
-        assert.ok(err);
-        next();
-      });
-    });
+    }
+    else {
+      next();
+    }
   }
 
 };
