@@ -267,22 +267,6 @@ model.defaultAdapter = model.createAdapter('postgres', {
 });
 ```
 
-#### model._ModelName_.adapter
-
-Use the `adapter` property to set an adapter on individual models.
-The default adapter will be used in all models that don't have `adapter` set on them.
-
-```javascript
-var mongoAdapter = model.createAdapter('mongo', {
-  host: 'localhost'
-, username: 'user'
-, password: 'password'
-, dbName: 'mymongo'
-});
-
-model.Message.adapter = mongoAdapter;
-```
-
 #### adapter.connect(cb)
 
 If you want to hook into when the adapter connects to the database you
