@@ -234,6 +234,9 @@ all of these but will put it in your `package.json` file for you:
 - MongoDB: `npm install mongodb --save`
 - LevelDB: `npm install level --save`
 
+The in-memory, filesystem, and Riak adapters work out of the box and don't need any
+additional libraries.
+
 #### model.createAdapter(_name_, _config_)
 
 Use `model.createAdapter(name, config)` to initialize an adapter and connect to the database.
