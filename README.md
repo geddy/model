@@ -217,7 +217,22 @@ User = model.register('User', User);
 
 ### Adapters
 
-An adapter allows a model to communicate with the database.
+An adapter allows a model to communicate with the database in a common way across any supported
+databases. For example, this allows you to easily switch from an in memory database for testing
+to something like MongoDB just by changing a single line in your model config.
+
+
+#### How to install adapters
+
+Some adapters require you to install a 3rd party module from npm. Below is a list of the
+adapters that require an install and how to install it. The `--save` flag is optional on
+all of these but will put it in your `package.json` file for you:
+
+- Postgres: `npm install pg --save`
+- MySQL: `npm install mysql --save`
+- SQLite: `npm install sqlite3 --save`
+- MongoDB: `npm install mongodb --save`
+- LevelDB: `npm install level --save`
 
 #### createAdapter(_name_, _config_)
 
