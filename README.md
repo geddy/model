@@ -103,7 +103,7 @@ Foo = model.register('Foo', Foo);
 module.exports = Foo;
 ```
 
-You then can use it like the following example.
+You can then use it like the following example:
 
 ```js
 var Foo = require('./foo.js');
@@ -126,9 +126,6 @@ Foo.first(1, function (err, model) {
 });
 
 ```
-
-Pass the string name of the desired adapter (e.g., 'level', 'postgres') followed
-any config options to the `setAdapter` method when defining your model.
 
 ## Defining models
 
