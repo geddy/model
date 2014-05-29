@@ -219,7 +219,9 @@ User = model.register('User', User);
 
 An adapter allows a model to communicate with the database.
 
-Use `model.createAdapter(name, config)` to create an adapter.
+#### createAdapter(_name_, _config_)
+
+Use `model.createAdapter(name, config)` to initialize an adapter and connect to the database.
 
 ```javascript
 var adapter = model.createAdapter('postgres', {
@@ -230,7 +232,10 @@ var adapter = model.createAdapter('postgres', {
 });
 ```
 
-Use the `defaultAdapter` property on `model` to set a default adapter.
+#### model.defaultAdapter
+
+Use the `defaultAdapter` property on `model` to set a default adapter for all models that don't manually specify
+`.setAdapter` in the model definition.
 
 ```javascript
 model.defaultAdapter = model.createAdapter('postgres', {
@@ -241,15 +246,17 @@ model.defaultAdapter = model.createAdapter('postgres', {
 });
 ```
 
+#### model._ModelName_.adapter
+
 Use the `adapter` property to set an adapter on individual models.
 The default adapter will be used in all models that don't have `adapter` set on them.
 
-``` javascript
-var mongoAdapter = model.createAdapter('mongodb', {
+```javascript
+var mongoAdapter = model.createAdapter('mongo', {
   host: 'localhost'
 , username: 'user'
 , password: 'password'
-, database: 'mymongo'
+, dbName: 'mymongo'
 });
 
 model.Message.adapter = mongoAdapter;
