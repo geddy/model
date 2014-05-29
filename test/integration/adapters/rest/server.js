@@ -30,7 +30,7 @@ function init()
   server.use(restify.acceptParser(server.acceptable));
   server.use(restify.queryParser());
   server.use(restify.bodyParser());
-  //server.use(logRequest);
+  server.use(logRequest);
 
   server.pre(function (req, res, next) {
     // strip file format suffixes
@@ -81,6 +81,14 @@ function init()
   });
 
   // remove
+  server.del('/:resourceType', function(req, res, next) {
+    removeAll(req.params.resourceType, req.params.query, getValidOptions(req.params), function(err, resp) {
+      res.send(resp);
+
+      return next();
+    });
+  });
+
   server.del('/:resourceType/:id', function(req, res, next) {
     removeFirst(req.params.resourceType, req.params.id, req.params, function(err, resp) {
       res.send(resp);
@@ -279,6 +287,31 @@ function removeFirst(resourceType, id, params, cb)
   }
 }
 
+function removeAll(resourceType, query, opts, cb)
+{
+  // normalize resourceType
+  resourceType = utils.string.getInflection(resourceType, 'constructor', 'singular');
+
+  if (model[resourceType]) {
+    var res = {};
+    model[resourceType].remove(query, opts, function(err, data) {
+      if (err) {
+        throw err;
+        return;
+      }
+
+      cb(null, {
+        success: true,
+        data: data
+      });
+    });
+  }
+  else {
+    var err = new Error('Resource "' + resourceType + '" does not exist.', 404);
+    throw err;
+  }
+}
+
 function create(resourceType, params, cb)
 {
   // normalize resourceType
@@ -287,20 +320,6 @@ function create(resourceType, params, cb)
 
   if (model[resourceType]) {
     var resource = model[resourceType].create(params[propType]);
-
-    // set center and user
-    resource.updateProperties({
-      center_id: 1,
-      author_id: 1
-    });
-
-    // publish posts that should get published immediately
-    if (resourceType === 'Post' && !resource.publish_at) {
-      resource.updateProperties({
-        state: 'published',
-        published_at: new Date()
-      });
-    }
 
     if (resource.isValid()) {
       resource.save(function(err, data) {
@@ -311,7 +330,7 @@ function create(resourceType, params, cb)
         else {
           var resp = {};
           var pluralName = utils.string.getInflection(resourceType, 'property', 'plural');
-          resp[pluralName] = [resource];
+          resp[pluralName] = [resource.toJSON()];
           cb(null, resp);
         }
       });
@@ -348,6 +367,7 @@ function getValidOptions(params)
     opts.limit = parseInt(params.per);
     opts.offset = (parseInt(params.page) - 1) * opts.limit;
   }
+  if (params.sort) opts.sort = params.sort;
   if (params.nocase) opts.nocase = (params.nocase === true || params.nocase === 'true' || params.nocase === '1');
   return opts;
 }
