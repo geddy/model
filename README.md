@@ -234,7 +234,7 @@ all of these but will put it in your `package.json` file for you:
 - MongoDB: `npm install mongodb --save`
 - LevelDB: `npm install level --save`
 
-#### createAdapter(_name_, _config_)
+#### model.createAdapter(_name_, _config_)
 
 Use `model.createAdapter(name, config)` to initialize an adapter and connect to the database.
 
@@ -275,6 +275,61 @@ var mongoAdapter = model.createAdapter('mongo', {
 });
 
 model.Message.adapter = mongoAdapter;
+```
+
+#### adapter.connect(cb)
+
+If you want to hook into when the adapter connects to the database you
+can hook into the connect method which will fire when the connection
+is either successful or it fails.
+
+```js
+myAdapter.connect(function (err) {
+  if (err) throw new Error('Error: ' + err);
+  console.log('Database connection successful');
+}
+```
+
+#### adapter.disconnect(cb)
+
+Same as `adapter.connect`, but when a disconnect happens.
+
+```js
+myAdapter.disconnect(function (err) {
+  if (err) throw new Error('Error: ' + err);
+  console.log('Database disconnected successfully');
+}
+```
+
+#### adapter.addListener('connect', callback)
+
+Same as `adapter.connect`, but in event form and only when it is successful.
+
+```js
+myAdapter.addListener('connect', function () {
+  console.log('Database connection successful');
+});
+```
+
+#### adapter.addListener('disconnect', callback)
+
+Same as `adapter.disconnect`, but in event form and only when it is successful.
+
+```js
+myAdapter.addListener('disconnect', function () {
+  console.log('Database disconnected successfully');
+});
+```
+
+#### adapter.addListener('error', callback)
+
+Fires whenever there is any error in the database connection during a connect or
+disconnect attempt.
+
+```js
+myAdapter.addListener('error', function (err) {
+  throw new Error('Error: ' + err);
+});
 ```
 
 ## Creating instances
