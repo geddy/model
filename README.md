@@ -238,6 +238,12 @@ all of these but will put it in your `package.json` file for you:
 
 Use `model.createAdapter(name, config)` to initialize an adapter and connect to the database.
 
+_NOTE:_ The `config` parameter for each adapter depends on the module used. As an example,
+postgres uses `database` for the database name whereas MongoDB uses `dbName`. Model doesn't
+try to standardize the config for each adapter. Instead it just passes the config you give it
+in `createAdapter` to the npm module. To check the config setup for your adapter go to the
+module's official site and look at their docs.
+
 ```javascript
 var adapter = model.createAdapter('postgres', {
 , host: 'localhost'
