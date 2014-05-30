@@ -65,10 +65,10 @@ Model requires version 0.8.x of Node.js or higher. If you want to run the tests,
 or work on Model, you'll want the [Jake](https://github.com/mde/jake) JavaScript
 build-tool.
 
-### Installing with [npm](http://npmjs.org/)
+### Installing with [NPM](http://npmjs.org/)
 
 ```
-npm install model
+NPM install model
 ```
 
 ## Bootstrapping Model
@@ -273,7 +273,7 @@ to something like MongoDB just by changing a single line in your model config.
 
 #### How to install adapters
 
-Some adapters require you to install a 3rd party module from npm. Below is a list of the
+Some adapters require you to install a 3rd party module from NPM. Below is a list of the
 adapters that require an install and how to install it. The `--save` flag is optional on
 all of these but will put it in your `package.json` file for you:
 
@@ -293,7 +293,7 @@ Use `model.createAdapter(name, config)` to initialize an adapter and connect to 
 _NOTE:_ The `config` parameter for each adapter depends on the module used. As an example,
 postgres uses `database` for the database name whereas MongoDB uses `dbName`. Model doesn't
 try to standardize the config for each adapter. Instead it just passes the config you give it
-in `createAdapter` to the npm module. To check the config setup for your adapter go to the
+in `createAdapter` to the NPM module. To check the config setup for your adapter go to the
 module's official site and look at their docs.
 
 ```javascript
@@ -1166,7 +1166,7 @@ Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
 
 The integration tests require the appropriate database and supporting library.
 (For example, running the Postgres tests require a running Postgres server, and
-the 'pg' module npm-installed in your model project directory.) To install the
+the 'pg' module NPM-installed in your model project directory.) To install the
 needed modules, just run `npm install` in the root model directory.
 
 To run the tests on a specific adapter, use `jake test[mongo]`, `jake
