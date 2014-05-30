@@ -73,36 +73,59 @@ npm install model
 
 ## Bootstrapping Model
 
-Model serves as the model component inside the Geddy Web framework
-(http://geddyjs.org/). But it can easily be used as an ORM on its own. Here's a
-minimal example which uses the LevelDB adapter for the defined model:
+Here's a minimal example which uses the LevelDB adapter for a `Foo` model:
 
 ```javascript
-var model = require('model')
-  , Zerb;
+var model = require('model');
 
-Zerb = function () {
-  this.property('title', 'string');
+// Setup the blueprint of the model. This is where you can
+// setup the model properties, defaults, and validations
+var Foo = function () {
   this.setAdapter('level', {
     db: './data'
   });
+  
+  // Define the whitelisted properties on the model.
+  // Properties not listed wont be saved
+  this.defineProperties({
+    name: { type: 'string', required: true },
+    description: { type: 'text' },
+    enabled: { type: 'boolean' },
+    archived: { type: 'boolean' },
+  });
 };
 
-model.registerDefinitions([{
-  ctorName: 'Zerb'
-, ctor: Zerb
-}]);
+// This registers the model with the model package so
+// things like associations can work
+Foo = model.register('Foo', Foo);
 
-var z = model.Zerb.create({title: 'asdf'});
-
-z.save(function (err, data) {
-  if (err) { throw err; }
-  console.log('Zerb ' + z.title + ' saved.');
-});
+// Now we export Foo to create a reusable model module
+module.exports = Foo;
 ```
 
-Pass the string name of the desired adapter (e.g., 'level', 'postgres') followed
-any config options to the `setAdapter` method when defining your model.
+You can then use it like the following example:
+
+```js
+var Foo = require('./foo.js');
+Foo.first(1, function (err, model) {
+  // Check if there was an error with the DB
+  if (err) throw new Error('Uh oh, something broke');
+  
+  // If there was no error, but no model was found it must be missing
+  if (!err && !model) throw new Error('Foo not found');
+  
+  // Update the model's name property
+  model.name = "New name!";
+  
+  // Once we're done updating properties we can call save on the model.
+  // Save will send the current model data to the DB you specified
+  model.save(function (err, updatedModel) {
+    if (err) throw new Error('Could not save the model');
+    console.log("The model was updated!");
+  });
+});
+
+```
 
 ## Defining models
 
