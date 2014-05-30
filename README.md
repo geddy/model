@@ -139,6 +139,34 @@ var User = function () {
 User = model.register('User', User);
 ```
 
+### Setting an adapter
+
+Although you can set a [default adapter](#modeldefaultadapter), you may want to override that default on a per model basis. To do that simply call `this.setAdapter(name, config)` just like you would with [createAdapter](#createadaptername-config), like so for a MongoDB adapter:
+
+```javascript
+var model = require('model');
+
+var Foo = function () {
+  this.setAdapter('mongo', {
+    "hostname":"localhost",
+    "port":27017,
+    "username":"",
+    "password":"",
+    "dbName":"mydatabase"
+  });
+  
+  this.defineProperties({
+    name: {
+      type: 'string', required: true
+    }
+  });
+};
+
+Foo = model.register('Foo', Foo);
+
+module.exports = Foo;
+```
+
 ### Defining properties
 
 Properties can be defined using the `property` method, which takes a name, a type,
