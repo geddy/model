@@ -65,7 +65,7 @@ Model requires version 0.8.x of Node.js or higher. If you want to run the tests,
 or work on Model, you'll want the [Jake](https://github.com/mde/jake) JavaScript
 build-tool.
 
-### Installing with [NPM](http://npmjs.org/)
+### Installing with [npm](http://npmjs.org/)
 
 ```
 npm install model
@@ -1143,7 +1143,7 @@ Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
 
 The integration tests require the appropriate database and supporting library.
 (For example, running the Postgres tests require a running Postgres server, and
-the 'pg' module NPM-installed in your model project directory.) To install the
+the 'pg' module npm-installed in your model project directory.) To install the
 needed modules, just run `npm install` in the root model directory.
 
 To run the tests on a specific adapter, use `jake test[mongo]`, `jake
