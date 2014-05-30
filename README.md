@@ -141,7 +141,7 @@ User = model.register('User', User);
 
 ### Setting an adapter
 
-Although you can set a [default adapter](#modeldefaultadapter), you may want to override that default on a per model basis. To do that simply call `this.setAdapter(name, config)` just like you would with [createAdapter](#createadaptername-config), like so for a MongoDB adapter:
+Although you can set a [default adapter](#modeldefaultadapter), you may want to override that default on a per model basis. To do that simply call `this.setAdapter(name, config)` just like you would with [createAdapter](#modelcreateadaptername-config), like so for a MongoDB adapter:
 
 ```javascript
 var model = require('model');
