@@ -65,7 +65,7 @@ Model requires version 0.8.x of Node.js or higher. If you want to run the tests,
 or work on Model, you'll want the [Jake](https://github.com/mde/jake) JavaScript
 build-tool.
 
-### Installing with [NPM](http://npmjs.org/)
+### Installing with [npm](http://npmjs.org/)
 
 ```
 npm install model
@@ -162,6 +162,32 @@ var User = function () {
 User = model.register('User', User);
 ```
 
+### Setting an adapter
+
+Although you can set a [default adapter](#modeldefaultadapter), you may want to override that default on a per model basis. To do that simply call `this.setAdapter(name, config)` just like you would with [createAdapter](#modelcreateadaptername-config), like so for a MongoDB adapter:
+
+```javascript
+var model = require('model');
+
+var Foo = function () {
+  this.setAdapter('mongo', {
+    "hostname":"localhost",
+    "port":27017,
+    "username":"",
+    "password":"",
+    "dbName":"mydatabase"
+  });
+  
+  this.defineProperties({
+    name: { type: 'string', required: true }
+  });
+};
+
+Foo = model.register('Foo', Foo);
+
+module.exports = Foo;
+```
+
 ### Defining properties
 
 Properties can be defined using the `property` method, which takes a name, a type,
@@ -240,9 +266,35 @@ User = model.register('User', User);
 
 ### Adapters
 
-An adapter allows a model to communicate with the database.
+An adapter allows a model to communicate with the database in a common way across any supported
+databases. For example, this allows you to easily switch from an in memory database for testing
+to something like MongoDB just by changing a single line in your model config.
 
-Use `model.createAdapter(name, config)` to create an adapter.
+
+#### How to install adapters
+
+Some adapters require you to install a 3rd party module from npm. Below is a list of the
+adapters that require an install and how to install it. The `--save` flag is optional on
+all of these but will put it in your `package.json` file for you:
+
+- Postgres: `npm install pg --save`
+- MySQL: `npm install mysql --save`
+- SQLite: `npm install sqlite3 --save`
+- MongoDB: `npm install mongodb --save`
+- LevelDB: `npm install level --save`
+
+The in-memory, filesystem, and Riak adapters work out of the box and don't need any
+additional libraries.
+
+#### model.createAdapter(_name_, _config_)
+
+Use `model.createAdapter(name, config)` to initialize an adapter and connect to the database.
+
+_NOTE:_ The `config` parameter for each adapter depends on the module used. As an example,
+postgres uses `database` for the database name whereas MongoDB uses `dbName`. Model doesn't
+try to standardize the config for each adapter. Instead it just passes the config you give it
+in `createAdapter` to the npm module. To check the config setup for your adapter go to the
+module's official site and look at their docs.
 
 ```javascript
 var adapter = model.createAdapter('postgres', {
@@ -253,7 +305,10 @@ var adapter = model.createAdapter('postgres', {
 });
 ```
 
-Use the `defaultAdapter` property on `model` to set a default adapter.
+#### model.defaultAdapter
+
+Use the `defaultAdapter` property on `model` to set a default adapter for all models that don't manually specify
+`.setAdapter` in the model definition.
 
 ```javascript
 model.defaultAdapter = model.createAdapter('postgres', {
@@ -264,18 +319,59 @@ model.defaultAdapter = model.createAdapter('postgres', {
 });
 ```
 
-Use the `adapter` property to set an adapter on individual models.
-The default adapter will be used in all models that don't have `adapter` set on them.
+#### adapter.connect(cb)
 
-``` javascript
-var mongoAdapter = model.createAdapter('mongodb', {
-  host: 'localhost'
-, username: 'user'
-, password: 'password'
-, database: 'mymongo'
+If you want to hook into when the adapter connects to the database you
+can hook into the connect method which will fire when the connection
+is either successful or it fails.
+
+```js
+myAdapter.connect(function (err) {
+  if (err) throw new Error('Error: ' + err);
+  console.log('Database connection successful');
+}
+```
+
+#### adapter.disconnect(cb)
+
+Same as `adapter.connect`, but when a disconnect happens.
+
+```js
+myAdapter.disconnect(function (err) {
+  if (err) throw new Error('Error: ' + err);
+  console.log('Database disconnected successfully');
+}
+```
+
+#### adapter.addListener('connect', callback)
+
+Same as `adapter.connect`, but in event form and only when it is successful.
+
+```js
+myAdapter.addListener('connect', function () {
+  console.log('Database connection successful');
 });
+```
 
-model.Message.adapter = mongoAdapter;
+#### adapter.addListener('disconnect', callback)
+
+Same as `adapter.disconnect`, but in event form and only when it is successful.
+
+```js
+myAdapter.addListener('disconnect', function () {
+  console.log('Database disconnected successfully');
+});
+```
+
+#### adapter.addListener('error', callback)
+
+Fires whenever there is any error in the database connection during a connect or
+disconnect attempt.
+
+```js
+myAdapter.addListener('error', function (err) {
+  throw new Error('Error: ' + err);
+});
 ```
 
 ## Creating instances
@@ -1070,7 +1166,7 @@ Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
 
 The integration tests require the appropriate database and supporting library.
 (For example, running the Postgres tests require a running Postgres server, and
-the 'pg' module NPM-installed in your model project directory.) To install the
+the 'pg' module npm-installed in your model project directory.) To install the
 needed modules, just run `npm install` in the root model directory.
 
 To run the tests on a specific adapter, use `jake test[mongo]`, `jake
