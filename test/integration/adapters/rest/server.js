@@ -235,8 +235,7 @@ function updateFirst(resourceType, query, data, cb)
           first.save(onSaved);
         }
         else {
-          var err = new Error('Cannot update ' + resourceType + ' as the provided data is invalid.', 422);
-          throw err;
+          first.save(onSaved);
         }
       }
     });
@@ -289,6 +288,12 @@ function removeFirst(resourceType, id, params, cb)
 
 function removeAll(resourceType, query, opts, cb)
 {
+  // if no query is given do nothing
+  if (!query) {
+    cb(null, { success: true });
+    return;
+  }
+
   // normalize resourceType
   resourceType = utils.string.getInflection(resourceType, 'constructor', 'singular');
 
@@ -336,9 +341,10 @@ function create(resourceType, params, cb)
       });
     }
     else {
-      var err = new Error('Resource is invalid.', 422);
-      throw err;
-      return;
+      var resp = {};
+      var pluralName = utils.string.getInflection(resourceType, 'property', 'plural');
+      resp[pluralName] = [resource.toJSON()];
+      cb(null, resp);
     }
   }
   else {

@@ -61,12 +61,8 @@ var disabled = [
   // paramifying undefined or null properties does not work, so this test fails as no id parameter will be send
 , 'test all, id does not override other conditions'
 
-  // TODO: invalid models currently throw an error in the rest adapter
-, 'test reification of invalid model'
+  // TODO: seems that mock server does not send validation errors on GET/load requests
 , 'test validations on reification'
-
-  // TODO: this test should pass
-, 'test remove with empty query'
 ];
 
 for (var p in shared) {
