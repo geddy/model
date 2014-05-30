@@ -156,9 +156,7 @@ var Foo = function () {
   });
   
   this.defineProperties({
-    name: {
-      type: 'string', required: true
-    }
+    name: { type: 'string', required: true }
   });
 };
 
