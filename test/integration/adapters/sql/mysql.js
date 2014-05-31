@@ -3,6 +3,7 @@ var utils = require('utilities')
   , model = require('../../../../lib')
   , helpers = require('.././helpers')
   , eagerAssnTests = require('./eager_assn')
+  , nestedEagerAssnTests = require('./nested_eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/mysql').Adapter
   , adapter
   , currentId
@@ -112,6 +113,10 @@ for (var p in shared) {
 
 for (var p in eagerAssnTests) {
   tests[p + ' (MySQL)'] = eagerAssnTests[p];
+}
+
+for (var p in nestedEagerAssnTests) {
+  tests[p + ' (MySQL)'] = nestedEagerAssnTests[p];
 }
 
 for (var p in unique) {
