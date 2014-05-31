@@ -1,19 +1,17 @@
-var utils = require('utilities')
-  , assert = require('assert')
+var helpers = require('../helpers')
   , model = require('../../../../lib')
-  , helpers = require('../helpers')
-  , eagerAssnTests = require('./eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/postgres').Adapter
-  , adapter
-  , currentId
-  , tests
   , config = require('../../../config')
   , shared = require('../shared')
+  , eagerAssnTests = require('./eager_assn')
   , unique = require('../unique_id')
-  , streaming = require('../streaming');
+  , streaming = require('../streaming')
+  , tests
+  , common;
 
-tests = {
-  'before': function (next) {
+common = new (function () {
+
+  this.connect = function (callback) {
     var relations = helpers.fixtures.slice()
       , models = [];
 
@@ -28,7 +26,7 @@ tests = {
         if (err) {
           throw err;
         }
-        next();
+        callback();
       });
     });
     adapter.connect();
@@ -42,20 +40,21 @@ tests = {
     });
 
     model.registerDefinitions(models);
-  }
 
-, 'after': function (next) {
+    return adapter;
+  };
+
+  this.disconnect = function (adapter, callback) {
     adapter.once('disconnect', function () {
-      next();
+      callback();
     });
     adapter.disconnect();
-  }
+  };
 
-, 'test create adapter': function () {
-    assert.ok(adapter instanceof Adapter);
-  }
+})();
 
-, 'test exec': function (next) {
+tests = {
+  'test exec': function (next) {
     adapter.exec('CREATE TABLE foo (bar varchar(256) ); DROP TABLE foo;',
         function (err, data) {
       if (err) {
@@ -64,7 +63,6 @@ tests = {
       next();
     });
   }
-
 };
 
 for (var p in shared) {
@@ -88,4 +86,5 @@ for (var p in streaming) {
   tests[p + ' (Postgres)'] = streaming[p];
 }
 
-module.exports = tests;
+common.tests = tests;
+module.exports = common;
