@@ -39,6 +39,7 @@ common = new (function () {
       });
     });
 
+    console.log('REGISTERING');
     model.registerDefinitions(models);
 
     return adapter;

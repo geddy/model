@@ -9,8 +9,6 @@ var FunActivity = function () {
 FunActivity.prototype.someMethod = function () {
 };
 
-FunActivity = model.register('FunActivity', FunActivity);
-
 module.exports.FunActivity = FunActivity;
 
 

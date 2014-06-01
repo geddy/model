@@ -7,14 +7,14 @@ var utils = require('utilities')
 
 tests = {
   'before': function (next) {
-    model.setAutoIncrementId(true);
+    model.config.autoIncrementId = true;
     adapter = common.connect(next);
   }
 
 , 'after': function (next) {
     common.disconnect(adapter, function () {
-      model.setAutoIncrementId(true);
-      next(); 
+      model.config.autoIncrementId = false;
+      next();
     });
   }
 

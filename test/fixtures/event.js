@@ -22,8 +22,6 @@ Event.findByTitle = function (t, cb) {
   Event.all({title: t}, cb);
 };
 
-Event = model.register('Event', Event);
-
 module.exports.Event = Event;
 
 

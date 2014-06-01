@@ -14,6 +14,4 @@ var Zooby = function () {
 
 };
 
-Zooby = model.register('Zooby', Zooby);
-
 module.exports.Zooby = Zooby;

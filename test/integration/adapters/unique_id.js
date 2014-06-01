@@ -2,19 +2,13 @@ var utils = require('utilities')
   , assert = require('assert')
   , config = require('../../config')
   , model = require('../../../lib')
-  , helpers = require('./helpers')
   , tests;
 
-// Import the model description for each fixture
-helpers.fixtures.forEach(function (f) {
-  var keyName = utils.string.getInflection(f, 'filename', 'singular');
-  model[f] = require('../../fixtures/' + keyName)[f];
-});
 
 tests = {
   'test id is actually unique': function (next) {
-    // Unnecessary with autoIncrementId
-    if (!model.autoIncrementId) {
+    // Unnecessary with config.autoIncrementId
+    if (!model.config.autoIncrementId) {
       model.Person.all(function (err, people) {
         var customId;
         if (err) { throw err; }

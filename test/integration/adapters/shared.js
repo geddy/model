@@ -8,19 +8,15 @@ var utils = require('utilities')
   , tests
   , testItems;
 
-// Import the model description for each fixture
-helpers.fixtures.forEach(function (f) {
-  var keyName = utils.string.getInflection(f, 'filename', 'singular');
-  model[f] = require('../../fixtures/' + keyName)[f];
-});
-
-
 tests = {
 
   'beforeEach': function (next) {
     var timeout = model.Event.adapter.name == 'riak' ?
         config.riak.testInterval : 0;
-    helpers.createFixtures(function () {
+    helpers.createFixtures(function (err) {
+      if (err) {
+        fail(JSON.stringify(err));
+      }
       setTimeout(next, timeout);
     });
   }
@@ -28,7 +24,10 @@ tests = {
 , 'afterEach': function (next) {
     var timeout = model.Event.adapter.name == 'riak' ?
         config.riak.testInterval : 0;
-    helpers.deleteFixtures(function () {
+    helpers.deleteFixtures(function (err) {
+      if (err) {
+        fail(JSON.stringify(err));
+      }
       setTimeout(next, timeout);
     });
   }
@@ -47,7 +46,7 @@ tests = {
   }
 
 , 'test first via non-existent string id': function (next) {
-    if (!model.autoIncrementId) {
+    if (!model.config.autoIncrementId) {
       model.Person.first('bogus-id', function (err, data) {
         if (err) { throw err; }
         assert.strictEqual(data, undefined);
@@ -109,7 +108,7 @@ tests = {
   }
 
 , 'test all via non-existent string id': function (next) {
-    if (!model.autoIncrementId) {
+    if (!model.config.autoIncrementId) {
       model.Person.all({id: 'bogus-id'}, function (err, data) {
         if (err) { throw err; }
         assert.equal(typeof data, 'object');
@@ -1121,7 +1120,7 @@ tests = {
   }
 
 , 'test save new with custom string id': function (next) {
-    if (!model.autoIncrementId) {
+    if (!model.config.autoIncrementId) {
       var customId = 'zerb';
       var p = model.Person.create({
         id: customId
@@ -1138,7 +1137,7 @@ tests = {
   }
 
 , 'test save new with custom int id': function (next) {
-    if (!model.autoIncrementId) {
+    if (!model.config.autoIncrementId) {
       var customId = 2112;
       var p = model.Person.create({
         id: customId

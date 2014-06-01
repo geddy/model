@@ -305,13 +305,13 @@ var adapter = model.createAdapter('postgres', {
 });
 ```
 
-#### model.defaultAdapter
+#### model.config.defaultAdapter
 
-Use the `defaultAdapter` property on `model` to set a default adapter for all models that don't manually specify
+Use the `defaultAdapter` property on `model.config` to set a default adapter for all models that don't manually specify
 `.setAdapter` in the model definition.
 
 ```javascript
-model.defaultAdapter = model.createAdapter('postgres', {
+model.config.defaultAdapter = model.createAdapter('postgres', {
   host: 'localhost',
   username: 'user',
   password: 'password',
