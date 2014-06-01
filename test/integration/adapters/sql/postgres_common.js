@@ -17,11 +17,11 @@ common = new (function () {
 
     adapter = new Adapter(config.postgres);
     adapter.once('connect', function () {
-      var sql = '';
+      var sql = ''
+        , tables = helpers.fixtureNames;
 
-      sql += adapter.generator.dropTable(relations);
-      sql += adapter.generator.createTable(relations);
-
+      sql += adapter.generator.dropTable(tables);
+      sql += adapter.generator.createTable(tables);
       adapter.exec(sql, function (err, data) {
         if (err) {
           throw err;
@@ -31,16 +31,18 @@ common = new (function () {
     });
     adapter.connect();
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+      , ctor: r.ctor
       });
     });
-
-    console.log('REGISTERING');
+    model.clearDefinitions(models);
     model.registerDefinitions(models);
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
 
     return adapter;
   };

@@ -19,7 +19,7 @@ Event.prototype.someMethod = function () {
 };
 
 Event.findByTitle = function (t, cb) {
-  Event.all({title: t}, cb);
+  model.Event.all({title: t}, cb);
 };
 
 module.exports.Event = Event;

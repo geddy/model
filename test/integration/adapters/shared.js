@@ -1111,7 +1111,7 @@ tests = {
   }
 
 // FIXME: This isn't really an integration test
-, 'test Static methods on model': function (next) {
+, 'test static methods on model': function (next) {
     model.Event.findByTitle('a', function (err, data) {
       assert.equal(1, data.length);
       if (err) { throw err; }
