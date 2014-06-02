@@ -6,6 +6,18 @@ var assert = require('assert')
   , config = require('../config')
   , tests;
 
+model.registerDefinitions([
+  { ctorName: 'User'
+  , ctor: User
+  }
+, { ctorName: 'Wooby'
+  , ctor: Wooby
+  }
+, { ctorName: 'Zooby'
+  , ctor: Zooby
+  }
+]);
+
 tests = {
   'beforeEach': function() {
     // tear down already attached adapters, if any exist
@@ -20,7 +32,7 @@ tests = {
     var memoryAdapter = model.createAdapter('memory');
     var filesystemAdapter = model.createAdapter('filesystem', config.filesystem);
 
-    model.defaultAdapter = memoryAdapter;
+    model.config.defaultAdapter = memoryAdapter;
     model.Zooby.adapter = filesystemAdapter;
 
     assert.equal(model.getAdapterForModel('User'), memoryAdapter);

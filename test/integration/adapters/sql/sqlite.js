@@ -20,10 +20,11 @@ tests = {
 
     adapter = new Adapter();
     adapter.once('connect', function () {
-      var sql = '';
+      var sql = ''
+        , tables = helpers.fixtureNames;
 
-      sql += adapter.generator.dropTable(relations);
-      sql += adapter.generator.createTable(relations);
+      sql += adapter.generator.dropTable(tables);
+      sql += adapter.generator.createTable(tables);
 
       adapter.exec(sql, function (err, data) {
         if (err) {
@@ -34,15 +35,18 @@ tests = {
     });
     adapter.connect();
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+      , ctor: r.ctor
       });
     });
-
     model.registerDefinitions(models);
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
+
   }
 
 , 'after': function (next) {

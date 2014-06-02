@@ -14,15 +14,17 @@ tests = {
       , models = [];
     adapter = new Adapter(config.level);
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+      , ctor: r.ctor
       });
     });
-
     model.registerDefinitions(models);
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
 
     adapter.dropTable(['Zooby', 'User'], next);
   }
