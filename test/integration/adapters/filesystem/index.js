@@ -19,6 +19,7 @@ tests = {
       , ctor: r.ctor
       });
     });
+    model.clearDefinitions(models);
     model.registerDefinitions(models);
     model.adapters = {};
     relations.forEach(function (r) {
