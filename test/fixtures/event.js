@@ -3,6 +3,7 @@ var model = require('../../lib');
 var Event = function () {
   this.property('title', 'string');
   this.property('description', 'text');
+  this.property('startingOn', 'date');
 
   this.validatesPresent('title', {message: 'Argle-bargle'});
   this.validatesPresent('description', {on: ['create', 'reify']});

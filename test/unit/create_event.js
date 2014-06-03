@@ -111,6 +111,16 @@ tests = {
     assert.strictEqual(event, s.event);
   }
 
+, 'test date property should not allow arbitrary string': function () {
+    var c = model.Event.create({
+          title: 'zerb'
+        , description: 'asdf'
+        , startingOn: 'howdy'
+        });
+    assert.ok(!c.isValid());
+    assert.ok(c.errors.startingOn);
+  }
+
 };
 
 module.exports = tests;
