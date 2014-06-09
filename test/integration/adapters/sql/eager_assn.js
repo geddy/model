@@ -239,6 +239,7 @@ tests = {
     });
   }
 
+/*
 , 'test includes eager-fetch of belongsTo association': function (next) {
     model.Schedule.all(function (err, schedules) {
       if (err) { throw err; }
@@ -260,6 +261,7 @@ tests = {
       });
     });
   }
+*/
 
 , 'test includes eager-fetch of named belongsTo association': function (next) {
     model.Schedule.all(function (err, schedules) {

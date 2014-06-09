@@ -14,6 +14,9 @@ var User = function () {
   this.afterCreate = function () {
     this.lastName = 'afterCreate';
   }
+  this.beforeValidate = function (params) {
+    params.firstName = params.firstName || 'Zerp'
+  }
   this.afterValidate = function () {
     this.lastName = 'afterValidate';
   }
@@ -35,7 +38,5 @@ User.prototype.someMethod = function () {
 User.findByLogin = function (login, callback) {
   User.all({login: login}, callback);
 }
-
-User = model.register('User', User);
 
 module.exports.User = User;

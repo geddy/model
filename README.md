@@ -28,15 +28,16 @@ NodeJS.
   - [Removing associations](#removing-associations)
   - ['Through' associations](#through-associations)
   - [Named associations](#named-associations)
+  - [Named Through associations](#named-through-associations)
 - [Querying](#querying)
   - [Finding a single item](#finding-a-single-item)
   - [Collections of items](#collections-of-items)
   - [Comparison operators](#comparison-operators)
 - [More complex queries](#more-complex-queries)
 - [Options: sort, skip, limit](#options-sort-skip-limit)
-	- [Sorting](#sorting)
-	- [Simplified syntax for sorting](#simplified-syntax-for-sorting)
-	- [Skip and limit](#skip-and-limit)
+  - [Sorting](#sorting)
+  - [Simplified syntax for sorting](#simplified-syntax-for-sorting)
+  - [Skip and limit](#skip-and-limit)
 - [Eager loading of associations (SQL adpaters only)](#eager-loading-of-associations-sql-adpaters-only)
   - [Sorting results](#sorting-results)
   - [Checking for loaded associations](#checking-for-loaded-associations)
@@ -67,56 +68,64 @@ build-tool.
 ### Installing with [NPM](http://npmjs.org/)
 
 ```
-npm install model
+NPM install model
 ```
-
-### Hacking on Model: running tests
-
-Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
-
-The integration tests require the appropriate database and supporting library.
-(For example, running the Postgres tests require a running Postgres server, and
-the 'pg' module NPM-installed in your model project directory.) To install the
-needed modules, just run `npm install` in the root model directory.
-
-To run the tests on a specific adapter, use `jake test[mongo]`, `jake
-test[postgres]`, or `jake test[memory]`.
-
-Configure adapter options by creating a `test/db.json` file. See
-`test/db.sample.json` for available options.
 
 ## Bootstrapping Model
 
-Model serves as the model component inside the Geddy Web framework
-(http://geddyjs.org/). But it can easily be used as an ORM on its own. Here's a
-minimal example which uses the LevelDB adapter for the defined model:
+Here's a minimal example which uses the LevelDB adapter for a `Foo` model:
 
 ```javascript
-var model = require('model')
-  , Zerb;
+var model = require('model');
 
-Zerb = function () {
-  this.property('title', 'string');
+// Setup the blueprint of the model. This is where you can
+// setup the model properties, defaults, and validations
+var Foo = function () {
   this.setAdapter('level', {
     db: './data'
   });
+  
+  // Define the whitelisted properties on the model.
+  // Properties not listed wont be saved
+  this.defineProperties({
+    name: { type: 'string', required: true },
+    description: { type: 'text' },
+    enabled: { type: 'boolean' },
+    archived: { type: 'boolean' },
+  });
 };
 
-model.registerDefinitions([{
-  ctorName: 'Zerb'
-, ctor: Zerb
-}]);
+// This registers the model with the model package so
+// things like associations can work
+Foo = model.register('Foo', Foo);
 
-var z = model.Zerb.create({title: 'asdf'});
-
-z.save(function (err, data) {
-  if (err) { throw err; }
-  console.log('Zerb ' + z.title + ' saved.');
-});
+// Now we export Foo to create a reusable model module
+module.exports = Foo;
 ```
 
-Pass the string name of the desired adapter (e.g., 'level', 'postgres') followed
-any config options to the `setAdapter` method when defining your model.
+You can then use it like the following example:
+
+```js
+var Foo = require('./foo.js');
+Foo.first(1, function (err, model) {
+  // Check if there was an error with the DB
+  if (err) throw new Error('Uh oh, something broke');
+  
+  // If there was no error, but no model was found it must be missing
+  if (!err && !model) throw new Error('Foo not found');
+  
+  // Update the model's name property
+  model.name = "New name!";
+  
+  // Once we're done updating properties we can call save on the model.
+  // Save will send the current model data to the DB you specified
+  model.save(function (err, updatedModel) {
+    if (err) throw new Error('Could not save the model');
+    console.log("The model was updated!");
+  });
+});
+
+```
 
 ## Defining models
 
@@ -136,28 +145,56 @@ var User = function () {
   this.validatesLength('login', {min: 3});
   this.validatesConfirmed('password', 'confirmPassword');
   this.validatesWithFunction('password', function (s) {
-      // Something that returns true or false
-      return s.length > 0;
+      if (password.indexOf('login')) {
+          // Returning a string indicates that the validation has failed.
+          // The string will be used as the message.
+          return "Password must not contain your username";
+      }
+      return true;
   });
 
-  // Can define methods for instances like this
   this.someMethod = function () {
     // Do some stuff
   };
 };
 
-// Can also define them on the prototype
-User.prototype.someOtherMethod = function () {
-  // Do some other stuff
-};
-
+// prepares the model and adds it as a property on `model`
 User = model.register('User', User);
 ```
 
-### Abbreviated syntax
+### Setting an adapter
+
+Although you can set a [default adapter](#modeldefaultadapter), you may want to override that default on a per model basis. To do that simply call `this.setAdapter(name, config)` just like you would with [createAdapter](#modelcreateadaptername-config), like so for a MongoDB adapter:
+
+```javascript
+var model = require('model');
+
+var Foo = function () {
+  this.setAdapter('mongo', {
+    "hostname":"localhost",
+    "port":27017,
+    "username":"",
+    "password":"",
+    "dbName":"mydatabase"
+  });
+  
+  this.defineProperties({
+    name: { type: 'string', required: true }
+  });
+};
+
+Foo = model.register('Foo', Foo);
+
+module.exports = Foo;
+```
+
+### Defining properties
+
+Properties can be defined using the `property` method, which takes a name, a type,
+and some options.
 
 Alternatively, you can use the `defineProperties` method to lay out your model's
-properties in one go:
+properties with a single method call:
 
 ```javascript
 var User = function () {
@@ -170,53 +207,172 @@ var User = function () {
 }
 ```
 
-### Adapters
-
-You can specify a different adapter for each model or apply the same adapter to all models.
-
-```javascript
-var adapter = model.createAdapter('postgres', {
-  host: 'localhost',
-  username: 'user',
-  password: 'password',
-  database: 'mydb'
-});
-
-model.User.adapter = adapter;
-model.Zerb.adapter = adapter;
-```
-
-You can also define a defaultAdapter which will be used by default.
-Then you can override it on individual models.
-
-```javascript
-model.defaultAdapter = model.createAdapter('memory');
-
-var postgresAdapter = model.createAdapter('postgres', {
-  host: 'localhost',
-  username: 'user',
-  password: 'password',
-  database: 'mydb'
-});
-
-// User model gets the defaultAdapter
-model.Zerb.adapter = postgresAdapter;
-```
-
-
 ### Datatypes
 
 Model supports the following datatypes:
 
-* string
-* text
-* number
-* int
-* boolean
-* date
-* datetime
-* time
-* object
+* `string`
+* `text`
+* `number`
+* `int`
+* `boolean`
+* `date`
+* `datetime`
+* `time`
+* `object`
+
+The `object` data type can take a JSON string or an object that will serialize
+to JSON.
+
+There is no currency or decimal datatype. For currencies it is recommended to use an
+int representing the smallest domination (such as cents), like the 
+[Stripe](http://stripe.com/) API does.
+
+### Custom Methods
+
+Custom instance methods can be attached to the prototype of a model. Be careful
+not to use a name that conflicts with a property, and avoid overriding a method
+supplied by *model* like `save` (instead use a [[lifecycle event](#lifecycle-events)).
+
+Class methods can be attached to the constructor of a model. As with instance
+methods, take care not to override existing class methods, such as `all`,
+`first`, and `count`.
+
+Here is an example of declaring class and instance methods:
+
+```javascript
+var User = function () {
+    this.property('email', 'string');
+    this.property('sendUpdates', 'boolean');
+
+    // setting a property on `this` in the constructor creates an instance method
+    this.sendConfirmation = function (callback) {
+        // send confirmation message
+    }
+}
+
+// setting a property on the prototype creates an instance method
+User.prototype.sendNewsletter = function (callback) {
+    // send newsletter
+}
+
+// setting a property on the constructor creates a class method
+User.sendNewsletters = function (callback) {
+    // send newsletter to users that opted into updates
+}
+
+User = model.register('User', User);
+```
+
+### Adapters
+
+An adapter allows a model to communicate with the database in a common way across any supported
+databases. For example, this allows you to easily switch from an in memory database for testing
+to something like MongoDB just by changing a single line in your model config.
+
+
+#### How to install adapters
+
+Some adapters require you to install a 3rd party module from NPM. Below is a list of the
+adapters that require an install and how to install it. The `--save` flag is optional on
+all of these but will put it in your `package.json` file for you:
+
+- Postgres: `npm install pg --save`
+- MySQL: `npm install mysql --save`
+- SQLite: `npm install sqlite3 --save`
+- MongoDB: `npm install mongodb --save`
+- LevelDB: `npm install level --save`
+
+The in-memory, filesystem, and Riak adapters work out of the box and don't need any
+additional libraries.
+
+#### model.createAdapter(_name_, _config_)
+
+Use `model.createAdapter(name, config)` to initialize an adapter and connect to the database.
+
+_NOTE:_ The `config` parameter for each adapter depends on the module used. As an example,
+postgres uses `database` for the database name whereas MongoDB uses `dbName`. Model doesn't
+try to standardize the config for each adapter. Instead it just passes the config you give it
+in `createAdapter` to the NPM module. To check the config setup for your adapter go to the
+module's official site and look at their docs.
+
+```javascript
+var adapter = model.createAdapter('postgres', {
+, host: 'localhost'
+, username: 'user'
+, password: 'password'
+, database: 'mydb'
+});
+```
+
+#### model.config.defaultAdapter
+
+Use the `defaultAdapter` property on `model.config` to set a default adapter for all models that don't manually specify
+`.setAdapter` in the model definition.
+
+```javascript
+model.config.defaultAdapter = model.createAdapter('postgres', {
+  host: 'localhost',
+  username: 'user',
+  password: 'password',
+  database: 'mydb'
+});
+```
+
+#### adapter.connect(cb)
+
+If you want to hook into when the adapter connects to the database you
+can hook into the connect method which will fire when the connection
+is either successful or it fails.
+
+```js
+myAdapter.connect(function (err) {
+  if (err) throw new Error('Error: ' + err);
+  console.log('Database connection successful');
+}
+```
+
+#### adapter.disconnect(cb)
+
+Same as `adapter.connect`, but when a disconnect happens.
+
+```js
+myAdapter.disconnect(function (err) {
+  if (err) throw new Error('Error: ' + err);
+  console.log('Database disconnected successfully');
+}
+```
+
+#### adapter.addListener('connect', callback)
+
+Same as `adapter.connect`, but in event form and only when it is successful.
+
+```js
+myAdapter.addListener('connect', function () {
+  console.log('Database connection successful');
+});
+```
+
+#### adapter.addListener('disconnect', callback)
+
+Same as `adapter.disconnect`, but in event form and only when it is successful.
+
+```js
+myAdapter.addListener('disconnect', function () {
+  console.log('Database disconnected successfully');
+});
+```
+
+#### adapter.addListener('error', callback)
+
+Fires whenever there is any error in the database connection during a connect or
+disconnect attempt.
+
+```js
+myAdapter.addListener('error', function (err) {
+  throw new Error('Error: ' + err);
+});
+```
 
 ## Creating instances
 
@@ -235,20 +391,61 @@ var user = User.create(params);
 ## Validations
 
 Validations provide a nice API for making sure your data items are in a good
-state. When an item is "valid," it means that its data meet all the criteria
-you've set for it. You can specify that certain fields have to be present, have
-to be certain length, or meet any other specific criteria you want to set.
+state, and creates friendly error messages to provide feedback to the user. When
+an item is "valid" it means that its data meet all the criteria you've set for
+it. You can specify that certain fields have to be present, have to be certain
+length, or meet any other specific criteria you want to set.
 
 Here's a list of supported validation methods:
 
- * validatesPresent -- ensures the property exists
- * validatesAbsent -- ensures the property does not exist
- * validatesLength -- ensures the minimum, maximum, or exact length
- * validatesFormat -- validates using a passed-in regex
- * validatesConfirmed -- validates a match against another named parameter
- * validatesWithFunction -- uses an arbitrary function to validate
+ * `validatesPresent` – ensures the property exists
+ * `validatesLength` – ensures the minimum, maximum, or exact length
+ * `validatesFormat` – validates using a passed-in regex
+ * `validatesConfirmed` – validates a match against another named parameter (useful for passwords)
+ * `validatesAbsent` – ensures the property does not exist
+ * `validatesWithFunction` – uses an arbitrary function to validate
 
-#### Common options
+Here are some simple examples of each validation method:
+
+```javascript
+var User = function () {
+  this.property('login', 'string', {required: true});
+  this.property('password', 'string', {required: true});
+  this.property('lastName', 'string');
+  this.property('firstName', 'string');
+
+  this.validatesPresent('login');
+  this.validatesFormat('login', /[a-z]+/, {message: 'Subdivisions!'});
+  this.validatesLength('login', {min: 3});
+  this.validatesConfirmed('password', 'confirmPassword');
+  this.validatesWithFunction('password', function (s) {
+      // Something that returns true or false
+      return s.length > 0;
+  });
+  this.validatesAbsent('unconfirmed');
+  this.validatesWithFunction('password', function (value, model) {
+      // if the function returns false it will use a standard message
+      if (typeof value != typeof "") {
+      	 return false;
+      }
+
+      // if it returns a string the string will be used as an error message
+      if  (value.length <= 3) {
+      	 return "Your password must be at least 4 characters long ";
+      }
+      
+      // return true if the validation passed
+      return true;
+  });
+
+  // methods for instances can be defined in the constructor like this
+  this.someMethod = function () {
+    // Do some stuff
+  };
+};
+```
+
+#### Common validation options
 
 You can specify a custom error message for when a validation fails using the
 'message' option:
@@ -279,13 +476,13 @@ myUser = User.create({name: 'aaa'});
 
 The default behavior is for validation on both 'create' and 'update':
 
- * `create` - validates on <MyModelDefinition>`.create`
- * `update` - validates on <myModelInstance>`.updateProperties`
+ * `create` – validates on MyModelDefinition.`create`
+ * `update` – validates on myModelInstance.`updateProperties`
 
 You can also define custom validation scenarios other than create and update.
-(There is a builtin custom 'reify' scenario which is uses when instantiating
-items out of your datastore. This happens on the `first` and `all` query
-methods.)
+(There is a builtin custom 'reify' scenario which it uses when instantiating
+items out of your datastore. This happens when the `first` and `all` query
+methods are called.)
 
 ```javascript
 // Force validation with the `reify` scenario, ignore the too-short name property
@@ -369,64 +566,66 @@ You can also pass a query to the `remove` method instead of an id.
 
 ## Lifecycle events
 
-Both the base model 'constructors,' and model instances are EventEmitters. They
+Both the base model *constructors* and model instances are EventEmitters. They
 emit events during the create/update/remove lifecycle of model instances. In all
 cases, the plain-named event is fired after the event in question, the
 'before'-prefixed event, of course happens before.
 
-The 'constructor' for a model emits the following events:
+The *constructor* for a model emits the following events:
 
- * beforeCreate
- * create
- * beforeValidate
- * validate
- * beforeUpdateProperties
- * updateProperties
- * beforeSave (new instances, single and bulk)
- * save (new instances, single and bulk)
- * beforeUpdate (existing single instances, bulk updates)
- * update (existing single instances, bulk updates)
- * beforeRemove
- * remove
+ * `beforeCreate`
+ * `create`
+ * `beforeValidate`
+ * `validate`
+ * `beforeUpdateProperties`
+ * `updateProperties`
+ * `beforeSave (new instances, single and bulk)`
+ * `save (new instances, single and bulk)`
+ * `beforeUpdate (existing single instances, bulk updates)`
+ * `update (existing single instances, bulk updates)`
+ * `beforeRemove`
+ * `remove`
 
 Model-item instances emit these events:
 
- * beforeUpdateProperties
- * updateProperties
- * beforeSave
- * save
- * beforeUpdate
- * update
+ * `beforeUpdateProperties`
+ * `updateProperties`
+ * `beforeSave`
+ * `save`
+ * `beforeUpdate`
+ * `update`
 
 Model-item instances also have the following lifecycle methods:
 
- * afterCreate
- * beforeValidate
- * afterValidate
- * beforeUpdateProperties
- * afterUpdateProperties
- * beforeSave
- * afterSave
- * beforeUpdate
- * afterUpdate
+ * `afterCreate`
+ * `beforeValidate`
+ * `afterValidate`
+ * `beforeUpdateProperties`
+ * `afterUpdateProperties`
+ * `beforeSave`
+ * `afterSave`
+ * `beforeUpdate`
+ * `afterUpdate`
 
-If these methods are defined, they will be called at the appropriate time:
-```
+If these methods are defined, they will be called at the
+appropriate time. You can hook into this lifecycle to do things
+like set default values for your items:
+
+```javascript
 var User = function () {
   this.property('name', 'string', {required: false});
 
-  // Lowercase the name before validating
-  this.beforeValidate = function () {
-    // `this` will refer to the model instance
-    this.name = this.name.toLowerCase();
+  // Make sure there's a name in the params before validating
+  this.beforeValidate = function (params) {
+    params.name = params.name || 'Zerp Derp';
   };
 };
 ```
 
 ## Associations
 
-Model has support for associations: including hasMany/belongsTo and
-hasOne/belongsTo. For example, if you had a `User` model with a single
+Model has support for paired associations including `hasMany`/`belongsTo`
+and hasOne/belongsTo. For example, if you had a `User` model with a single
 `Profile`, and potentially many `Accounts`:
 
 ```javascript
@@ -438,17 +637,24 @@ var User = function () {
   this.hasOne('Profile');
   this.hasMany('Accounts');
 };
-```
 
-A `Book` model that belongs to an `Author` would look like this:
+var Profile = function() {
+  // properties
 
-```javascript
-var Book = function () {
-  this.property('title', 'string');
-  this.property('description', 'text');
-
-  this.belongsTo('Author');
+  this.belongsTo('Account');
 };
+
+var Account = function() {
+  // properties
+
+  this.belongsTo('User');
+};
+
+// Names in association methods must match the names that models are registered with.
+// The name given to hasMany is pluralized.
+User = model.register('User', User);
+Profile = model.register('Profile', Profile);
+Account = model.register('Account', Account);
 ```
 
 ### Creating associations
@@ -457,6 +663,33 @@ Add the `hasOne` relationship by calling 'set' plus the name of the owned
 model in singular (in this case `setProfile`). Retrieve the associated item by
 using 'get' plus the name of the owned model in singular (in this case
 `getProfile`). Here's an example:
+
+```javascript
+var user = User.create({
+  login: 'asdf'
+, password: 'zerb'
+, confirmPassword: 'zerb'
+});
+user.save(function (err, data) {
+  var profile;
+  if (err) {
+    throw err;
+  }
+  profile = Profile.create({});
+  user.setProfile(profile);
+  user.save(function (err, data) {
+    if (err) {
+      throw err;
+    }
+    user.getProfile(function (err, data) {
+      if (err) {
+        throw err;
+      }
+      console.log(profile.id ' is the same as ' + data.id);
+    });
+  });
+});
+```
 
 Set up the `hasMany` relationship by calling 'add' plus the name of the
 owned model in singular (in this case `addAccount`). Retrieve the associated
@@ -484,33 +717,6 @@ user.save(function (err, data) {
         throw err;
       }
       console.log('This number should be 2: ' + data.length);
-    });
-  });
-});
-```
-
-```javascript
-var user = User.create({
-  login: 'asdf'
-, password: 'zerb'
-, confirmPassword: 'zerb'
-});
-user.save(function (err, data) {
-  var profile;
-  if (err) {
-    throw err;
-  }
-  profile = Profile.create({});
-  user.setProfile(profile);
-  user.save(function (err, data) {
-    if (err) {
-      throw err;
-    }
-    user.getProfile(function (err, data) {
-      if (err) {
-        throw err;
-      }
-      console.log(profile.id ' is the same as ' + data.id);
     });
   });
 });
@@ -642,6 +848,34 @@ The API for this is the same as with normal associations, using the `set`/`add`
 and `get`, with the appropriate association name (not the model name). For
 example, in the case of `Kids`, you'd use `addKid` and `getKids`.
 
+### Named 'through' associations
+
+If one of your named associations of a model is 'through' another model, such as
+a join table, it is necessary that the association's name is the same for the
+model declaring the through association as it is for the model who the
+association is through.
+
+For example, a team may have many players, but may also have many coaches.
+
+```javascript
+var Team = function(){
+  this.hasMany('Players');
+  this.hasMany('Coaches', {through: 'TeamCoaches', model: 'Players'});
+};
+var TeamCoaches = function(){
+  this.belongsTo('CoachedTeam', {model: 'Team'});
+  this.belongsTo('Coach', {model: 'Player'});
+}
+var Player = function(){
+  this.hasMany('Teams');
+  this.hasMany('CoachedTeams', {through: 'TeamCoaches', model: 'Team'});
+}
+```
+
+Here a `Team` has many `Players`, but also has many `Coaches`, and we have an
+inverse relationship set up as well so that a `Player` has many `Teams` but also
+has many `CoachedTeams`.
+
 ## Querying
 
 Model uses a simple API for finding and sorting items. Again, it should look
@@ -670,7 +904,7 @@ User.first({login: 'alerxst'}, function (err, data) {
 });
 ```
 
-### Collections of items
+### Finding a collection of items
 
 Use the `all` method to find lots of items. Pass it a set of query parameters in
 the form of an object-literal, where each key is a field to compare, and the
@@ -775,6 +1009,7 @@ Zooby.all({foo: {'like': 'b'}}, {nocase: true}, ...
 // The "bar" comparison will be case-sensitive, and the "foo" will not
 Zooby.all({or: [{foo: {'like': 'b'}}, {bar: 'baz'}]}, {nocase: ['foo']},
 ```
+
 ## More complex queries
 
 Model supports combining queries with OR and negating queries with NOT.
@@ -859,7 +1094,6 @@ end up with a random subset instead of the items you want.
 ```javascript
 // Returns items 501-600
 {skip: 500, limit: 100}
-
 ```
 
 ## Eager loading of associations (SQL adpaters only)
@@ -947,8 +1181,23 @@ if (!someTeam.players) {
 }
 ```
 
+## Contributing
+
+### Hacking on Model: running tests
+
+Run the tests with `jake test`. Run only unit tests with `jake test[unit]`.
+
+The integration tests require the appropriate database and supporting library.
+(For example, running the Postgres tests require a running Postgres server, and
+the 'pg' module NPM-installed in your model project directory.) To install the
+needed modules, just run `npm install` in the root model directory.
+
+To run the tests on a specific adapter, use `jake test[mongo]`, `jake
+test[postgres]`, or `jake test[memory]`.
+
+Configure adapter options by creating a `test/db.json` file. See
+`test/db.sample.json` for available options.
+
 - - -
 Model JavaScript ORM copyright 2112 mde@fleegix.org.
-
-
 

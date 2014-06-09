@@ -8,6 +8,18 @@ var utils = require('utilities')
   , Wooby = require('../../fixtures/wooby').Wooby
   , tests;
 
+model.registerDefinitions([
+  { ctorName: 'Wooby'
+  , ctor: Wooby
+  }
+, { ctorName: 'Zooby'
+  , ctor: Zooby
+  }
+]);
+
+Wooby = model.Wooby;
+Zooby = model.Zooby;
+
 var tests = {
   'test condition is AndOperation': function () {
     var query = new Query(Zooby, {foo: {like: 'foo'}, bar: null}, {});

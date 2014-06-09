@@ -11,8 +11,6 @@ var Photo = function () {
 Photo.prototype.someMethod = function () {
 };
 
-Photo = model.register('Photo', Photo);
-
 module.exports.Photo = Photo;
 
 

@@ -117,6 +117,12 @@ tests = {
     assert.ok(!msg);
   }
 
+, 'Validating with function returning message error': function () {
+    var customError = "I'm a custom error";
+    var msg = validators.withFunction('foo', 'zerp', null, {reference: function (v) { return customError; }});
+    assert.ok(msg === customError);
+  }
+
 , 'Validating format': function () {
     var msg = validators.format('foo', 'ABC', null, {reference: /abc/i});
     assert.ok(!msg);

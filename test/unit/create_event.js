@@ -3,11 +3,40 @@ var utils = require('utilities')
   , model = require('../../lib')
   , Event = require('../fixtures/event').Event
   , Schedule = require('../fixtures/schedule').Schedule
+  , FunActivity = require('../fixtures/fun_activity').FunActivity
+  , Message = require('../fixtures/message').Message
+  , Photo = require('../fixtures/photo').Photo
+  , Participation = require('../fixtures/participation').Participation
+  , Person = require('../fixtures/person').Person
   , tests;
+
+model.registerDefinitions([
+  { ctorName: 'Event'
+  , ctor: Event
+  }
+, { ctorName: 'Schedule'
+  , ctor: Schedule
+  }
+, { ctorName: 'FunActivity'
+  , ctor: FunActivity
+  }
+, { ctorName: 'Message'
+  , ctor: Message
+  }
+, { ctorName: 'Photo'
+  , ctor: Photo
+  }
+, { ctorName: 'Participation'
+  , ctor: Participation
+  }
+, { ctorName: 'Person'
+  , ctor: Person
+  }
+]);
 
 tests = {
   'test valid instance': function () {
-    var c = Event.create({
+    var c = model.Event.create({
       title: 'zerb'
     , description: 'asdf'
     });
@@ -15,14 +44,14 @@ tests = {
   }
 
 , 'test non-valid instance': function () {
-    var c = Event.create({
+    var c = model.Event.create({
       title: 'zerb'
     });
     assert.ok(!c.isValid());
   }
 
 , 'test serialize has defined properties': function () {
-    var c = Event.create({
+    var c = model.Event.create({
       title: 'zerb'
     , description: 'asdf'
     });
@@ -32,7 +61,7 @@ tests = {
   }
 
 , 'test serialize has no business-logic methods': function () {
-    var c = Event.create({
+    var c = model.Event.create({
       title: 'zerb'
     , description: 'asdf'
     });
@@ -41,7 +70,7 @@ tests = {
   }
 
 , 'test serialize excludes ad-hoc props': function () {
-    var c = Event.create({
+    var c = model.Event.create({
       title: 'zerb'
     , description: 'asdf'
     });
@@ -51,7 +80,7 @@ tests = {
   }
 
 , 'test serialize includes whitelisted ad-hoc props': function () {
-    var c = Event.create({
+    var c = model.Event.create({
       title: 'zerb'
     , description: 'asdf'
     });
@@ -61,7 +90,7 @@ tests = {
   }
 
 , 'test serialize includes hasMany association props': function () {
-    var c = Event.create({
+    var c = model.Event.create({
           title: 'zerb'
         , description: 'asdf'
         })
@@ -72,7 +101,7 @@ tests = {
   }
 
 , 'test serialize includes hasOne association props': function () {
-    var s = Schedule.create({
+    var s = model.Schedule.create({
           title: 'zerb'
         , description: 'asdf'
         })
@@ -80,6 +109,16 @@ tests = {
     s.event = event;
     s = s.toJSON();
     assert.strictEqual(event, s.event);
+  }
+
+, 'test date property should not allow arbitrary string': function () {
+    var c = model.Event.create({
+          title: 'zerb'
+        , description: 'asdf'
+        , startingOn: 'howdy'
+        });
+    assert.ok(!c.isValid());
+    assert.ok(c.errors.startingOn);
   }
 
 };
