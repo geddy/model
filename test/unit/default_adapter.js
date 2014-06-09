@@ -32,7 +32,7 @@ tests = {
     var memoryAdapter = model.createAdapter('memory');
     var filesystemAdapter = model.createAdapter('filesystem', config.filesystem);
 
-    model.config.defaultAdapter = memoryAdapter;
+    model.defaultAdapter = memoryAdapter;
     model.Zooby.adapter = filesystemAdapter;
 
     assert.equal(model.getAdapterForModel('User'), memoryAdapter);
