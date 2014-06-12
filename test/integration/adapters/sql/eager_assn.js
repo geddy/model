@@ -384,6 +384,59 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of hasMany with array of ids': function (next) {
+    model.Schedule.all(function (err, schedules) {
+      if (err) { throw err; }
+      // Grab the first five items
+      var scheduleList = schedules.slice(0, 5);
+      model.FunActivity.all({}, {sort: {id: 'desc'}}, function (err, activities) {
+        if (err) { throw err; }
+        // Give each schedule item four associated FunActivities
+        var interval = 4
+          , start = 0
+          , end = 4;
+        scheduleList.forEach(function (schedule) {
+          activityList = activities.slice(start, end);
+          activityList.forEach(function (activity) {
+            schedule.addFunActivity(activity);
+          });
+          start += interval;
+          end += interval;
+        });
+        helpers.updateItems(scheduleList, function (err) {
+          if (err) { throw err; }
+          // Grab a few ids
+          var ids = scheduleList.map(function (schedule) {
+            return schedule.id;
+          });
+          model.Schedule.all({id: ids}, {includes: 'funActivities'},
+              function (err, data) {
+            var scheduleIds = {}
+              , activityIds = {};
+            if (err) { throw err; }
+            // Should be five results
+            assert.equal(5, data.length);
+            // No schedule id should show up more than once
+            data.forEach(function (d) {
+              assert.ok(!scheduleIds[d.id]);
+              scheduleIds[d.id] = true;
+              // Should have four associated activities each
+              assert.equal(4, d.funActivities.length);
+              d.funActivities.forEach(function (a) {
+                // No activity id should show up more than once
+                assert.ok(!activityIds[a.id]);
+                activityIds[a.id] = true;
+              });
+            });
+            next();
+          });
+        });
+      });
+    });
+  }
+
+
+
 };
 
 module.exports = tests;
