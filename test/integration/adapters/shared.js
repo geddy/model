@@ -29,6 +29,13 @@ tests = {
     });
   }
 
+, 'test count': function (next) {
+    model.Person.count(function (err, data) {
+      assert.equal(20, data);
+      next();
+    });
+  }
+
 , 'test first via string id': function (next) {
     model.Person.all(function (err, data) {
       if (err) { throw err; }
