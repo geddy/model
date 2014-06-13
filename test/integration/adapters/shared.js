@@ -3,10 +3,7 @@ var utils = require('utilities')
   , config = require('../../config')
   , model = require('../../../lib')
   , helpers = require('./helpers')
-  , currentId
-  , currentDateProp
-  , tests
-  , testItems;
+  , tests;
 
 tests = {
 
