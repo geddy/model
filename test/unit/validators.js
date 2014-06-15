@@ -54,11 +54,6 @@ tests = {
     assert.ok(!msg);
   }
 
-, 'Validating exact length with correct length and string opts': function () {
-    var msg = validators.length('foo', '111', null, {opts: {is: '3'}});
-    assert.ok(!msg);
-  }
-
 , 'Validating exact length with correct length and non-number string opts': function () {
     assert.throws(function () {
       var msg = validators.length('foo', '111', null, {opts: {is: 'hello'}});

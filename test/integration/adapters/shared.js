@@ -511,7 +511,7 @@ tests = {
     });
   }
 
-, 'test all, or with simple equality and like comparison': function (next) {
+, 'test all, or with simple equality and like comparison 2': function (next) {
     model.Person.all({title: {eql: 'a', ne: 'b'}},
         function (err, data) {
       if (err) { throw err; }
