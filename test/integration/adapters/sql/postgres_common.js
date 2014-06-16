@@ -73,7 +73,7 @@ for (var p in shared) {
     tests[p] = shared[p];
   }
   else {
-    tests[p + ' (Postgres)'] = shared[p];
+    //tests[p + ' (Postgres)'] = shared[p];
   }
 }
 

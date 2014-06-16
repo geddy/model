@@ -458,7 +458,7 @@ tests = {
           model.Schedule.all({id: ids}, {
             includes: 'funActivities',
             limit: 2,
-            sort: 'createdAt'
+            sort: ['createdAt', 'FunActivities.createdAt']
           }, function (err, data) {
             var scheduleIds = {}
               , activityIds = {};
