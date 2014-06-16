@@ -455,8 +455,11 @@ tests = {
           var ids = scheduleList.map(function (schedule) {
             return schedule.id;
           });
-          model.Schedule.all({id: ids}, {includes: 'funActivities', limit: 2},
-              function (err, data) {
+          model.Schedule.all({id: ids}, {
+            includes: 'funActivities',
+            limit: 2,
+            sort: 'createdAt'
+          }, function (err, data) {
             var scheduleIds = {}
               , activityIds = {};
             if (err) { throw err; }
