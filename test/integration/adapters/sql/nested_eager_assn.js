@@ -46,10 +46,7 @@ tests = {
         , c = data[2]
         , d = data[3]
         , e = data[4]
-        , f = data[5]
-        , byTitleComparator = function (l, r) {
-            return l.title < r.title ? -1 : 1;
-          };
+        , f = data[5];
 
       // a -> b, c
       a.addFriend(b);
@@ -70,6 +67,7 @@ tests = {
               sort: {
                 title: 'asc'
               , 'friends.title': 'asc'
+              , 'friends.friends.title': 'asc'
               }
             , includes: {friends: 'friends'}}
             , function (err, data) {
@@ -85,8 +83,7 @@ tests = {
 
               // a -> c -> e, f
               assert.equal(data[0].friends[1].friends.length, 2);
-              // FIXME: Need to be able to sort on nested assocs
-              data[0].friends[1].friends.sort(byTitleComparator);
+
               assert.equal(data[0].friends[1].friends[0].id, e.id);
               assert.equal(data[0].friends[1].friends[1].id, f.id);
 
@@ -158,10 +155,7 @@ tests = {
         , c = data[2]
         , d = data[3]
         , e = data[4]
-        , f = data[5]
-        , byTitleComparator = function (l, r) {
-            return l.title < r.title ? -1 : 1;
-          };
+        , f = data[5];
 
       // a -> b, c
       a.addFriend(b);
@@ -178,6 +172,7 @@ tests = {
           sort: {
             title: 'asc'
           , 'friends.title': 'asc'
+          , 'friends.friends.title': 'asc'
           }
           // "Get friends of friends"
         , includes: {friends: 'friends'}}
@@ -194,8 +189,6 @@ tests = {
 
           // a -> c -> e, f
           assert.equal(data[0].friends[1].friends.length, 2);
-          // FIXME: Need to be able to sort on nested assocs
-          data[0].friends[1].friends.sort(byTitleComparator);
           assert.equal(data[0].friends[1].friends[0].id, e.id);
           assert.equal(data[0].friends[1].friends[1].id, f.id);
 
