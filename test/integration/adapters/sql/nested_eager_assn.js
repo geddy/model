@@ -381,6 +381,62 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch of hasMany -> belongsTo with query on nested assn': function (next) {
+    /*
+    * This is the same test as the previous one, the only difference is that
+    * the query we assert on does the id includes query on the nested association
+    */
+    model.Schedule.all(function (err, schedules) {
+      if (err) { throw err; }
+      // Grab the first five items
+      var scheduleList = schedules.slice(0, 5);
+      model.FunActivity.all({}, {sort: {id: 'desc'}}, function (err, activities) {
+        if (err) { throw err; }
+        // Give each schedule item four associated FunActivities
+        var interval = 4
+          , start = 0
+          , end = 4;
+        scheduleList.forEach(function (schedule) {
+          activityList = activities.slice(start, end);
+          activityList.forEach(function (activity) {
+            schedule.addFunActivity(activity);
+          });
+          start += interval;
+          end += interval;
+        });
+        helpers.updateItems(scheduleList, function (err) {
+          if (err) { throw err; }
+          // Grab a few ids
+          var ids = scheduleList.map(function (schedule) {
+            return schedule.id;
+          });
+          // Note that the correct syntax is to use the association name
+          model.Schedule.all({'funActivities.schedule.id': ids}, {includes: {'funActivities': 'schedule'}},
+              function (err, data) {
+            var scheduleIds = {}
+              , activityIds = {};
+            if (err) { throw err; }
+            // Should be five results
+            assert.equal(5, data.length);
+            // No schedule id should show up more than once
+            data.forEach(function (d) {
+              assert.ok(!scheduleIds[d.id]);
+              scheduleIds[d.id] = true;
+              // Should have four associated activities each
+              assert.equal(4, d.funActivities.length);
+              d.funActivities.forEach(function (a) {
+                // No activity id should show up more than once
+                assert.ok(!activityIds[a.id]);
+                activityIds[a.id] = true;
+                assert.equal(d, a.schedule);
+              });
+            });
+            next();
+          });
+        });
+      });
+    });
+  }
 
 };
 
