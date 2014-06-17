@@ -12,7 +12,3 @@ Schedule.prototype.someMethod = function () {
 };
 
 module.exports.Schedule = Schedule;
-
-
-
-

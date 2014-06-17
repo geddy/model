@@ -15,7 +15,7 @@ tests = {
         photos.forEach(function (p) {
           ev.addPhoto(p);
         });
-        ev.save(function (err, data) {
+        ev.save(function (err) {
           if (err) { throw err; }
           model.Event.first({id: ev.id}, {includes: 'photos'}, function (err, data) {
             if (err) { throw err; }
@@ -35,7 +35,7 @@ tests = {
       children.forEach(function (c) {
         person.addChild(c);
       });
-      person.save(function (err, data) {
+      person.save(function (err) {
         if (err) { throw err; }
         model.Person.first({id: person.id}, {includes: 'children'}, function (err, data) {
           if (err) { throw err; }
@@ -56,7 +56,7 @@ tests = {
         people.forEach(function (person) {
           ev.addParticipant(person);
         });
-        ev.save(function (err, data) {
+        ev.save(function (err) {
           if (err) { throw err; }
           model.Event.first({id: ev.id}, {includes: 'participant'}, function (err, data) {
             if (err) { throw err; }
@@ -78,7 +78,7 @@ tests = {
         people.forEach(function (person) {
           ev.addParticipant(person);
         });
-        ev.save(function (err, data) {
+        ev.save(function (err) {
           if (err) { throw err; }
           model.Event.first({id: ev.id}, {includes: ['participation', 'participant']}, function (err, data) {
             if (err) { throw err; }
@@ -102,7 +102,7 @@ tests = {
           ev.addParticipant(person);
           ev.addAdmin(person);
         });
-        ev.save(function (err, data) {
+        ev.save(function (err) {
           if (err) { throw err; }
           model.Event.first({id: ev.id}, {includes: ['participant',
               'admin']}, function (err, data) {
@@ -119,9 +119,9 @@ tests = {
     model.Event.all(function (err, data) {
       if (err) { throw err; }
       var events = data
+        , firstEvent = events[0]
         , incr = 0
         , people
-        , ids = []
         , associate = function () {
             var ev;
             // Add a participant and admin to every event
@@ -129,20 +129,25 @@ tests = {
               ev.addParticipant(people[incr]);
               ev.addAdmin(people[incr]);
               incr++;
-              ev.save(function (err, data) {
+              ev.save(function (err) {
                 if (err) { throw err; }
                 associate();
               });
             }
             else {
-              var q = model.Event.all({}, {includes: ['participant',
+              model.Event.all({}, {includes: ['participant',
                   'admin', 'photo']}, function (err, data) {
                 if (err) { throw err; }
                 var events = data;
-                assert.equal(20, events[0].photos.length);
                 events.forEach(function (ev) {
                   assert.equal(1, ev.participants.length);
                   assert.equal(1, ev.admins.length);
+
+                  // Can't guarantee order without a sort,
+                  // was previously events[0]
+                  if(ev.id == firstEvent.id) {
+                    assert.equal(20, ev.photos.length);
+                  }
                 });
                 next();
               });
@@ -153,7 +158,7 @@ tests = {
         var photos = data;
         // Add a bunch of photos to the first event
         photos.forEach(function (photo) {
-          events[0].addPhoto(photo);
+          firstEvent.addPhoto(photo);
         });
         model.Person.all(function (err, data) {
           if (err) { throw err; }
@@ -168,7 +173,7 @@ tests = {
 , 'test includes, using an invalid association name throws the proper error': function () {
     assert.throws(
       function () {
-        model.Person.all({}, { includes: 'this_doesnt_exist' }, function (err, data) {
+        model.Person.all({}, { includes: 'this_doesnt_exist' }, function () {
 
         });
       },
@@ -187,7 +192,7 @@ tests = {
       friends.forEach(function (f) {
         person.addFriend(f);
       });
-      person.save(function (err, data) {
+      person.save(function (err) {
         var query
           , opts;
         if (err) { throw err; }
@@ -234,18 +239,18 @@ tests = {
     });
   }
 
-/*
+
 , 'test includes eager-fetch of belongsTo association': function (next) {
     model.Schedule.all(function (err, schedules) {
       if (err) { throw err; }
-      model.Event.all(function (err, events) {
+      model.Event.all({}, {sort: {id: 'desc'}}, function (err, events) {
         if (err) { throw err; }
         for (var i = 0, ii = events.length; i < ii; i++) {
           schedules[i].setEvent(events[i]);
         }
         helpers.updateItems(schedules, function (err) {
           if (err) { throw err; }
-          model.Schedule.all({}, {includes: ['event']}, function (err, data) {
+          model.Schedule.all({}, {includes: ['event'], sort: {'event.id': 'desc'}}, function (err, data) {
             if (err) { throw err; }
             for (var i = 0, ii = events.length; i < ii; i++) {
               assert.equal(events[i].id, data[i].event.id);
@@ -256,7 +261,6 @@ tests = {
       });
     });
   }
-*/
 
 , 'test includes eager-fetch of named belongsTo association': function (next) {
     model.Schedule.all(function (err, schedules) {
@@ -269,7 +273,7 @@ tests = {
         helpers.updateItems(schedules, function (err) {
           if (err) { throw err; }
           model.Schedule.all({}, {includes: ['editors'],
-              sort: {'editor.id': 'desc'}}, function (err, data) {
+              sort: {'editors.id': 'desc'}}, function (err, data) {
             if (err) { throw err; }
             for (var i = 0, ii = people.length; i < ii; i++) {
               assert.equal(people[i].id, data[i].editor.id);
@@ -291,7 +295,7 @@ tests = {
         if (err) { throw err; }
         data.forEach(function (p) {
           // Half of associated events to A, half to B
-          if (!!(incr % 2)) {
+          if (incr % 2 === 0) {
             p.setEvent(evA);
           }
           else {
@@ -302,7 +306,7 @@ tests = {
         helpers.updateItems(data, function () {
           model.Event.all({id: [evA.id, evB.id]},
               {includes: ['photos'], sort: {'title': 'desc',
-              'photo.title': 'asc'}}, function (err, data) {
+              'photos.title': 'asc'}}, function (err, data) {
             assert.equal('b', data[0].title);
             assert.equal('a', data[1].title);
             assert.ok(!(data[0].photos.some(helpers.foundOutOfOrderItemAscending,
@@ -325,7 +329,7 @@ tests = {
         data.forEach(function (p) {
           ev.addAdmin(p);
         });
-        ev.save(function (err, data) {
+        ev.save(function (err) {
           if (err) { throw err; }
           model.Event.first({id: ev.id}, {includes: 'admins'}, function (err, data) {
             if (err) { throw err; }
@@ -346,7 +350,7 @@ tests = {
         people.forEach(function (person) {
           ev.addParticipant(person);
         });
-        ev.save(function (err, data) {
+        ev.save(function (err) {
           if (err) { throw err; }
           model.Event.first({id: ev.id}, {includes: ['participant',
               'admin']}, function (err, data) {
@@ -367,7 +371,7 @@ tests = {
         activities.forEach(function (ac) {
           sc.addFunActivity(ac);
         });
-        sc.save(function (err, data) {
+        sc.save(function (err) {
           if (err) { throw err; }
           model.Schedule.first({id: sc.id}, {includes: 'funActivities'},
               function (err, data) {

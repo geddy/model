@@ -84,7 +84,7 @@ var Foo = function () {
   this.setAdapter('level', {
     db: './data'
   });
-  
+
   // Define the whitelisted properties on the model.
   // Properties not listed wont be saved
   this.defineProperties({
@@ -110,13 +110,13 @@ var Foo = require('./foo.js');
 Foo.first(1, function (err, model) {
   // Check if there was an error with the DB
   if (err) throw new Error('Uh oh, something broke');
-  
+
   // If there was no error, but no model was found it must be missing
   if (!err && !model) throw new Error('Foo not found');
-  
+
   // Update the model's name property
   model.name = "New name!";
-  
+
   // Once we're done updating properties we can call save on the model.
   // Save will send the current model data to the DB you specified
   model.save(function (err, updatedModel) {
@@ -177,7 +177,7 @@ var Foo = function () {
     "password":"",
     "dbName":"mydatabase"
   });
-  
+
   this.defineProperties({
     name: { type: 'string', required: true }
   });
@@ -225,7 +225,7 @@ The `object` data type can take a JSON string or an object that will serialize
 to JSON.
 
 There is no currency or decimal datatype. For currencies it is recommended to use an
-int representing the smallest domination (such as cents), like the 
+int representing the smallest domination (such as cents), like the
 [Stripe](http://stripe.com/) API does.
 
 ### Custom Methods
@@ -433,7 +433,7 @@ var User = function () {
       if  (value.length <= 3) {
       	 return "Your password must be at least 4 characters long ";
       }
-      
+
       // return true if the validation passed
       return true;
   });
@@ -1130,16 +1130,49 @@ Team.all({}, opts, function (err, data) {
 });
 ```
 
+You can also do an eager load of nested associations. If you wanted to get the
+sponsors of each player, you can do it like so:
+
+```javascript
+Team.all({}, {includes: {players: 'sponsors'}}, function (err, data) {});
+```
+
+You can also get the investors of the teams like so:
+```javascript
+Team.all({}, {includes: [{players: 'sponsors'}, 'investors']}, function (err, data) {});
+```
+
+Or get the investors' spouses as well:
+```javascript
+Team.all({}, {includes: {players: 'sponsors', investors: 'spouse'}, function (err, data) {});
+```
+
+While there is no hard limit on nesting associations, queries like this search for
+friends of friends of friends are likely to have poor performance:
+```javascript
+Person.all({}, {includes: {friends: {friends: 'friends'}}, function (err, data) {});
+```
+
+You can also query on nested associations. This query will return teams with players sponsored by Daffy Duck:
+```javascript
+Team.all({'players.sponsors.name': 'Daffy Duck'}, {includes: {players: 'sponsors'}}, function (err, data) {});
+```
+
 ### Sorting results
 
 Notice that it's possible to sort the eager-loaded associations in the above
-query. Just pass the association-names + properties in the 'sort' property.
+queries. Just pass the association-names + properties in the 'sort' property.
 
-In the above example, the 'name' property of the sort refers to the team-names.
+In the first example, the 'name' property of the sort refers to the team-names.
 The other two, 'players.familyName' and 'players.givenName', refer to the loaded
 associations. This will result in a list where the teams are initially sorted by
 name, and the contents of their 'players' list have the players sorted by given
 name, then first name.
+
+You can sort on nested attributes by specifying the association name:
+```javascript
+{sort: 'players.sponsors.id'}
+```
 
 ### Checking for loaded associations
 
