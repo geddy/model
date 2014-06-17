@@ -256,8 +256,8 @@ tests = {
         helpers.updateItems(schedules, function (err) {
           if (err) { throw err; }
           model.Schedule.all({}
-            , {includes: {'FunActivities': 'Schedule'}
-            , sort: {'FunActivities.id': 'desc'}}
+            , {includes: {'funActivities': 'Schedule'}
+            , sort: {'funActivities.id': 'desc'}}
             , function (err, data) {
             if (err) { throw err; }
             for (var i = 0, ii = activities.length; i < ii; i++) {
@@ -334,8 +334,7 @@ tests = {
           , start = 0
           , end = 4;
         scheduleList.forEach(function (schedule) {
-          activityList = activities.slice(start, end);
-          activityList.forEach(function (activity) {
+          activities.slice(start, end).forEach(function (activity) {
             schedule.addFunActivity(activity);
           });
           start += interval;
