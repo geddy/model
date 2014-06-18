@@ -453,20 +453,23 @@ tests = {
         });
         helpers.updateItems(scheduleList, function (err) {
           if (err) { throw err; }
+
           // Grab a few ids
           var ids = scheduleList.map(function (schedule) {
-            return schedule.id;
-          });
-          model.Schedule.all({id: ids}, {
-            includes: 'funActivities',
-            limit: 2,
-            sort: ['createdAt', 'FunActivities.createdAt']
-          }, function (err, data) {
-            if (err) { throw err; }
-            // Should be two results
-            assert.equal(2, data.length);
+                return schedule.id;
+              })
+            , results = []
+            , processor = model.Schedule.all({id: ids}, {
+                includes: 'funActivities',
+                limit: 4,
+                sort: ['createdAt', 'FunActivities.createdAt']
+              })
+
+          processor.on('data', function (model) { results.push(model) })
+          processor.on('end', function () {
+            assert.equal(4, results.length);
             next();
-          });
+          })
         });
       });
     });
