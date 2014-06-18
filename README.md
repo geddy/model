@@ -1096,7 +1096,7 @@ end up with a random subset instead of the items you want.
 {skip: 500, limit: 100}
 ```
 
-## Eager loading of associations (SQL adpaters only)
+## Eager loading of associations (SQL adapters only)
 
 You can use the 'includes' option to specify second-order associations that
 should be eager-loaded in a particular query (avoiding the so-called N + 1 Query
@@ -1129,6 +1129,8 @@ Team.all({}, opts, function (err, data) {
   });
 });
 ```
+
+### Eager loading of nested associations
 
 You can also do an eager load of nested associations. If you wanted to get the
 sponsors of each player, you can do it like so:
@@ -1173,6 +1175,44 @@ You can sort on nested attributes by specifying the association name:
 ```javascript
 {sort: 'players.sponsors.id'}
 ```
+
+#### Limitations when eager loading
+
+Due to limitations in SQL, please take note of the following when using eager loading:
+
+ * Querying on associations is only possible when including the associated model
+
+```javascript
+// Good
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}}
+        , function (err, data) {});
+
+// Bad
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: 'players'}
+        , function (err, data) {});
+```
+
+ * Querying on associations is not possible when there is a limit clause
+```
+// Bad
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, limit: 5}
+        , function (err, data) {});
+```
+
+ * Streaming is not possible when sorting on a nested association before the top level id
+```
+// Streaming API will work, the sort clause will be modified to ['id', 'players.name']
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, sort: ['players.name']});
+
+// Streaming API will still work, but results will only be sent at the end of the query
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, sort: ['players.name', 'id']});
+```
+
 
 ### Checking for loaded associations
 
