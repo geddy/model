@@ -1195,7 +1195,8 @@ Team.all({'players.sponsors.name': 'Daffy Duck'}
 ```
 
  * Querying on associations is not possible when there is a limit clause
-```
+
+```javascript
 // Bad
 Team.all({'players.sponsors.name': 'Daffy Duck'}
         , {includes: {players: 'sponsors'}, limit: 5}
@@ -1203,7 +1204,8 @@ Team.all({'players.sponsors.name': 'Daffy Duck'}
 ```
 
  * Streaming is not possible when sorting on a nested association before the top level id
-```
+
+```javascript
 // Streaming API will work, the sort clause will be modified to ['id', 'players.name']
 Team.all({'players.sponsors.name': 'Daffy Duck'}
         , {includes: {players: 'sponsors'}, sort: ['players.name']});
