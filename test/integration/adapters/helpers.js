@@ -3,7 +3,7 @@ var model = require('../../../lib')
   , utils = require('utilities')
   , helpers
   , fixtureNameList = ['event', 'person', 'participation', 'message',
-      'photo', 'schedule', 'friendship', 'fun_activity']
+      'photo', 'schedule', 'friendship', 'fun_activity', 'result']
   , fixtures = (function () {
       var fixtureList = [];
       fixtureNameList.forEach(function (item) {
