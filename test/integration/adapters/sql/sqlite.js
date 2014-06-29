@@ -3,6 +3,7 @@ var utils = require('utilities')
   , model = require('../../../../lib')
   , helpers = require('../helpers')
   , eagerAssnTests = require('./eager_assn')
+  , nestedEagerAssnTests = require('./nested_eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/sqlite').Adapter
   , generator = require('../../../../lib/generators/sql')
   , adapter
@@ -84,6 +85,10 @@ for (var p in shared) {
 
 for (var p in eagerAssnTests) {
   tests[p + ' (SQLite)'] = eagerAssnTests[p];
+}
+
+for (var p in nestedEagerAssnTests) {
+  tests[p + ' (SQLite)'] = nestedEagerAssnTests[p];
 }
 
 for (var p in unique) {

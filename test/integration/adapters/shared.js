@@ -3,10 +3,7 @@ var utils = require('utilities')
   , config = require('../../config')
   , model = require('../../../lib')
   , helpers = require('./helpers')
-  , currentId
-  , currentDateProp
-  , tests
-  , testItems;
+  , tests;
 
 tests = {
 
@@ -1176,6 +1173,27 @@ tests = {
     });
   }
 
+, 'test number query': function(next) {
+  var val = 3.8
+    , title = 'foo'
+    , result = model.Result.create({
+    value: val,
+    title: title
+  });
+
+  result.save(function(err, data) {
+    if (err) { throw err; }
+    model.Result.first({
+      title: title,
+      value: val
+    }, function(err, result) {
+      if (err) { throw err; }
+      var value = result && result.value;
+      assert.equal(val, value);
+      next();
+    });
+  });
+}
 };
 
 module.exports = tests;

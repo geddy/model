@@ -118,10 +118,12 @@ var tests = {
     assert.ok(query.conditions.operands[1].opts.nocase);
   }
 
+/* We don't support this kind of query yet. wooby here is a property, not an assn.
 , 'test object\'s properties with Model': function () {
     var query = new Query(Zooby, { 'wooby.foo': { like: 'foo' } });
     assert.ok(query.conditions.isValid());
   }
+*/
 
 , 'test "and" with multiple comparisions on same field, verbose': function () {
     var query = new Query(Zooby, {and: [
