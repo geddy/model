@@ -389,7 +389,7 @@ tests = {
           , start = 0
           , end = 4;
         scheduleList.forEach(function (schedule) {
-          activityList = activities.slice(start, end);
+          var activityList = activities.slice(start, end);
           activityList.forEach(function (activity) {
             schedule.addFunActivity(activity);
           });
