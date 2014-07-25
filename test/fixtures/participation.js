@@ -10,8 +10,6 @@ var Participation = function () {
 Participation.prototype.someMethod = function () {
 };
 
-Participation = model.register('Participation', Participation);
-
 module.exports.Participation = Participation;
 
 

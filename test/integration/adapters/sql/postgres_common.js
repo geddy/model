@@ -1,62 +1,65 @@
-var utils = require('utilities')
-  , assert = require('assert')
+var helpers = require('../helpers')
   , model = require('../../../../lib')
-  , helpers = require('../helpers')
   , eagerAssnTests = require('./eager_assn')
   , nestedEagerAssnTests = require('./nested_eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/postgres').Adapter
-  , adapter
-  , currentId
-  , tests
   , config = require('../../../config')
   , shared = require('../shared')
+  , eagerAssnTests = require('./eager_assn')
   , unique = require('../unique_id')
-  , streaming = require('../streaming');
+  , streaming = require('../streaming')
+  , tests
+  , common;
 
-tests = {
-  'before': function (next) {
+common = new (function () {
+
+  this.connect = function (callback) {
     var relations = helpers.fixtures.slice()
       , models = [];
 
     adapter = new Adapter(config.postgres);
     adapter.once('connect', function () {
-      var sql = '';
+      var sql = ''
+        , tables = helpers.fixtureNames;
 
-      sql += adapter.generator.dropTable(relations);
-      sql += adapter.generator.createTable(relations);
-
+      sql += adapter.generator.dropTable(tables);
+      sql += adapter.generator.createTable(tables);
       adapter.exec(sql, function (err, data) {
         if (err) {
           throw err;
         }
-        next();
+        callback();
       });
     });
     adapter.connect();
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+      , ctor: r.ctor
       });
     });
-
+    model.clearDefinitions(models);
     model.registerDefinitions(models);
-  }
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
 
-, 'after': function (next) {
+    return adapter;
+  };
+
+  this.disconnect = function (adapter, callback) {
     adapter.once('disconnect', function () {
-      next();
+      callback();
     });
     adapter.disconnect();
-  }
+  };
 
-, 'test create adapter': function () {
-    assert.ok(adapter instanceof Adapter);
-  }
+})();
 
-, 'test exec': function (next) {
+tests = {
+  'test exec': function (next) {
     adapter.exec('CREATE TABLE foo (bar varchar(256) ); DROP TABLE foo;',
         function (err, data) {
       if (err) {
@@ -65,7 +68,6 @@ tests = {
       next();
     });
   }
-
 };
 
 for (var p in shared) {
@@ -93,4 +95,5 @@ for (var p in streaming) {
   tests[p + ' (Postgres)'] = streaming[p];
 }
 
-module.exports = tests;
+common.tests = tests;
+module.exports = common;

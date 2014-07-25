@@ -12,8 +12,6 @@ var Friendship = function () {
 Friendship.prototype.someMethod = function () {
 };
 
-Friendship = model.register('Friendship', Friendship);
-
 module.exports.Friendship = Friendship;
 
 

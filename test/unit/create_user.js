@@ -5,6 +5,14 @@ var utils = require('utilities')
   , _params
   , tests;
 
+model.registerDefinitions([
+  { ctorName: 'User'
+  , ctor: User
+  }
+]);
+
+User = model.User;
+
 _params = {
   login: 'zzz',
   password: 'asdf',

@@ -11,6 +11,4 @@ var Schedule = function () {
 Schedule.prototype.someMethod = function () {
 };
 
-Schedule = model.register('Schedule', Schedule);
-
 module.exports.Schedule = Schedule;

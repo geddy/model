@@ -14,7 +14,7 @@ tests = {
         , opts: {}
         , datatype: 'string'
         });
-    assert.equal('users."foo"', name);
+    assert.equal('"users"."foo"', name);
   }
 
 , 'transform comparison field name, nocase': function () {
@@ -24,7 +24,7 @@ tests = {
         , opts: {nocase: true}
         , datatype: 'string'
         });
-    assert.equal('LOWER(users."foo")', name);
+    assert.equal('LOWER("users"."foo")', name);
   }
 
 };

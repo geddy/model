@@ -9,6 +9,9 @@ services:
   - riak
   - mysql
 
+before_install:
+  - npm update -g npm
+
 before_script:
   - psql -c 'create database model_test;' -U postgres
   - sudo apt-get install mysql-server mysql-client

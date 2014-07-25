@@ -181,6 +181,28 @@ tests = {
     );
   }
 
+, 'test includes, querying on an association with a limit clause throws the proper error': function () {
+    assert.throws(
+      function () {
+        model.Person.all({'friends.id': 1}, { includes: 'friends', limit: 1 }, function () {
+
+        });
+      },
+      /It\sis\snot\spossible\sto\squery\son\san\sassociation\swhen\sthere\sis\sa\slimit\sclause/
+    );
+  }
+
+, 'test includes, querying on an association with an implicit limit clause throws the proper error': function () {
+    assert.throws(
+      function () {
+        model.Person.first({'friends.id': 1}, { includes: 'friends' }, function () {
+
+        });
+      },
+      /It\sis\snot\spossible\sto\squery\son\san\sassociation\swhen\sthere\sis\sa\slimit\sclause/
+    );
+  }
+
 , 'test named, reflexive, hasMany/through with properties on the join-model': function (next) {
     model.Person.all({}, {sort: 'title'}, function (err, data) {
       if (err) { throw err; }
@@ -239,7 +261,7 @@ tests = {
     });
   }
 
-/*
+
 , 'test includes eager-fetch of belongsTo association': function (next) {
     model.Schedule.all(function (err, schedules) {
       if (err) { throw err; }
@@ -261,7 +283,6 @@ tests = {
       });
     });
   }
-*/
 
 , 'test includes eager-fetch of named belongsTo association': function (next) {
     model.Schedule.all(function (err, schedules) {
@@ -379,6 +400,122 @@ tests = {
             assert.equal(20, data.funActivities.length);
             next();
           });
+        });
+      });
+    });
+  }
+
+, 'test includes eager-fetch querying on association': function (next) {
+    model.Schedule.all(function (err, data) {
+      if (err) { throw err; }
+      var sc = data[0];
+      model.FunActivity.all(function (err, data) {
+        var activities = data;
+        activities.forEach(function (ac) {
+          sc.addFunActivity(ac);
+        });
+        sc.save(function (err) {
+          if (err) { throw err; }
+          global.debug = true
+          model.Schedule.all({'funActivities.id': activities[0].id}, {includes: 'funActivities'},
+              function (err, data) {
+          global.debug = false
+            assert.equal(1, data.length);
+            assert.equal(sc.id, data[0].id);
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test includes eager-fetch of hasMany with array of ids': function (next) {
+    model.Schedule.all(function (err, schedules) {
+      if (err) { throw err; }
+      // Grab the first five items
+      var scheduleList = schedules.slice(0, 5);
+      model.FunActivity.all({}, {sort: {id: 'desc'}}, function (err, activities) {
+        if (err) { throw err; }
+        // Give each schedule item four associated FunActivities
+        var interval = 4
+          , start = 0
+          , end = 4;
+        scheduleList.forEach(function (schedule) {
+          activities.slice(start, end).forEach(function (activity) {
+            schedule.addFunActivity(activity);
+          });
+          start += interval;
+          end += interval;
+        });
+        helpers.updateItems(scheduleList, function (err) {
+          if (err) { throw err; }
+          // Grab a few ids
+          var ids = scheduleList.map(function (schedule) {
+            return schedule.id;
+          });
+          model.Schedule.all({id: ids}, {includes: 'funActivities'},
+              function (err, data) {
+            var scheduleIds = {}
+              , activityIds = {};
+            if (err) { throw err; }
+            // Should be five results
+            assert.equal(5, data.length);
+            // No schedule id should show up more than once
+            data.forEach(function (d) {
+              assert.ok(!scheduleIds[d.id]);
+              scheduleIds[d.id] = true;
+              // Should have four associated activities each
+              assert.equal(4, d.funActivities.length);
+              d.funActivities.forEach(function (a) {
+                // No activity id should show up more than once
+                assert.ok(!activityIds[a.id]);
+                activityIds[a.id] = true;
+              });
+            });
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test includes eager-fetch of hasMany with array of ids and limit': function (next) {
+    model.Schedule.all(function (err, schedules) {
+      if (err) { throw err; }
+      // Grab the first five items
+      var scheduleList = schedules.slice(0, 5);
+      model.FunActivity.all({}, {sort: {id: 'desc'}}, function (err, activities) {
+        if (err) { throw err; }
+        // Give each schedule item four associated FunActivities
+        var interval = 4
+          , start = 0
+          , end = 4;
+        scheduleList.forEach(function (schedule) {
+          activities.slice(start, end).forEach(function (activity) {
+            schedule.addFunActivity(activity);
+          });
+          start += interval;
+          end += interval;
+        });
+        helpers.updateItems(scheduleList, function (err) {
+          if (err) { throw err; }
+
+          // Grab a few ids
+          var ids = scheduleList.map(function (schedule) {
+                return schedule.id;
+              })
+            , results = []
+            , processor = model.Schedule.all({id: ids}, {
+                includes: 'funActivities',
+                limit: 4,
+                sort: ['createdAt', 'FunActivities.createdAt']
+              })
+
+          processor.on('data', function (model) { results.push(model) })
+          processor.on('end', function () {
+            assert.equal(4, results.length);
+            next();
+          })
         });
       });
     });

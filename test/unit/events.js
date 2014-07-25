@@ -14,7 +14,15 @@ _params = {
   firstName: 'Neil'
 };
 
-model.User.adapter = new BaseAdapter();
+model.registerDefinitions([
+  { ctorName: 'User'
+  , ctor: User
+  }
+]);
+
+User = model.User;
+
+User.adapter = new BaseAdapter();
 
 tests = {
   'static has EventEmitter emit': function () {
