@@ -1182,6 +1182,8 @@ Due to limitations in SQL, please take note of the following when using eager lo
 
  * Querying on associations is only possible when including the associated model
 
+If you query on an association, you *must* include the relationship, or the query will fail.
+
 ```javascript
 // Good
 Team.all({'players.sponsors.name': 'Daffy Duck'}
@@ -1195,6 +1197,8 @@ Team.all({'players.sponsors.name': 'Daffy Duck'}
 ```
 
  * Querying on associations is not possible when there is a limit clause
+
+This is a limitation of the current implementation. An exception will be thrown when queries like this are attempted.
 
 ```javascript
 // Bad
