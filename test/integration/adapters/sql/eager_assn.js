@@ -181,6 +181,28 @@ tests = {
     );
   }
 
+, 'test includes, querying on an association with a limit clause throws the proper error': function () {
+    assert.throws(
+      function () {
+        model.Person.all({'friends.id': 1}, { includes: 'friends', limit: 1 }, function () {
+
+        });
+      },
+      /It\sis\snot\spossible\sto\squery\son\san\sassociation\swhen\sthere\sis\sa\slimit\sclause/
+    );
+  }
+
+, 'test includes, querying on an association with an implicit limit clause throws the proper error': function () {
+    assert.throws(
+      function () {
+        model.Person.first({'friends.id': 1}, { includes: 'friends' }, function () {
+
+        });
+      },
+      /It\sis\snot\spossible\sto\squery\son\san\sassociation\swhen\sthere\sis\sa\slimit\sclause/
+    );
+  }
+
 , 'test named, reflexive, hasMany/through with properties on the join-model': function (next) {
     model.Person.all({}, {sort: 'title'}, function (err, data) {
       if (err) { throw err; }
