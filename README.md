@@ -1201,6 +1201,11 @@ Team.all({'players.sponsors.name': 'Daffy Duck'}
 Team.all({'players.sponsors.name': 'Daffy Duck'}
         , {includes: {players: 'sponsors'}, limit: 5}
         , function (err, data) {});
+
+// Bad too, since .first is an implicit "limit: 1"
+Team.first({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, limit: 5}
+        , function (err, data) {});
 ```
 
  * Streaming is not possible when sorting on a nested association before the top level id
