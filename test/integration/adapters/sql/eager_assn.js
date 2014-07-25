@@ -383,6 +383,30 @@ tests = {
     });
   }
 
+, 'test includes eager-fetch querying on association': function (next) {
+    model.Schedule.all(function (err, data) {
+      if (err) { throw err; }
+      var sc = data[0];
+      model.FunActivity.all(function (err, data) {
+        var activities = data;
+        activities.forEach(function (ac) {
+          sc.addFunActivity(ac);
+        });
+        sc.save(function (err) {
+          if (err) { throw err; }
+          global.debug = true
+          model.Schedule.all({'funActivities.id': activities[0].id}, {includes: 'funActivities'},
+              function (err, data) {
+          global.debug = false
+            assert.equal(1, data.length);
+            assert.equal(sc.id, data[0].id);
+            next();
+          });
+        });
+      });
+    });
+  }
+
 , 'test includes eager-fetch of hasMany with array of ids': function (next) {
     model.Schedule.all(function (err, schedules) {
       if (err) { throw err; }
