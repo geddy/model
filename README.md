@@ -164,7 +164,7 @@ User = model.register('User', User);
 
 ### Setting an adapter
 
-Although you can set a [default adapter](#modeldefaultadapter), you may want to override that default on a per model basis. To do that simply call `this.setAdapter(name, config)` just like you would with [createAdapter](#modelcreateadaptername-config), like so for a MongoDB adapter:
+Although you can set a [default adapter](#modelconfigdefaultadapter), you may want to override that default on a per model basis. To do that simply call `this.setAdapter(name, config)` just like you would with [createAdapter](#modelcreateadaptername-config), like so for a MongoDB adapter:
 
 ```javascript
 var model = require('model');
@@ -1182,6 +1182,8 @@ Due to limitations in SQL, please take note of the following when using eager lo
 
  * Querying on associations is only possible when including the associated model
 
+If you query on an association, you *must* include the relationship, or the query will fail.
+
 ```javascript
 // Good
 Team.all({'players.sponsors.name': 'Daffy Duck'}
@@ -1196,9 +1198,16 @@ Team.all({'players.sponsors.name': 'Daffy Duck'}
 
  * Querying on associations is not possible when there is a limit clause
 
+This is a limitation of the current implementation. An exception will be thrown when queries like this are attempted.
+
 ```javascript
 // Bad
 Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, limit: 5}
+        , function (err, data) {});
+
+// Bad too, since .first is an implicit "limit: 1"
+Team.first({'players.sponsors.name': 'Daffy Duck'}
         , {includes: {players: 'sponsors'}, limit: 5}
         , function (err, data) {});
 ```

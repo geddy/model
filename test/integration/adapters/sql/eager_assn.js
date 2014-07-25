@@ -181,6 +181,28 @@ tests = {
     );
   }
 
+, 'test includes, querying on an association with a limit clause throws the proper error': function () {
+    assert.throws(
+      function () {
+        model.Person.all({'friends.id': 1}, { includes: 'friends', limit: 1 }, function () {
+
+        });
+      },
+      /It\sis\snot\spossible\sto\squery\son\san\sassociation\swhen\sthere\sis\sa\slimit\sclause/
+    );
+  }
+
+, 'test includes, querying on an association with an implicit limit clause throws the proper error': function () {
+    assert.throws(
+      function () {
+        model.Person.first({'friends.id': 1}, { includes: 'friends' }, function () {
+
+        });
+      },
+      /It\sis\snot\spossible\sto\squery\son\san\sassociation\swhen\sthere\sis\sa\slimit\sclause/
+    );
+  }
+
 , 'test named, reflexive, hasMany/through with properties on the join-model': function (next) {
     model.Person.all({}, {sort: 'title'}, function (err, data) {
       if (err) { throw err; }
@@ -376,6 +398,30 @@ tests = {
           model.Schedule.first({id: sc.id}, {includes: 'funActivities'},
               function (err, data) {
             assert.equal(20, data.funActivities.length);
+            next();
+          });
+        });
+      });
+    });
+  }
+
+, 'test includes eager-fetch querying on association': function (next) {
+    model.Schedule.all(function (err, data) {
+      if (err) { throw err; }
+      var sc = data[0];
+      model.FunActivity.all(function (err, data) {
+        var activities = data;
+        activities.forEach(function (ac) {
+          sc.addFunActivity(ac);
+        });
+        sc.save(function (err) {
+          if (err) { throw err; }
+          global.debug = true
+          model.Schedule.all({'funActivities.id': activities[0].id}, {includes: 'funActivities'},
+              function (err, data) {
+          global.debug = false
+            assert.equal(1, data.length);
+            assert.equal(sc.id, data[0].id);
             next();
           });
         });
