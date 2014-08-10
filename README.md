@@ -38,7 +38,7 @@ NodeJS.
   - [Sorting](#sorting)
   - [Simplified syntax for sorting](#simplified-syntax-for-sorting)
   - [Skip and limit](#skip-and-limit)
-- [Eager loading of associations (SQL adpaters only)](#eager-loading-of-associations-sql-adpaters-only)
+- [Eager loading of associations (SQL adapters only)](#eager-loading-of-associations-sql-adapters-only)
   - [Sorting results](#sorting-results)
   - [Checking for loaded associations](#checking-for-loaded-associations)
 
