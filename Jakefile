@@ -1,5 +1,5 @@
 
-var t = new jake.TestTask('Model', function () {
+testTask('Model', function () {
   // FIXME: These tests fail if run too late
   // This forces them to run first so the tests pass
   this.testFiles.include('test/unit/default_adapter.js');
@@ -20,7 +20,7 @@ var t = new jake.TestTask('Model', function () {
   this.testFiles.exclude('test/db.sample.json');
 });
 
-var p = new jake.NpmPublishTask('model', [
+publishTask('model', [
   'Jakefile'
 , 'README.md'
 , 'package.json'
