@@ -23,6 +23,10 @@
     , level: {
         db: process.env.LEVEL_DATABASE || '/tmp/foo'
       }
+    , multilevel: {
+        port: process.env.LEVEL_PORT || 3000
+      , host: process.env.LEVEL_HOST || '127.0.0.1'
+      }
     };
 
   try {
@@ -37,12 +41,12 @@
     else {
       existsSync = fs.existsSync;
     }
-    
+
     // Check if JSON parsing failed
     if(existsSync(userOptsFile)) {
       throw new Error("Could not parse user options, check if your file is valid JSON");
     }
   }
-  
+
   module.exports = config;
 }());

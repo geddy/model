@@ -36,6 +36,7 @@
     "pg": "2.5.x",
     "mysql": "2.0.x",
     "level": "0.17.x",
+    "multilevel": "6.0.x",
     "sqlite3": "2.1.x"
   },
   "engines": {
