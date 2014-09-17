@@ -27,8 +27,6 @@ tests = {
           .pipe(conn);
     });
 
-    server.unref();
-
     server.listen(settings.port, settings.host, function() {
 
       adapter = new Adapter(settings);
