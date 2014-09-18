@@ -73,6 +73,7 @@ tests = {
     assert.ok(adapter instanceof Adapter);
   }
 
+
 };
 
 for (var p in shared) {
