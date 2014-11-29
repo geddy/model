@@ -3,6 +3,7 @@ var utils = require('utilities')
   , model = require('../../../../lib')
   , helpers = require('../helpers')
   , eagerAssnTests = require('./eager_assn')
+  , nestedEagerAssnTests = require('./nested_eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/sqlite').Adapter
   , generator = require('../../../../lib/generators/sql')
   , adapter
@@ -20,10 +21,11 @@ tests = {
 
     adapter = new Adapter();
     adapter.once('connect', function () {
-      var sql = '';
+      var sql = ''
+        , tables = helpers.fixtureNames;
 
-      sql += adapter.generator.dropTable(relations);
-      sql += adapter.generator.createTable(relations);
+      sql += adapter.generator.dropTable(tables);
+      sql += adapter.generator.createTable(tables);
 
       adapter.exec(sql, function (err, data) {
         if (err) {
@@ -34,15 +36,19 @@ tests = {
     });
     adapter.connect();
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+      , ctor: r.ctor
       });
     });
-
+    model.clearDefinitions(models);
     model.registerDefinitions(models);
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
+
   }
 
 , 'after': function (next) {
@@ -79,6 +85,10 @@ for (var p in shared) {
 
 for (var p in eagerAssnTests) {
   tests[p + ' (SQLite)'] = eagerAssnTests[p];
+}
+
+for (var p in nestedEagerAssnTests) {
+  tests[p + ' (SQLite)'] = nestedEagerAssnTests[p];
 }
 
 for (var p in unique) {

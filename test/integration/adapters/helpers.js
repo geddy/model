@@ -1,12 +1,34 @@
 var model = require('../../../lib')
-  , fixtures = ['Event', 'Person', 'Participation', 'Message',
-      'Photo', 'Schedule', 'Friendship', 'FunActivity'];
+  , fs = require('fs')
+  , utils = require('utilities')
+  , helpers
+  , fixtureNameList = ['event', 'person', 'participation', 'message',
+      'photo', 'schedule', 'friendship', 'fun_activity', 'result']
+  , fixtures = (function () {
+      var fixtureList = [];
+      fixtureNameList.forEach(function (item) {
+        var ctor
+          , ctorName;
+        ctorName = utils.string.camelize(item, {initialCap: true});
+        ctor = require('../../fixtures/' + item)[ctorName];
+        fixtureList.push({
+          ctorName: ctorName
+        , ctor: ctor
+        });
+      });
+      return fixtureList;
+    })()
+  , fixtureNames = fixtures.map(function (f) {
+      return f.ctorName;
+    });
 
-module.exports = {
+helpers = {
   fixtures: fixtures
 
+, fixtureNames: fixtureNames
+
 , createFixtures: function (cb) {
-    var relations = fixtures.slice()
+    var relations = fixtureNames.slice()
       , doIt = function () {
           var relation = relations.shift()
             , items = []
@@ -22,7 +44,9 @@ module.exports = {
               }));
             });
             model[relation].save(items, function (err, data) {
-              if (err) { throw err; }
+              if (err) {
+                return cb(err);
+              }
               doIt();
             });
           }
@@ -34,7 +58,7 @@ module.exports = {
   }
 
 , deleteFixtures: function (cb) {
-    var relations = fixtures.slice()
+    var relations = fixtureNames.slice()
       , doIt = function () {
           var relation = relations.shift();
           if (relation) {
@@ -45,7 +69,7 @@ module.exports = {
                 ids.push(item.id);
               });
               model[relation].remove({id: ids}, function (err, data) {
-                if (err) { throw err; }
+                if (err) { return cb(err); }
                 doIt();
               });
             });
@@ -92,3 +116,4 @@ module.exports = {
 
 };
 
+module.exports = helpers;

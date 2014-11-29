@@ -17,7 +17,7 @@
     "leveldb",
     "sqlite"
   ],
-  "version": "0.5.14",
+  "version": "6.0.2",
   "author": "Matthew Eernisse <mde@fleegix.org> (http://fleegix.org)",
   "main": "./lib/index.js",
   "scripts": {
@@ -28,17 +28,18 @@
     "url": "git://github.com/geddy/model.git"
   },
   "dependencies": {
-    "utilities": "0.0.x",
-    "rest-js": "0.0.x"
+    "utilities": "1.0.x"
   },
   "devDependencies": {
-    "jake": "0.7.x",
+    "jake": "8.0.x",
     "mongodb": "1.x",
     "pg": "2.5.x",
     "mysql": "2.0.x",
     "level": "0.17.x",
+    "multilevel": "6.0.x",
     "sqlite3": "2.1.x",
-    "restify": "2.8.x"
+    "restify": "2.8.x",
+    "rest-js": "0.0.x"
   },
   "engines": {
     "node": "*"

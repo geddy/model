@@ -11,8 +11,6 @@ var Message = function () {
 Message.prototype.someMethod = function () {
 };
 
-Message = model.register('Message', Message);
-
 module.exports.Message = Message;
 
 

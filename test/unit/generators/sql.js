@@ -14,6 +14,14 @@ strIncl = function (searchIn, searchFor) {
     return sIn.indexOf(sFor) > -1;
 };
 
+model.registerDefinitions([
+  { ctorName: 'Zooby'
+  , ctor: Zooby
+  }
+]);
+
+Zooby = model.Zooby;
+
 tests = {
 
   'addColumnStatement': function () {

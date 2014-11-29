@@ -3,6 +3,7 @@ var utils = require('utilities')
   , model = require('../../../../lib')
   , helpers = require('.././helpers')
   , eagerAssnTests = require('./eager_assn')
+  , nestedEagerAssnTests = require('./nested_eager_assn')
   , Adapter = require('../../../../lib/adapters/sql/mysql').Adapter
   , adapter
   , currentId
@@ -17,6 +18,8 @@ tests = {
     var relations = helpers.fixtures.slice()
       , models = [];
 
+    // When creating test DB:
+    // CREATE DATABASE model_test COLLATE latin1_general_cs;
     adapter = new Adapter({
       user: 'root'
     , multipleStatements: true
@@ -24,11 +27,11 @@ tests = {
     });
 
     adapter.once('connect', function () {
-      var sql = '';
+      var sql = ''
+        , tables = helpers.fixtureNames;
 
-      sql += adapter.generator.dropTable(relations);
-      sql += adapter.generator.createTable(relations);
-
+      sql += adapter.generator.dropTable(tables);
+      sql += adapter.generator.createTable(tables);
       adapter.exec(sql, function (err, data) {
         if (err) {
           throw err;
@@ -38,15 +41,19 @@ tests = {
     });
     adapter.connect();
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+      , ctor: r.ctor
       });
     });
-
+    model.clearDefinitions(models);
     model.registerDefinitions(models);
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
+
   }
 
 , 'after': function (next) {
@@ -112,6 +119,10 @@ for (var p in shared) {
 
 for (var p in eagerAssnTests) {
   tests[p + ' (MySQL)'] = eagerAssnTests[p];
+}
+
+for (var p in nestedEagerAssnTests) {
+  tests[p + ' (MySQL)'] = nestedEagerAssnTests[p];
 }
 
 for (var p in unique) {

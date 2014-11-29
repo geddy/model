@@ -3,24 +3,17 @@ var utils = require('utilities')
   , config = require('../../config')
   , model = require('../../../lib')
   , helpers = require('./helpers')
-  , currentId
-  , currentDateProp
-  , tests
-  , testItems;
-
-// Import the model description for each fixture
-helpers.fixtures.forEach(function (f) {
-  var keyName = utils.string.getInflection(f, 'filename', 'singular');
-  model[f] = require('../../fixtures/' + keyName)[f];
-});
-
+  , tests;
 
 tests = {
 
   'beforeEach': function (next) {
     var timeout = model.Event.adapter.name == 'riak' ?
         config.riak.testInterval : 0;
-    helpers.createFixtures(function () {
+    helpers.createFixtures(function (err) {
+      if (err) {
+        fail(JSON.stringify(err));
+      }
       setTimeout(next, timeout);
     });
   }
@@ -28,8 +21,18 @@ tests = {
 , 'afterEach': function (next) {
     var timeout = model.Event.adapter.name == 'riak' ?
         config.riak.testInterval : 0;
-    helpers.deleteFixtures(function () {
+    helpers.deleteFixtures(function (err) {
+      if (err) {
+        fail(JSON.stringify(err));
+      }
       setTimeout(next, timeout);
+    });
+  }
+
+, 'test count': function (next) {
+    model.Person.count(function (err, data) {
+      assert.equal(20, data);
+      next();
     });
   }
 
@@ -46,12 +49,17 @@ tests = {
     });
   }
 
-, 'test first via nonexistant string id': function (next) {
-    model.Person.first('bogus-id', function (err, data) {
-      if (err) { throw err; }
-      assert.strictEqual(data, undefined);
+, 'test first via non-existent string id': function (next) {
+    if (!model.config.autoIncrementId) {
+      model.Person.first('bogus-id', function (err, data) {
+        if (err) { throw err; }
+        assert.strictEqual(data, undefined);
+        next();
+      });
+    }
+    else {
       next();
-    });
+    }
   }
 
 , 'test first via id in query object': function (next) {
@@ -103,13 +111,18 @@ tests = {
     });
   }
 
-, 'test all via nonexistant string id': function (next) {
-    model.Person.all({id: 'bogus-id'}, function (err, data) {
-      if (err) { throw err; }
-      assert.equal(typeof data, 'object');
-      assert.equal(data.length, 0);
+, 'test all via non-existent string id': function (next) {
+    if (!model.config.autoIncrementId) {
+      model.Person.all({id: 'bogus-id'}, function (err, data) {
+        if (err) { throw err; }
+        assert.equal(typeof data, 'object');
+        assert.equal(data.length, 0);
+        next();
+      });
+    }
+    else {
       next();
-    });
+    }
   }
 
 , 'test all via list of ids in query object': function (next) {
@@ -500,7 +513,7 @@ tests = {
     });
   }
 
-, 'test all, or with simple equality and like comparison': function (next) {
+, 'test all, or with simple equality and like comparison 2': function (next) {
     model.Person.all({title: {eql: 'a', ne: 'b'}},
         function (err, data) {
       if (err) { throw err; }
@@ -1107,7 +1120,7 @@ tests = {
   }
 
 // FIXME: This isn't really an integration test
-, 'test Static methods on model': function (next) {
+, 'test static methods on model': function (next) {
     model.Event.findByTitle('a', function (err, data) {
       assert.equal(1, data.length);
       if (err) { throw err; }
@@ -1116,27 +1129,37 @@ tests = {
   }
 
 , 'test save new with custom string id': function (next) {
-    var customId = 'zerb';
-    var p = model.Person.create({
-      id: customId
-    });
-    p.save(function (err, data) {
-      if (err) { throw err; }
-      assert.equal(data.id, customId);
+    if (!model.config.autoIncrementId) {
+      var customId = 'zerb';
+      var p = model.Person.create({
+        id: customId
+      });
+      p.save(function (err, data) {
+        if (err) { throw err; }
+        assert.equal(data.id, customId);
+        next();
+      });
+    }
+    else {
       next();
-    });
+    }
   }
 
 , 'test save new with custom int id': function (next) {
-    var customId = 2112;
-    var p = model.Person.create({
-      id: customId
-    });
-    p.save(function (err, data) {
-      if (err) { throw err; }
-      assert.equal(data.id, customId);
+    if (!model.config.autoIncrementId) {
+      var customId = 2112;
+      var p = model.Person.create({
+        id: customId
+      });
+      p.save(function (err, data) {
+        if (err) { throw err; }
+        assert.equal(data.id, customId);
+        next();
+      });
+    }
+    else {
       next();
-    });
+    }
   }
 
 , 'test count all': function (next) {
@@ -1155,6 +1178,27 @@ tests = {
     });
   }
 
+, 'test number query': function(next) {
+  var val = 3.8
+    , title = 'foo'
+    , result = model.Result.create({
+    value: val,
+    title: title
+  });
+
+  result.save(function(err, data) {
+    if (err) { throw err; }
+    model.Result.first({
+      title: title,
+      value: val
+    }, function(err, result) {
+      if (err) { throw err; }
+      var value = result && result.value;
+      assert.equal(val, value);
+      next();
+    });
+  });
+}
 };
 
 module.exports = tests;

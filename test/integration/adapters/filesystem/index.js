@@ -13,15 +13,18 @@ tests = {
       , models = [];
     adapter = new Adapter();
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+      , ctor: r.ctor
       });
     });
-
+    model.clearDefinitions(models);
     model.registerDefinitions(models);
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
 
     adapter.createTable(Object.keys(model.adapters), next);
 

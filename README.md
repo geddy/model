@@ -38,7 +38,7 @@ NodeJS.
   - [Sorting](#sorting)
   - [Simplified syntax for sorting](#simplified-syntax-for-sorting)
   - [Skip and limit](#skip-and-limit)
-- [Eager loading of associations (SQL adpaters only)](#eager-loading-of-associations-sql-adpaters-only)
+- [Eager loading of associations (SQL adapters only)](#eager-loading-of-associations-sql-adapters-only)
   - [Sorting results](#sorting-results)
   - [Checking for loaded associations](#checking-for-loaded-associations)
 
@@ -68,41 +68,64 @@ build-tool.
 ### Installing with [NPM](http://npmjs.org/)
 
 ```
-npm install model
+NPM install model
 ```
 
 ## Bootstrapping Model
 
-Model serves as the model component inside the Geddy Web framework
-(http://geddyjs.org/). But it can easily be used as an ORM on its own. Here's a
-minimal example which uses the LevelDB adapter for the defined model:
+Here's a minimal example which uses the LevelDB adapter for a `Foo` model:
 
 ```javascript
-var model = require('model')
-  , Zerb;
+var model = require('model');
 
-Zerb = function () {
-  this.property('title', 'string');
+// Setup the blueprint of the model. This is where you can
+// setup the model properties, defaults, and validations
+var Foo = function () {
   this.setAdapter('level', {
     db: './data'
   });
+
+  // Define the whitelisted properties on the model.
+  // Properties not listed wont be saved
+  this.defineProperties({
+    name: { type: 'string', required: true },
+    description: { type: 'text' },
+    enabled: { type: 'boolean' },
+    archived: { type: 'boolean' },
+  });
 };
 
-model.registerDefinitions([{
-  ctorName: 'Zerb'
-, ctor: Zerb
-}]);
+// This registers the model with the model package so
+// things like associations can work
+Foo = model.register('Foo', Foo);
 
-var z = model.Zerb.create({title: 'asdf'});
-
-z.save(function (err, data) {
-  if (err) { throw err; }
-  console.log('Zerb ' + z.title + ' saved.');
-});
+// Now we export Foo to create a reusable model module
+module.exports = Foo;
 ```
 
-Pass the string name of the desired adapter (e.g., 'level', 'postgres') followed
-any config options to the `setAdapter` method when defining your model.
+You can then use it like the following example:
+
+```js
+var Foo = require('./foo.js');
+Foo.first(1, function (err, model) {
+  // Check if there was an error with the DB
+  if (err) throw new Error('Uh oh, something broke');
+
+  // If there was no error, but no model was found it must be missing
+  if (!err && !model) throw new Error('Foo not found');
+
+  // Update the model's name property
+  model.name = "New name!";
+
+  // Once we're done updating properties we can call save on the model.
+  // Save will send the current model data to the DB you specified
+  model.save(function (err, updatedModel) {
+    if (err) throw new Error('Could not save the model');
+    console.log("The model was updated!");
+  });
+});
+
+```
 
 ## Defining models
 
@@ -137,6 +160,32 @@ var User = function () {
 
 // prepares the model and adds it as a property on `model`
 User = model.register('User', User);
+```
+
+### Setting an adapter
+
+Although you can set a [default adapter](#modelconfigdefaultadapter), you may want to override that default on a per model basis. To do that simply call `this.setAdapter(name, config)` just like you would with [createAdapter](#modelcreateadaptername-config), like so for a MongoDB adapter:
+
+```javascript
+var model = require('model');
+
+var Foo = function () {
+  this.setAdapter('mongo', {
+    "hostname":"localhost",
+    "port":27017,
+    "username":"",
+    "password":"",
+    "dbName":"mydatabase"
+  });
+
+  this.defineProperties({
+    name: { type: 'string', required: true }
+  });
+};
+
+Foo = model.register('Foo', Foo);
+
+module.exports = Foo;
 ```
 
 ### Defining properties
@@ -176,7 +225,7 @@ The `object` data type can take a JSON string or an object that will serialize
 to JSON.
 
 There is no currency or decimal datatype. For currencies it is recommended to use an
-int representing the smallest domination (such as cents), like the 
+int representing the smallest domination (such as cents), like the
 [Stripe](http://stripe.com/) API does.
 
 ### Custom Methods
@@ -217,9 +266,35 @@ User = model.register('User', User);
 
 ### Adapters
 
-An adapter allows a model to communicate with the database.
+An adapter allows a model to communicate with the database in a common way across any supported
+databases. For example, this allows you to easily switch from an in memory database for testing
+to something like MongoDB just by changing a single line in your model config.
 
-Use `model.createAdapter(name, config)` to create an adapter.
+
+#### How to install adapters
+
+Some adapters require you to install a 3rd party module from NPM. Below is a list of the
+adapters that require an install and how to install it. The `--save` flag is optional on
+all of these but will put it in your `package.json` file for you:
+
+- Postgres: `npm install pg --save`
+- MySQL: `npm install mysql --save`
+- SQLite: `npm install sqlite3 --save`
+- MongoDB: `npm install mongodb --save`
+- LevelDB: `npm install level --save`
+
+The in-memory, filesystem, and Riak adapters work out of the box and don't need any
+additional libraries.
+
+#### model.createAdapter(_name_, _config_)
+
+Use `model.createAdapter(name, config)` to initialize an adapter and connect to the database.
+
+_NOTE:_ The `config` parameter for each adapter depends on the module used. As an example,
+postgres uses `database` for the database name whereas MongoDB uses `dbName`. Model doesn't
+try to standardize the config for each adapter. Instead it just passes the config you give it
+in `createAdapter` to the NPM module. To check the config setup for your adapter go to the
+module's official site and look at their docs.
 
 ```javascript
 var adapter = model.createAdapter('postgres', {
@@ -230,10 +305,13 @@ var adapter = model.createAdapter('postgres', {
 });
 ```
 
-Use the `defaultAdapter` property on `model` to set a default adapter.
+#### model.config.defaultAdapter
+
+Use the `defaultAdapter` property on `model.config` to set a default adapter for all models that don't manually specify
+`.setAdapter` in the model definition.
 
 ```javascript
-model.defaultAdapter = model.createAdapter('postgres', {
+model.config.defaultAdapter = model.createAdapter('postgres', {
   host: 'localhost',
   username: 'user',
   password: 'password',
@@ -241,18 +319,59 @@ model.defaultAdapter = model.createAdapter('postgres', {
 });
 ```
 
-Use the `adapter` property to set an adapter on individual models.
-The default adapter will be used in all models that don't have `adapter` set on them.
+#### adapter.connect(cb)
 
-``` javascript
-var mongoAdapter = model.createAdapter('mongodb', {
-  host: 'localhost'
-, username: 'user'
-, password: 'password'
-, database: 'mymongo'
+If you want to hook into when the adapter connects to the database you
+can hook into the connect method which will fire when the connection
+is either successful or it fails.
+
+```js
+myAdapter.connect(function (err) {
+  if (err) throw new Error('Error: ' + err);
+  console.log('Database connection successful');
+}
+```
+
+#### adapter.disconnect(cb)
+
+Same as `adapter.connect`, but when a disconnect happens.
+
+```js
+myAdapter.disconnect(function (err) {
+  if (err) throw new Error('Error: ' + err);
+  console.log('Database disconnected successfully');
+}
+```
+
+#### adapter.addListener('connect', callback)
+
+Same as `adapter.connect`, but in event form and only when it is successful.
+
+```js
+myAdapter.addListener('connect', function () {
+  console.log('Database connection successful');
 });
+```
 
-model.Message.adapter = mongoAdapter;
+#### adapter.addListener('disconnect', callback)
+
+Same as `adapter.disconnect`, but in event form and only when it is successful.
+
+```js
+myAdapter.addListener('disconnect', function () {
+  console.log('Database disconnected successfully');
+});
+```
+
+#### adapter.addListener('error', callback)
+
+Fires whenever there is any error in the database connection during a connect or
+disconnect attempt.
+
+```js
+myAdapter.addListener('error', function (err) {
+  throw new Error('Error: ' + err);
+});
 ```
 
 ## Creating instances
@@ -314,7 +433,7 @@ var User = function () {
       if  (value.length <= 3) {
       	 return "Your password must be at least 4 characters long ";
       }
-      
+
       // return true if the validation passed
       return true;
   });
@@ -977,7 +1096,7 @@ end up with a random subset instead of the items you want.
 {skip: 500, limit: 100}
 ```
 
-## Eager loading of associations (SQL adpaters only)
+## Eager loading of associations (SQL adapters only)
 
 You can use the 'includes' option to specify second-order associations that
 should be eager-loaded in a particular query (avoiding the so-called N + 1 Query
@@ -1011,16 +1130,100 @@ Team.all({}, opts, function (err, data) {
 });
 ```
 
+### Eager loading of nested associations
+
+You can also do an eager load of nested associations. If you wanted to get the
+sponsors of each player, you can do it like so:
+
+```javascript
+Team.all({}, {includes: {players: 'sponsors'}}, function (err, data) {});
+```
+
+You can also get the investors of the teams like so:
+```javascript
+Team.all({}, {includes: [{players: 'sponsors'}, 'investors']}, function (err, data) {});
+```
+
+Or get the investors' spouses as well:
+```javascript
+Team.all({}, {includes: {players: 'sponsors', investors: 'spouse'}, function (err, data) {});
+```
+
+While there is no hard limit on nesting associations, queries like this search for
+friends of friends of friends are likely to have poor performance:
+```javascript
+Person.all({}, {includes: {friends: {friends: 'friends'}}, function (err, data) {});
+```
+
+You can also query on nested associations. This query will return teams with players sponsored by Daffy Duck:
+```javascript
+Team.all({'players.sponsors.name': 'Daffy Duck'}, {includes: {players: 'sponsors'}}, function (err, data) {});
+```
+
 ### Sorting results
 
 Notice that it's possible to sort the eager-loaded associations in the above
-query. Just pass the association-names + properties in the 'sort' property.
+queries. Just pass the association-names + properties in the 'sort' property.
 
-In the above example, the 'name' property of the sort refers to the team-names.
+In the first example, the 'name' property of the sort refers to the team-names.
 The other two, 'players.familyName' and 'players.givenName', refer to the loaded
 associations. This will result in a list where the teams are initially sorted by
 name, and the contents of their 'players' list have the players sorted by given
 name, then first name.
+
+You can sort on nested attributes by specifying the association name:
+```javascript
+{sort: 'players.sponsors.id'}
+```
+
+#### Limitations when eager loading
+
+Due to limitations in SQL, please take note of the following when using eager loading:
+
+ * Querying on associations is only possible when including the associated model
+
+If you query on an association, you *must* include the relationship, or the query will fail.
+
+```javascript
+// Good
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}}
+        , function (err, data) {});
+
+// Bad
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: 'players'}
+        , function (err, data) {});
+```
+
+ * Querying on associations is not possible when there is a limit clause
+
+This is a limitation of the current implementation. An exception will be thrown when queries like this are attempted.
+
+```javascript
+// Bad
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, limit: 5}
+        , function (err, data) {});
+
+// Bad too, since .first is an implicit "limit: 1"
+Team.first({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, limit: 5}
+        , function (err, data) {});
+```
+
+ * Streaming is not possible when sorting on a nested association before the top level id
+
+```javascript
+// Streaming API will work, the sort clause will be modified to ['id', 'players.name']
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, sort: ['players.name']});
+
+// Streaming API will still work, but results will only be sent at the end of the query
+Team.all({'players.sponsors.name': 'Daffy Duck'}
+        , {includes: {players: 'sponsors'}, sort: ['players.name', 'id']});
+```
+
 
 ### Checking for loaded associations
 

@@ -16,8 +16,6 @@ var Person = function () {
 Person.prototype.someMethod = function () {
 };
 
-Person = model.register('Person', Person);
-
 module.exports.Person = Person;
 
 

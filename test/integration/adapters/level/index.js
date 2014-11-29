@@ -14,21 +14,29 @@ tests = {
       , models = [];
     adapter = new Adapter(config.level);
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+      , ctor: r.ctor
       });
     });
-
+    model.clearDefinitions(models);
     model.registerDefinitions(models);
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
 
     adapter.dropTable(['Zooby', 'User'], next);
   }
 
 , 'after': function (next) {
-    adapter.dropTable(['Zooby', 'User'], next);
+    adapter.dropTable(['Zooby', 'User'], function () {
+      adapter.disconnect(function (err) {
+        if (err) { throw err; }
+        next();
+      });
+    });
   }
 
 , 'test create adapter': function () {

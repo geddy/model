@@ -3,6 +3,7 @@ var model = require('../../lib');
 var Event = function () {
   this.property('title', 'string');
   this.property('description', 'text');
+  this.property('startingOn', 'date');
 
   this.validatesPresent('title', {message: 'Argle-bargle'});
   this.validatesPresent('description', {on: ['create', 'reify']});
@@ -19,10 +20,8 @@ Event.prototype.someMethod = function () {
 };
 
 Event.findByTitle = function (t, cb) {
-  Event.all({title: t}, cb);
+  model.Event.all({title: t}, cb);
 };
-
-Event = model.register('Event', Event);
 
 module.exports.Event = Event;
 

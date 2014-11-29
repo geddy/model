@@ -39,6 +39,4 @@ User.findByLogin = function (login, callback) {
   User.all({login: login}, callback);
 }
 
-User = model.register('User', User);
-
 module.exports.User = User;
