@@ -13,17 +13,18 @@ function init()
     , models = [];
   adapter = new MemoryAdapter();
 
-  model.adapters = {};
   relations.forEach(function (r) {
-    model[r].adapter = adapter;
     models.push({
-      ctorName: r
+      ctorName: r.ctorName
+      , ctor: r.ctor
     });
   });
-
+  model.clearDefinitions(models);
   model.registerDefinitions(models);
-
-  //adapter.createTable(Object.keys(model.adapters));
+  model.adapters = {};
+  relations.forEach(function (r) {
+    model[r.ctorName].adapter = adapter;
+  });
 
   // create mock server
   server = restify.createServer();

@@ -17,15 +17,18 @@ tests = {
       , models = [];
     adapter = new Adapter(config.rest);
 
-    model.adapters = {};
     relations.forEach(function (r) {
-      model[r].adapter = adapter;
       models.push({
-        ctorName: r
+        ctorName: r.ctorName
+        , ctor: r.ctor
       });
     });
-
+    model.clearDefinitions(models);
     model.registerDefinitions(models);
+    model.adapters = {};
+    relations.forEach(function (r) {
+      model[r.ctorName].adapter = adapter;
+    });
 
     mockServer = fork(path.join(__dirname, '/server'));
 
