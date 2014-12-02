@@ -3,6 +3,7 @@
   , fs = require('fs')
   , utils = require('utilities')
   , path = require('path')
+  , rest = require('rest-js')
   , userOptsFile = path.join(__dirname, 'db')
   , existsSync
   , config = {
@@ -26,6 +27,12 @@
     , multilevel: {
         port: process.env.LEVEL_PORT || 3000
       , host: process.env.LEVEL_HOST || '127.0.0.1'
+      }
+    , rest: {
+        host: 'http://localhost:3000/',
+        filters: {
+          param: [rest.RestFilters.PARAM_FILTER_PARAMS]
+        }
       }
     };
 

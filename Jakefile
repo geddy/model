@@ -15,6 +15,7 @@ testTask('Model', function () {
   this.testFiles.exclude('test/integration/adapters/sql/eager_assn.js');
   this.testFiles.exclude('test/integration/adapters/sql/nested_eager_assn.js');
   this.testFiles.exclude('test/integration/adapters/sql/postgres_common.js');
+  this.testFiles.exclude('test/integration/adapters/rest/server.js');
   this.testFiles.exclude('test/config.js');
   this.testFiles.exclude('test/db.json');
   this.testFiles.exclude('test/db.sample.json');

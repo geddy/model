@@ -37,7 +37,9 @@
     "mysql": "2.0.x",
     "level": "0.17.x",
     "multilevel": "6.0.x",
-    "sqlite3": "2.1.x"
+    "sqlite3": "2.1.x",
+    "restify": "2.8.x",
+    "rest-js": "0.0.x"
   },
   "engines": {
     "node": "*"
