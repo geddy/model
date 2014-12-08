@@ -54,6 +54,7 @@ Model currently implements adapters for:
 * LevelDB
 * In-memory
 * Filesystem
+* RESTfull Web-Services
 
 ### License
 
@@ -282,6 +283,7 @@ all of these but will put it in your `package.json` file for you:
 - SQLite: `npm install sqlite3 --save`
 - MongoDB: `npm install mongodb --save`
 - LevelDB: `npm install level --save`
+- REST: `npm install rest-js --save`
 
 The in-memory, filesystem, and Riak adapters work out of the box and don't need any
 additional libraries.
