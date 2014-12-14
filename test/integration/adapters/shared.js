@@ -534,6 +534,7 @@ tests = {
     var dt
       , p = model.Photo.create({title: 'z'});
 
+    // Dummy item to use for its createdAt time
     p.save(function (err, data) {
       var lt = new Date(data.createdAt.getTime() + 5000);
 
@@ -551,6 +552,7 @@ tests = {
     var dt
       , p = model.Photo.create({title: 'z'});
 
+    // Dummy item to use for its createdAt time
     p.save(function (err, data) {
       var lt = new Date(data.createdAt.getTime() + 5000)
         , gt = new Date(data.createdAt.getTime() - 5000);
@@ -563,6 +565,35 @@ tests = {
         next();
       });
     });
+  }
+
+, 'test all, using id-range, and less-than-or-equal and greater-than-or-equal with createdAt': function (next) {
+    var dt
+      , p = model.Photo.create({title: 'z'});
+
+    model.Person.all(function (err, data) {
+      if (err) { throw err; }
+      // Collect the ids
+      var ids = [];
+      data.forEach(function (person) {
+        ids.push(person.id);
+      });
+
+      // Dummy item to use for its createdAt time
+      p.save(function (err, data) {
+        var lt = new Date(data.createdAt.getTime() + 5000)
+          , gt = new Date(data.createdAt.getTime() - 5000);
+
+        if (err) { throw err; }
+        model.Person.all({id: ids, createdAt: {lte: lt, gte: gt}},
+            function (err, data) {
+          if (err) { throw err; }
+          assert.equal(20, data.length);
+          next();
+        });
+      });
+    });
+
   }
 
 , 'test remove by id': function (next) {
