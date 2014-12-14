@@ -17,7 +17,7 @@
     "leveldb",
     "sqlite"
   ],
-  "version": "6.0.1",
+  "version": "6.0.2",
   "author": "Matthew Eernisse <mde@fleegix.org> (http://fleegix.org)",
   "main": "./lib/index.js",
   "scripts": {
@@ -36,7 +36,10 @@
     "pg": "2.5.x",
     "mysql": "2.0.x",
     "level": "0.17.x",
-    "sqlite3": "2.1.x"
+    "multilevel": "6.0.x",
+    "sqlite3": "2.1.x",
+    "restify": "2.8.x",
+    "rest-js": "0.0.x"
   },
   "engines": {
     "node": "*"

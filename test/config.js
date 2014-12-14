@@ -3,6 +3,7 @@
   , fs = require('fs')
   , utils = require('utilities')
   , path = require('path')
+  , rest = require('rest-js')
   , userOptsFile = path.join(__dirname, 'db')
   , existsSync
   , config = {
@@ -23,6 +24,16 @@
     , level: {
         db: process.env.LEVEL_DATABASE || '/tmp/foo'
       }
+    , multilevel: {
+        port: process.env.LEVEL_PORT || 3000
+      , host: process.env.LEVEL_HOST || '127.0.0.1'
+      }
+    , rest: {
+        host: 'http://localhost:3000/',
+        filters: {
+          param: [rest.RestFilters.PARAM_FILTER_PARAMS]
+        }
+      }
     };
 
   try {
@@ -37,12 +48,12 @@
     else {
       existsSync = fs.existsSync;
     }
-    
+
     // Check if JSON parsing failed
     if(existsSync(userOptsFile)) {
       throw new Error("Could not parse user options, check if your file is valid JSON");
     }
   }
-  
+
   module.exports = config;
 }());

@@ -31,7 +31,12 @@ tests = {
   }
 
 , 'after': function (next) {
-    adapter.dropTable(['Zooby', 'User'], next);
+    adapter.dropTable(['Zooby', 'User'], function () {
+      adapter.disconnect(function (err) {
+        if (err) { throw err; }
+        next();
+      });
+    });
   }
 
 , 'test create adapter': function () {
