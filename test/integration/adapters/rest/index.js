@@ -53,7 +53,28 @@ tests = {
     assert.ok(adapter instanceof Adapter);
   }
 
+, 'test instance cache': function (next) {
+    var events;
+    model.Event.all(function (err, _events) {
+      events = _events;
 
+      assert.ok(model.Event.adapter.cache.Event);
+
+      events.forEach(function (event) {
+        assert.strictEqual(model.Event.adapter.cache.Event[event.id], event);
+      });
+
+      // wait until cache lifetime expires
+      setTimeout(function () {
+        assert.ok(model.Event.adapter.cache.Event);
+        events.forEach(function (event) {
+          assert.ok(!model.Event.adapter.cache.Event[event.id]);
+        });
+        next();
+      }, model.Event.adapter.config.instanceCacheLifetime + 100);
+
+    });
+  }
 };
 
 
@@ -78,5 +99,3 @@ for (var p in shared) {
 }
 
 module.exports = tests;
-
-

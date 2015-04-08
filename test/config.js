@@ -33,6 +33,7 @@
         filters: {
           param: [rest.RestFilters.PARAM_FILTER_PARAMS]
         }
+      , instanceCacheLifetime: 1000
       }
     };
 
