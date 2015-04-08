@@ -14,6 +14,7 @@ NodeJS.
 - [Defining Models](#defining-models)
   - [Abbreviated syntax](#abbreviated-syntax)
   - [Adapters](#adapters)
+    - [Using REST-Adapter in Browser](#using-rest-adapter-in-browser)
   - [Datatypes](#datatypes)
 - [Creating instances](#creating-instances)
 - [Validations](#validations)
@@ -54,6 +55,7 @@ Model currently implements adapters for:
 * LevelDB
 * In-memory
 * Filesystem
+* RESTfull Web-Services
 
 ### License
 
@@ -282,6 +284,7 @@ all of these but will put it in your `package.json` file for you:
 - SQLite: `npm install sqlite3 --save`
 - MongoDB: `npm install mongodb --save`
 - LevelDB: `npm install level --save`
+- REST: `npm install rest-js --save`
 
 The in-memory, filesystem, and Riak adapters work out of the box and don't need any
 additional libraries.
@@ -372,6 +375,44 @@ disconnect attempt.
 myAdapter.addListener('error', function (err) {
   throw new Error('Error: ' + err);
 });
+```
+
+#### Using REST-Adapter in Browser
+
+You can use the REST-Adapter in the browser.
+
+Assuming you use a tool like browserify to include `model` in your JS:
+
+```javascript
+var model = require('model');
+var RestAdapter = require('model/lib/adapters/rest').Adapter;
+
+model.defaultAdapter = new RestAdapter({
+  host: window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/',
+  defaultDataType: 'json',
+  defaultFormat: 'json',
+  crossDomain: false,
+  cacheLifetime: 5000,
+  camelize: true
+});
+```
+
+You can then access the restApi and add filters as you need:
+
+```javascript
+var restApi = model.defaultAdapter.restApi;
+
+// convert params to json
+restApi.addFilter('param', rest.RestFilters.PARAM_FILTER_JSON);
+```
+
+After that you will also need to register all your models manually:
+
+```javascript
+var model = require('model');
+
+model.register('User', require('app/models/user').User);
+model.register('Event', require('app/models/event').Event);
 ```
 
 ## Creating instances
@@ -1261,4 +1302,3 @@ Configure adapter options by creating a `test/db.json` file. See
 
 - - -
 Model JavaScript ORM copyright 2112 mde@fleegix.org.
-
