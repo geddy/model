@@ -32,14 +32,14 @@
   },
   "devDependencies": {
     "jake": "8.0.x",
-    "mongodb": "1.x",
-    "pg": "4.3.x",
-    "mysql": "2.6.x",
     "level": "0.17.x",
+    "mongodb": "1.x",
     "multilevel": "6.0.x",
-    "sqlite3": "3.0.x",
+    "mysql": "2.6.x",
+    "pg": "4.3.x",
+    "rest-js": "0.0.x",
     "restify": "2.8.x",
-    "rest-js": "0.0.x"
+    "sqlite3": "3.0.x"
   },
   "engines": {
     "node": "*"
