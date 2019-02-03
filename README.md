@@ -7,6 +7,9 @@ Model is a datastore-agnostic ORM in JavaScript. It serves as the
 model-component for the [Geddy MVC Web framework](http://geddyjs.org/) for
 NodeJS.
 
+## DEPRECATION NOTICE
+**Geddy is no longer actively maintained, and therefore it is not recommended to be used for any new projects. For current users, it is highly recommended to migrate another framework.**
+
 ## TOC
 
 - [Overview](#overview)
