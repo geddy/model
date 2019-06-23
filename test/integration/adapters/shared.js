@@ -1230,6 +1230,15 @@ tests = {
     });
   });
 }
+
+, 'test escaping null characters': function (next) {
+    var person = model.Person.create({title: 'test \u0000!'});
+    person.save(function (err, data) {
+      if (err) { throw err; }
+      next();
+    });
+  }
+
 };
 
 module.exports = tests;
